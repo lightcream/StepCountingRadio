@@ -3,588 +3,861 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>互动律动媒体播放器</title>
+    <title>Neumorphism Step & Rhythm Media Player</title>
     <style>
         :root {
-            --bg-color: #0f0f13;
-            --panel-bg: rgba(25, 25, 30, 0.85);
-            --theme-color: #00e5ff;
-            --text-color: #f1f1f1;
+            --bg-color: #1a1b1e;
+            --neu-light: #25272b;
+            --neu-dark: #0f1011;
+            --cyan-blue: #00e0ff;
+            --text-main: #e0e0e0;
+            --text-muted: #888;
         }
-        * { box-sizing: border-box; }
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background-color: var(--bg-color); color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden; /* 防止页面滚动 */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* 基础新拟态类 */
+        .neu-out {
+            background: var(--bg-color);
+            box-shadow: 6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light);
+            border-radius: 12px;
+        }
+        
+        .neu-in {
+            background: var(--bg-color);
+            box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+            border-radius: 12px;
+        }
+
+        .neu-btn {
+            background: var(--bg-color);
+            box-shadow: 4px 4px 8px var(--neu-dark), -4px -4px 8px var(--neu-light);
+            border: none;
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+
+        .neu-btn:active {
+            box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+            color: var(--cyan-blue);
+        }
+
+        .neu-btn.active-cyan {
+            color: var(--cyan-blue);
+            text-shadow: 0 0 8px rgba(0, 224, 255, 0.5);
+            box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+        }
+
+        input[type="text"], input[type="number"] {
+            background: var(--bg-color);
+            border: none;
+            color: var(--cyan-blue);
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
+            outline: none;
+            width: 100px;
+            text-align: center;
+        }
+
+        /* 主体布局 */
+        #media-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
+            background: #000;
         }
 
-        /* 核心容器与媒体元素 */
-        #player-container {
-            position: relative; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-        }
-        #main-media {
-            width: 100%; height: 100%; object-fit: contain; pointer-events: none;
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none; /* 禁用默认交互，避免出现默认播放控件 */
         }
 
-        /* 底部交互UI层 */
-        #ui-layer {
-            position: absolute; bottom: 0; left: 0; width: 100%; z-index: 50;
-            display: flex; flex-direction: column; justify-content: flex-end;
-        }
-
-        /* 细条进度条 */
-        #progress-wrapper {
-            width: 100%; height: 6px; background: rgba(255,255,255,0.2);
-            cursor: pointer; position: relative; z-index: 51;
-            transition: height 0.2s;
-        }
-        #progress-wrapper:hover { height: 10px; }
-        #progress-fill {
-            width: 0%; height: 100%; background: var(--theme-color);
-            box-shadow: 0 0 10px var(--theme-color); pointer-events: none;
-        }
-
-        /* 设置面板 (毛玻璃) */
+        /* 隐藏控制面板时的极简状态 */
         #settings-panel {
-            width: 100%; max-height: 75vh; overflow-y: auto;
-            background: var(--panel-bg); backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.1);
-            transition: max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), padding 0.4s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 45vh;
+            background: var(--bg-color);
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow-y: auto;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.5);
         }
-        #settings-panel.hidden { max-height: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; border: none; }
+
+        #settings-panel.hidden {
+            transform: translateY(100%);
+        }
+
+        /* 整合的 全屏/隐藏 悬浮按钮 */
+        #toggle-fab {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            font-size: 20px;
+            transition: all 0.3s;
+        }
         
-        /* 面板内部网格排版 */
-        .panel-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;
+        #toggle-fab.fab-hidden-mode {
+            bottom: 10px;
+            right: 10px;
+            opacity: 0.5;
+            box-shadow: none;
+            background: transparent;
+            color: var(--cyan-blue);
         }
-        .card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; }
-        h3 { margin: 0 0 12px 0; font-size: 16px; color: var(--theme-color); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+
+        #toggle-fab.fab-hidden-mode:hover {
+            opacity: 1;
+        }
+
+        /* 细长/变粗 进度条 */
+        #progress-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--neu-dark);
+            z-index: 150;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #settings-panel:not(.hidden) ~ #progress-wrapper {
+            bottom: 45vh;
+            height: 12px;
+            background: var(--neu-light);
+            box-shadow: inset 2px 2px 5px var(--neu-dark);
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--cyan-blue);
+            box-shadow: 0 0 10px var(--cyan-blue);
+            position: relative;
+            transition: width 0.1s linear;
+        }
+
+        /* 律动跳跃时的震动与变色动画 */
+        @keyframes beatShake {
+            0% { transform: translateY(0); background: #fff; box-shadow: 0 0 20px #fff; }
+            25% { transform: translateY(-3px); }
+            50% { transform: translateY(3px); background: var(--cyan-blue); box-shadow: 0 0 15px var(--cyan-blue); }
+            75% { transform: translateY(-2px); }
+            100% { transform: translateY(0); background: var(--cyan-blue); }
+        }
+        .beat-jump-anim {
+            animation: beatShake 0.3s ease-out;
+        }
+
+        /* 进度条悬浮百分比提示 */
+        #progress-thumb {
+            position: absolute;
+            right: -10px;
+            top: -6px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--text-main);
+            box-shadow: 0 0 5px #000;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        #progress-wrapper:hover #progress-thumb { opacity: 1; }
         
-        /* 表单元素美化 */
-        label { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-        input[type="number"], input[type="text"] {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            color: #fff; padding: 6px 10px; border-radius: 6px; width: 80px; outline: none;
+        #progress-tooltip {
+            position: absolute;
+            top: -25px;
+            right: -15px;
+            background: var(--cyan-blue);
+            color: #000;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
         }
-        input[type="range"] {
-            width: 120px; accent-color: var(--theme-color); margin-left: 10px;
+        #progress-wrapper:hover #progress-tooltip { opacity: 1; }
+
+        /* 全屏飘爱心 */
+        .heart {
+            position: absolute;
+            color: #ff3b6b;
+            font-size: 24px;
+            pointer-events: none;
+            animation: floatUp 2s ease-in forwards;
+            z-index: 10;
         }
-        input[type="file"] { font-size: 12px; width: 100%; color: #aaa; }
-        input[type="file"]::file-selector-button {
-            background: var(--theme-color); color: #000; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 1; }
+            100% { transform: translateY(-150px) scale(1.5); opacity: 0; }
         }
-        
-        button {
-            background: var(--theme-color); color: #000; border: none;
-            padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;
-            transition: opacity 0.2s; width: 100%; margin-top: 5px;
+
+        /* 控制面板内的各种网格与组件 */
+        .panel-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
         }
-        button:active { opacity: 0.7; }
-        button.outline { background: transparent; border: 1px solid var(--theme-color); color: var(--theme-color); }
-        
+        .panel-group {
+            padding: 15px;
+            flex: 1;
+            min-width: 250px;
+        }
+        .panel-group h3 {
+            font-size: 14px;
+            color: var(--cyan-blue);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* 隐藏原生文件上传按钮，用拟态按钮代替 */
+        input[type="file"] { display: none; }
+        .file-label {
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
         /* 播放列表 */
+        #playlist {
+            max-height: 100px;
+            overflow-y: auto;
+            margin-top: 10px;
+            background: var(--neu-in);
+            padding: 10px;
+            border-radius: 8px;
+        }
         .playlist-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 5px; font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--neu-dark);
+            font-size: 12px;
+            cursor: pointer;
         }
-        .playlist-item.active { border-left: 3px solid var(--theme-color); background: rgba(0, 229, 255, 0.1); }
-        .del-btn { background: #ff4757; padding: 4px 8px; font-size: 12px; width: auto; margin:0; }
+        .playlist-item:hover { color: var(--cyan-blue); }
+        .playlist-item.active { color: var(--cyan-blue); font-weight: bold; }
+        .remove-btn { color: #ff3b3b; cursor: pointer; margin-left: 10px; font-weight: bold; }
 
-        /* 顶部悬浮控制条 (用于切换面板和全屏) */
-        #top-controls {
-            position: absolute; top: 15px; right: 15px; z-index: 60; display: flex; gap: 10px;
+        /* 滑块定制 */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100px;
+            background: transparent;
         }
-        #top-controls button { width: auto; padding: 8px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-
-        /* 视觉特效动画 */
-        @keyframes impactGlow {
-            0% { box-shadow: inset 0 0 0px rgba(0,229,255,0); border: 0px solid transparent; }
-            10% { box-shadow: inset 0 0 60px 15px rgba(0,229,255,0.9); border: 2px solid var(--theme-color); }
-            100% { box-shadow: inset 0 0 0px rgba(0,229,255,0); border: 0px solid transparent; }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            background: var(--neu-in);
+            border-radius: 3px;
         }
-        .glow-hit { animation: impactGlow 0.5s ease-out; }
-
-        @keyframes screenShake {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            20% { transform: translate(-8px, 5px) rotate(-1deg) scale(1.02); }
-            40% { transform: translate(8px, -5px) rotate(1deg) scale(1.02); }
-            60% { transform: translate(-5px, -3px) rotate(0deg) scale(1.01); }
-            80% { transform: translate(5px, 3px) rotate(0deg) scale(1.01); }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--cyan-blue);
+            margin-top: -5px;
+            cursor: pointer;
+            box-shadow: 0 0 5px var(--cyan-blue);
         }
-        .shake-hit { animation: screenShake 0.4s; }
-
-        /* 隐藏原生滚动条 */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        
+        .status-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <div id="player-container">
-        <!-- 视频容器 (不使用controls属性，隐藏原生播放UI) -->
-        <video id="main-media" playsinline></video>
-        <!-- 独立的音频用于音乐律动检测 -->
-        <audio id="rhythm-audio" loop></audio>
-        
-        <div id="top-controls">
-            <button id="auth-btn">激活传感器与核心功能</button>
-            <button id="toggle-panel-btn">隐藏设置</button>
-            <button id="fullscreen-btn">全屏</button>
-        </div>
+    <!-- 媒体展示区 -->
+    <div id="media-container">
+        <video id="main-video" playsinline></video>
+        <audio id="rhythm-audio"></audio>
+    </div>
 
-        <div id="ui-layer">
-            <div id="progress-wrapper">
-                <div id="progress-fill"></div>
-            </div>
-            
-            <div id="settings-panel">
-                <div class="panel-grid">
-                    <!-- 媒体管理 -->
-                    <div class="card">
-                        <h3>1. 媒体列表 (音视频)</h3>
-                        <input type="file" id="media-upload" multiple accept="video/*, audio/*">
-                        <label style="margin-top: 10px;"><input type="checkbox" id="random-play"> 乱序播放</label>
-                        <div id="playlist-container" style="max-height: 120px; overflow-y: auto; margin-top: 10px;"></div>
-                    </div>
-
-                    <!-- 播放控制 -->
-                    <div class="card">
-                        <h3>2. 播放控制</h3>
-                        <label>播放倍速: 
-                            <input type="range" id="speed-slider" min="0.1" max="4" step="0.1" value="1">
-                            <input type="number" id="speed-input" value="1" step="0.1" style="width:60px; margin-left: 5px;">
-                        </label>
-                        <label>媒体音量: 
-                            <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="1">
-                        </label>
-                        <label>音乐音量: 
-                            <input type="range" id="music-vol-slider" min="0" max="1" step="0.01" value="0.5">
-                        </label>
-                    </div>
-
-                    <!-- 计步传感器与预热 -->
-                    <div class="card">
-                        <h3>3. 传感器控制</h3>
-                        <label>计步触发播放时长 (秒): <input type="number" id="step-time" value="5"></label>
-                        <button id="warmup-btn" class="outline">预热 (直接播放 3分45秒)</button>
-                    </div>
-
-                    <!-- 字幕与TTS -->
-                    <div class="card">
-                        <h3>4. 字幕文件 (可选)</h3>
-                        <input type="file" id="sub-upload" accept=".json, .vtt, .lrc">
-                        <div style="font-size: 11px; color: #888; margin-top: 5px;">支持 JSON, VTT, LRC。加载后自动启用TTS领读模式。</div>
-                    </div>
-
-                    <!-- 音乐律动 -->
-                    <div class="card">
-                        <h3>5. 音乐律动跳跃 (可选)</h3>
-                        <input type="file" id="music-upload" accept="audio/*">
-                        <label>触发阈值 (0-255): <input type="number" id="beat-threshold" value="200"></label>
-                        <label>忽略头部 (分钟): <input type="number" id="ignore-start" value="1"></label>
-                        <label>忽略尾部 (分钟): <input type="number" id="ignore-end" value="1"></label>
-                    </div>
-                </div>
+    <!-- 进度条 -->
+    <div id="progress-wrapper">
+        <div id="progress-bar">
+            <div id="progress-thumb">
+                <div id="progress-tooltip">0%</div>
             </div>
         </div>
     </div>
 
-<script>
-    /* ================= 核心状态变量 ================= */
-    const media = document.getElementById('main-media');
-    const rhythmAudio = document.getElementById('rhythm-audio');
-    const container = document.getElementById('player-container');
-    
-    let playlist = [];
-    let currentTrackIdx = 0;
-    
-    // 播放时间控制
-    let systemPlayTimer = null; // 控制有效播放窗口的定时器
-    
-    // 倍速控制（全局保留）
-    let globalSpeed = 1.0;
-    
-    // 字幕与TTS状态
-    let subtitles = [];
-    let nextSubIndex = 0;
-    let ttsIsSpeaking = false;
-    
-    // 律动状态
-    let audioCtx, musicAnalyser, dataArray;
-    let lastJumpTime = 0;
-    let isRhythmActive = false;
+    <!-- 整合控制按钮 -->
+    <button id="toggle-fab" class="neu-btn">⛶</button>
 
-    // 计步防抖
-    let lastStepTime = 0;
-    let isDragging = false; // 进度条拖拽防冲突
+    <!-- 设置面板 -->
+    <div id="settings-panel">
+        
+        <div class="panel-row">
+            <!-- 媒体与列表 -->
+            <div class="panel-group neu-out">
+                <h3>媒体库</h3>
+                <label class="file-label neu-btn">
+                    <input type="file" id="media-upload" multiple accept="video/*,audio/*">
+                    上传音视频
+                </label>
+                <label class="file-label neu-btn">
+                    <input type="checkbox" id="shuffle-checkbox" style="display:none;">
+                    <span id="shuffle-text">顺序播放</span>
+                </label>
+                <div id="playlist" class="neu-in"></div>
+            </div>
 
-    /* ================= 1. 基础 UI 与 播放器绑定 ================= */
-    
-    // 隐藏/显示面板
-    document.getElementById('toggle-panel-btn').addEventListener('click', (e) => {
-        const panel = document.getElementById('settings-panel');
-        panel.classList.toggle('hidden');
-        e.target.innerText = panel.classList.contains('hidden') ? '显示设置' : '隐藏设置';
-    });
+            <!-- 控制与步数 -->
+            <div class="panel-group neu-out">
+                <h3>播放与计步控制</h3>
+                <div style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                    <button id="play-pause-btn" class="neu-btn">▶ 播放</button>
+                    <button id="warmup-btn" class="neu-btn">🔥 预热(3分45秒)</button>
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                    <button id="enable-step-btn" class="neu-btn">👣 授权/启用计步</button>
+                    <span class="status-text">每步增加(秒):</span>
+                    <input type="number" id="step-duration" value="5" step="0.1">
+                </div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <span class="status-text">音量:</span>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+                    <span class="status-text">倍速:</span>
+                    <input type="number" id="speed-input" value="1.0" step="0.1">
+                    <input type="range" id="speed-slider" min="0.25" max="3" step="0.05" value="1.0">
+                </div>
+            </div>
+        </div>
 
-    // 全屏控制
-    document.getElementById('fullscreen-btn').addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            container.requestFullscreen().catch(err => alert("全屏请求失败: " + err.message));
-        } else {
-            document.exitFullscreen();
+        <div class="panel-row">
+            <!-- 字幕与TTS -->
+            <div class="panel-group neu-out">
+                <h3>智能字幕 (TTS拦截)</h3>
+                <label class="file-label neu-btn">
+                    <input type="file" id="sub-upload" accept=".json,.lrc,.vtt">
+                    上传字幕文件
+                </label>
+                <button id="remove-sub-btn" class="neu-btn" style="color:#ff3b3b;">清除字幕</button>
+                <div class="status-text" id="sub-status" style="margin-top:10px;">未加载字幕</div>
+            </div>
+
+            <!-- 律动卡点 -->
+            <div class="panel-group neu-out">
+                <h3>音乐律动卡点</h3>
+                <label class="file-label neu-btn">
+                    <input type="file" id="music-upload" accept="audio/*">
+                    上传背景节奏音乐
+                </label>
+                <button id="remove-music-btn" class="neu-btn" style="color:#ff3b3b;">清除音乐</button>
+                <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                    <span class="status-text">触发阈值(0-255):</span>
+                    <input type="number" id="beat-threshold" value="180" style="width:60px;">
+                    <span class="status-text">冷却(秒):</span>
+                    <input type="number" id="beat-cooldown" value="0.5" step="0.01" style="width:60px;">
+                </div>
+                <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                    <span class="status-text">头部避让(分):</span>
+                    <input type="number" id="safe-start" value="1" step="0.1" style="width:60px;">
+                    <span class="status-text">尾部避让(分):</span>
+                    <input type="number" id="safe-end" value="1" step="0.1" style="width:60px;">
+                </div>
+                <div class="status-text" style="margin-top:10px; opacity:0.7;">原理：提取低频Bass能量，超阈值且过冷却期即随机跳转至安全区。</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // DOM 元素引用
+        const video = document.getElementById('main-video');
+        const rhythmAudio = document.getElementById('rhythm-audio');
+        const container = document.getElementById('media-container');
+        const toggleFab = document.getElementById('toggle-fab');
+        const settingsPanel = document.getElementById('settings-panel');
+        const progressWrapper = document.getElementById('progress-wrapper');
+        const progressBar = document.getElementById('progress-bar');
+        const progressTooltip = document.getElementById('progress-tooltip');
+        const playlistDiv = document.getElementById('playlist');
+        const subStatus = document.getElementById('sub-status');
+        
+        // 核心状态
+        let playlist = [];
+        let currentIndex = -1;
+        let isShuffle = false;
+        let globalSpeed = 1.0;
+        
+        // 播放预算（秒），用于计步控制，核心防叠加逻辑
+        let playbackBudget = 0; 
+        let lastFrameTime = performance.now();
+        let isTTSPlaying = false; // TTS拦截标志
+
+        // 字幕状态
+        let subtitles = [];
+        let currentSubIndex = 0;
+        let synth = window.speechSynthesis;
+
+        // 律动状态
+        let audioCtx, analyser, dataArray;
+        let lastJumpTime = 0;
+        let rhythmEnabled = false;
+
+        // 传感器状态
+        let lastAcc = 0;
+
+        // --- 初始化与核心循环 ---
+        function initApp() {
+            requestAnimationFrame(mainLoop);
+            
+            // 修复iOS音频限制：首次交互解锁所有媒体
+            document.body.addEventListener('click', () => {
+                if(synth.getVoices().length === 0) synth.getVoices();
+            }, {once: true});
         }
-    });
 
-    // 倍速同步更新 (拖拽和键盘输入互相绑定，跨视频生效)
-    const speedSlider = document.getElementById('speed-slider');
-    const speedInput = document.getElementById('speed-input');
-    function updateSpeed(val) {
-        globalSpeed = parseFloat(val) || 1;
-        speedSlider.value = globalSpeed;
-        speedInput.value = globalSpeed;
-        media.playbackRate = globalSpeed;
-    }
-    speedSlider.addEventListener('input', e => updateSpeed(e.target.value));
-    speedInput.addEventListener('change', e => updateSpeed(e.target.value));
+        function mainLoop(now) {
+            let dt = (now - lastFrameTime) / 1000; // 秒
+            lastFrameTime = now;
 
-    // 音量控制
-    document.getElementById('vol-slider').addEventListener('input', e => { media.volume = e.target.value; });
-    document.getElementById('music-vol-slider').addEventListener('input', e => { rhythmAudio.volume = e.target.value; });
+            // 1. 播放预算消耗逻辑（计步播放不叠加逻辑）
+            if (playbackBudget > 0 && !isTTSPlaying) {
+                // 如果有预算且TTS没在讲话，确保视频播放
+                if (video.paused && video.src) {
+                    video.play().catch(e=>console.log(e));
+                    if(rhythmEnabled && rhythmAudio.src) rhythmAudio.play().catch(e=>console.log(e));
+                }
+                playbackBudget -= dt;
+                
+                if (playbackBudget <= 0) {
+                    // 预算耗尽，暂停
+                    playbackBudget = 0;
+                    video.pause();
+                    if(rhythmEnabled) rhythmAudio.pause();
+                }
+            } else if (!isTTSPlaying && playbackBudget <= 0 && !video.paused) {
+                // 防止拖动进度条等操作导致意外播放
+                // 仅在预算模式下强制拦截（如果用户纯手动点播放，预算会被设为很大）
+            }
 
-    // 核心：进度条拖拽功能
-    const progWrapper = document.getElementById('progress-wrapper');
-    const progFill = document.getElementById('progress-fill');
+            // 2. 字幕TTS拦截逻辑
+            if (subtitles.length > 0 && currentSubIndex < subtitles.length && video.src) {
+                let nextSub = subtitles[currentSubIndex];
+                if (video.currentTime >= nextSub.start && !isTTSPlaying) {
+                    // 达到字幕时间：暂停画面和预算消耗，触发TTS
+                    video.pause();
+                    if(rhythmEnabled) rhythmAudio.pause();
+                    isTTSPlaying = true;
+                    
+                    let utterance = new SpeechSynthesisUtterance(nextSub.text);
+                    utterance.lang = 'zh-CN';
+                    utterance.rate = 1.2;
+                    utterance.onend = () => {
+                        isTTSPlaying = false;
+                        currentSubIndex++; // 读完准备下一个
+                        // budget逻辑会在下一帧自动恢复播放
+                    };
+                    synth.speak(utterance);
+                }
+            }
 
-    function updateProgressUI() {
-        if(!isDragging && media.duration) {
-            progFill.style.width = (media.currentTime / media.duration * 100) + '%';
+            // 3. 音乐律动逻辑
+            if (rhythmEnabled && !rhythmAudio.paused && analyser) {
+                analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                // 提取前10个频段（低频 Bass）
+                for(let i = 0; i < 10; i++) sum += dataArray[i];
+                let avg = sum / 10;
+
+                let threshold = parseFloat(document.getElementById('beat-threshold').value);
+                let cooldown = parseFloat(document.getElementById('beat-cooldown').value) * 1000;
+
+                if (avg > threshold && (now - lastJumpTime > cooldown)) {
+                    lastJumpTime = now;
+                    jumpVideoToSafeZone();
+                }
+            }
+
+            // 4. 更新进度条 UI
+            if (video.duration) {
+                let percent = (video.currentTime / video.duration) * 100;
+                progressBar.style.width = percent + '%';
+                progressTooltip.innerText = percent.toFixed(1) + '%';
+            }
+
+            requestAnimationFrame(mainLoop);
         }
-    }
-    media.addEventListener('timeupdate', updateProgressUI);
 
-    function calcProgressFromEvent(e) {
-        let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        let rect = progWrapper.getBoundingClientRect();
-        let percent = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
-        progFill.style.width = (percent * 100) + '%';
-        if (media.duration) media.currentTime = percent * media.duration;
-    }
+        // --- 律动跳转逻辑 ---
+        function jumpVideoToSafeZone() {
+            if(!video.duration) return;
+            let safeStart = parseFloat(document.getElementById('safe-start').value) * 60;
+            let safeEnd = video.duration - (parseFloat(document.getElementById('safe-end').value) * 60);
+            
+            if (safeStart >= safeEnd || safeStart < 0) {
+                safeStart = 0; safeEnd = video.duration;
+            }
+            
+            let randomTime = safeStart + Math.random() * (safeEnd - safeStart);
+            video.currentTime = randomTime;
+            
+            // 触发视觉特效 (全屏也会有短暂进度条显示)
+            progressBar.classList.remove('beat-jump-anim');
+            void progressBar.offsetWidth; // 触发重绘
+            progressBar.classList.add('beat-jump-anim');
+            
+            // 震动特效(需要设备支持)
+            if(navigator.vibrate) navigator.vibrate(50);
+        }
 
-    progWrapper.addEventListener('mousedown', e => { isDragging = true; calcProgressFromEvent(e); });
-    document.addEventListener('mousemove', e => { if(isDragging) calcProgressFromEvent(e); });
-    document.addEventListener('mouseup', () => { 
-        if(isDragging) { isDragging = false; syncSubIndex(); } // 拖拽结束后重置TTS同步索引
-    });
-    // 触屏支持
-    progWrapper.addEventListener('touchstart', e => { isDragging = true; calcProgressFromEvent(e); }, {passive: true});
-    document.addEventListener('touchmove', e => { if(isDragging) calcProgressFromEvent(e); }, {passive: true});
-    document.addEventListener('touchend', () => { if(isDragging) { isDragging = false; syncSubIndex(); }});
-
-    /* ================= 2. 播放列表管理 ================= */
-    document.getElementById('media-upload').addEventListener('change', (e) => {
-        let newFiles = Array.from(e.target.files);
-        newFiles.forEach(file => {
-            playlist.push({ file: file, name: file.name, url: URL.createObjectURL(file) });
+        // --- UI & 全屏控制 ---
+        toggleFab.addEventListener('click', () => {
+            let isHidden = settingsPanel.classList.toggle('hidden');
+            if (isHidden) {
+                toggleFab.classList.add('fab-hidden-mode');
+                toggleFab.innerText = '⚙';
+                // 尝试进入全屏
+                if (!document.fullscreenElement) {
+                    container.requestFullscreen().catch(err => {
+                        console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                    });
+                }
+            } else {
+                toggleFab.classList.remove('fab-hidden-mode');
+                toggleFab.innerText = '⛶';
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+            }
         });
-        renderPlaylist();
-        if(playlist.length > 0 && !media.src) playTrack(0); // 默认加载第一个
-    });
 
-    function renderPlaylist() {
-        const pContainer = document.getElementById('playlist-container');
-        pContainer.innerHTML = '';
-        playlist.forEach((item, index) => {
-            let div = document.createElement('div');
-            div.className = `playlist-item ${index === currentTrackIdx ? 'active' : ''}`;
-            div.innerHTML = `
-                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:80%;">${item.name}</span>
-                <button class="del-btn">移除</button>
-            `;
-            // 点击切换播放
-            div.addEventListener('click', (e) => {
-                if(e.target.classList.contains('del-btn')) {
+        // 监听全屏变化，处理默认按ESC退出全屏时同步UI
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                settingsPanel.classList.remove('hidden');
+                toggleFab.classList.remove('fab-hidden-mode');
+                toggleFab.innerText = '⛶';
+            }
+        });
+
+        // --- 进度条拖拽控制 ---
+        progressWrapper.addEventListener('click', (e) => {
+            if (!video.duration) return;
+            let rect = progressWrapper.getBoundingClientRect();
+            let pos = (e.clientX - rect.left) / rect.width;
+            video.currentTime = pos * video.duration;
+            // 更新当前字幕索引，防止拖回前面不读TTS
+            updateSubIndexOnSeek();
+        });
+
+        function updateSubIndexOnSeek() {
+            if (subtitles.length === 0) return;
+            currentSubIndex = subtitles.findIndex(s => s.start >= video.currentTime);
+            if (currentSubIndex === -1) currentSubIndex = subtitles.length;
+        }
+        video.addEventListener('seeked', updateSubIndexOnSeek);
+
+        // --- 媒体库与列表控制 ---
+        document.getElementById('media-upload').addEventListener('change', (e) => {
+            let files = Array.from(e.target.files);
+            files.forEach(file => {
+                playlist.push({
+                    name: file.name,
+                    url: URL.createObjectURL(file)
+                });
+            });
+            renderPlaylist();
+            if (currentIndex === -1 && playlist.length > 0) {
+                playMedia(0);
+            }
+        });
+
+        function renderPlaylist() {
+            playlistDiv.innerHTML = '';
+            playlist.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = 'playlist-item' + (index === currentIndex ? ' active' : '');
+                
+                let title = document.createElement('span');
+                title.innerText = item.name;
+                title.onclick = () => playMedia(index);
+                
+                let del = document.createElement('span');
+                del.className = 'remove-btn';
+                del.innerText = '✖';
+                del.onclick = (e) => {
+                    e.stopPropagation();
+                    URL.revokeObjectURL(item.url);
                     playlist.splice(index, 1);
-                    if(index === currentTrackIdx) media.src = ''; // 移除了当前正在播放的
+                    if (currentIndex === index) {
+                        video.src = '';
+                        currentIndex = -1;
+                    } else if (currentIndex > index) {
+                        currentIndex--;
+                    }
                     renderPlaylist();
-                } else {
-                    playTrack(index);
-                }
+                };
+                
+                div.appendChild(title);
+                div.appendChild(del);
+                playlistDiv.appendChild(div);
             });
-            pContainer.appendChild(div);
+        }
+
+        function playMedia(index) {
+            if (index < 0 || index >= playlist.length) return;
+            currentIndex = index;
+            video.src = playlist[index].url;
+            video.playbackRate = globalSpeed; // 应用全局倍速
+            currentSubIndex = 0; // 重置字幕
+            renderPlaylist();
+            // 上传即给点预算预览
+            playbackBudget = 3; 
+        }
+
+        video.addEventListener('ended', () => {
+            if (playlist.length <= 1) {
+                playbackBudget = 0;
+                return;
+            }
+            let next = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
+            playMedia(next);
+            // 自动续播给极大预算，交给步数逻辑覆盖
+            playbackBudget = parseFloat(document.getElementById('step-duration').value); 
         });
-    }
 
-    function playTrack(index) {
-        if(index < 0 || index >= playlist.length) return;
-        currentTrackIdx = index;
-        media.src = playlist[index].url;
-        renderPlaylist();
-        
-        // 只有当存在有效播放窗口时，才允许播放
-        if(systemPlayTimer && !ttsIsSpeaking) media.play().catch(e=>console.log(e));
-    }
+        document.getElementById('shuffle-checkbox').addEventListener('change', (e) => {
+            isShuffle = e.target.checked;
+            document.getElementById('shuffle-text').innerText = isShuffle ? '🔀 乱序播放' : '🔁 顺序播放';
+            e.target.parentElement.classList.toggle('active-cyan');
+        });
 
-    media.addEventListener('loadedmetadata', () => {
-        media.playbackRate = globalSpeed; // 确保新视频继承倍速设置
-        syncSubIndex(); 
-    });
+        // 播放暂停手动控制 (手动点播放视为无限预算)
+        document.getElementById('play-pause-btn').addEventListener('click', () => {
+            if (video.paused) {
+                playbackBudget = 999999; 
+            } else {
+                playbackBudget = 0;
+            }
+        });
 
-    media.addEventListener('ended', () => {
-        if(playlist.length <= 1) return;
-        let isRandom = document.getElementById('random-play').checked;
-        let nextIdx = isRandom ? Math.floor(Math.random() * playlist.length) : (currentTrackIdx + 1) % playlist.length;
-        playTrack(nextIdx);
-    });
+        // 倍速与音量
+        const speedInput = document.getElementById('speed-input');
+        const speedSlider = document.getElementById('speed-slider');
+        function updateSpeed(val) {
+            globalSpeed = parseFloat(val);
+            speedInput.value = globalSpeed;
+            speedSlider.value = globalSpeed;
+            video.playbackRate = globalSpeed;
+        }
+        speedInput.addEventListener('change', e => updateSpeed(e.target.value));
+        speedSlider.addEventListener('input', e => updateSpeed(e.target.value));
 
-    /* ================= 3. 计步传感器与计时播放引擎 ================= */
-    
-    // 初始化权限(iOS 需要用户手动点击按钮触发)
-    document.getElementById('auth-btn').addEventListener('click', () => {
-        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-            DeviceMotionEvent.requestPermission()
-                .then(state => {
-                    if(state === 'granted') window.addEventListener('devicemotion', handleMotion);
-                    else alert("传感器权限被拒绝");
+        document.getElementById('volume-slider').addEventListener('input', (e) => {
+            video.volume = e.target.value;
+            if(rhythmEnabled) rhythmAudio.volume = e.target.value;
+        });
+
+        // --- 字幕解析逻辑 ---
+        document.getElementById('sub-upload').addEventListener('change', (e) => {
+            let file = e.target.files[0];
+            if (!file) return;
+            let reader = new FileReader();
+            reader.onload = (ev) => {
+                let text = ev.target.result;
+                let ext = file.name.split('.').pop().toLowerCase();
+                parseSubtitles(text, ext);
+                subStatus.innerText = `已加载字幕: ${file.name} (${subtitles.length}条)`;
+                currentSubIndex = 0;
+                updateSubIndexOnSeek();
+            };
+            reader.readAsText(file);
+        });
+
+        document.getElementById('remove-sub-btn').addEventListener('click', () => {
+            subtitles = [];
+            currentSubIndex = 0;
+            subStatus.innerText = '未加载字幕';
+            document.getElementById('sub-upload').value = '';
+        });
+
+        function parseSubtitles(text, type) {
+            subtitles = [];
+            if (type === 'json') {
+                try {
+                    let arr = JSON.parse(text);
+                    subtitles = arr.map(item => ({ start: parseFloat(item.from), text: item.content }));
+                } catch(e) { alert('JSON格式错误'); }
+            } else if (type === 'lrc') {
+                let lines = text.split('\n');
+                let regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+                lines.forEach(line => {
+                    let match = line.match(regex);
+                    if (match) {
+                        let start = parseInt(match[1])*60 + parseInt(match[2]) + parseInt(match[3].padEnd(3,'0'))/1000;
+                        if(match[4].trim()) subtitles.push({ start, text: match[4].trim() });
+                    }
+                });
+            } else if (type === 'vtt') {
+                let blocks = text.split(/\n\s*\n/);
+                let timeRegex = /(?:(\d{2}):)?(\d{2}):(\d{2})\.(\d{3})\s+-->/;
+                blocks.forEach(block => {
+                    let lines = block.split('\n');
+                    let tIdx = lines.findIndex(l => timeRegex.test(l));
+                    if (tIdx !== -1) {
+                        let m = lines[tIdx].match(timeRegex);
+                        let h = m[1] ? parseInt(m[1]) : 0;
+                        let start = h*3600 + parseInt(m[2])*60 + parseInt(m[3]) + parseInt(m[4])/1000;
+                        let content = lines.slice(tIdx + 1).join(' ').trim();
+                        // 移除可能的VTT标签如<c.color>
+                        content = content.replace(/<[^>]+>/g, '');
+                        if (content) subtitles.push({ start, text: content });
+                    }
+                });
+            }
+            subtitles.sort((a,b) => a.start - b.start);
+        }
+
+        // --- 音乐律动加载逻辑 ---
+        document.getElementById('music-upload').addEventListener('change', (e) => {
+            let file = e.target.files[0];
+            if (!file) return;
+            rhythmAudio.src = URL.createObjectURL(file);
+            rhythmEnabled = true;
+
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                let source = audioCtx.createMediaElementSource(rhythmAudio);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+            }
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+        });
+
+        document.getElementById('remove-music-btn').addEventListener('click', () => {
+            rhythmAudio.src = '';
+            rhythmEnabled = false;
+            document.getElementById('music-upload').value = '';
+        });
+
+        // --- 计步与传感器逻辑 ---
+        const stepBtn = document.getElementById('enable-step-btn');
+        stepBtn.addEventListener('click', () => {
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                DeviceMotionEvent.requestPermission().then(permissionState => {
+                    if (permissionState === 'granted') {
+                        startPedometer();
+                        stepBtn.classList.add('active-cyan');
+                    } else {
+                        alert('需要传感器权限才能计步');
+                    }
                 }).catch(console.error);
-        } else {
-            window.addEventListener('devicemotion', handleMotion);
-        }
-        
-        // 初始化TTS引擎(防止iOS静音)
-        let utter = new SpeechSynthesisUtterance('');
-        window.speechSynthesis.speak(utter);
-        
-        // 初始化 Web Audio API 用于音乐律动
-        if(!audioCtx) initAudioRhythm();
-        
-        document.getElementById('auth-btn').style.display = 'none';
-    });
-
-    // 计步逻辑 (基于加速度向量阈值)
-    function handleMotion(e) {
-        let ag = e.accelerationIncludingGravity;
-        if(!ag) return;
-        let mag = Math.sqrt(ag.x*ag.x + ag.y*ag.y + ag.z*ag.z);
-        
-        if (mag > 13) { // 阈值13通常对应轻微震动/走步
-            let now = Date.now();
-            if(now - lastStepTime > 400) { // 400ms防抖
-                lastStepTime = now;
-                triggerPlayWindow(parseFloat(document.getElementById('step-time').value) || 5);
-                triggerVisualEffects();
+            } else {
+                startPedometer(); // 安卓非HTTPS或默认允许
+                stepBtn.classList.add('active-cyan');
             }
-        }
-    }
+            
+            // 点击激活AudioContext
+            if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        });
 
-    // 预热按钮 (直接播放225秒)
-    document.getElementById('warmup-btn').addEventListener('click', () => {
-        if(systemPlayTimer) clearTimeout(systemPlayTimer);
-        systemPlayTimer = null;
-        triggerPlayWindow(225); 
-    });
-
-    // 核心引擎：开启播放窗口
-    function triggerPlayWindow(durationSec) {
-        // 如果已有窗口在运行，绝不叠加时间！
-        if(systemPlayTimer) return; 
-
-        // 如果TTS没有在说话，并且有视频，就播放
-        if(!ttsIsSpeaking && playlist.length > 0) {
-            media.play().catch(e=>console.log(e));
-        }
-        
-        // 律动音乐同步
-        if(isRhythmActive && !ttsIsSpeaking) rhythmAudio.play();
-
-        systemPlayTimer = setTimeout(() => {
-            media.pause();
-            if(isRhythmActive) rhythmAudio.pause();
-            systemPlayTimer = null;
-        }, durationSec * 1000);
-    }
-
-    // 全屏时触发特效 (薄光晕+撞击感)
-    function triggerVisualEffects() {
-        if (document.fullscreenElement) {
-            container.classList.remove('glow-hit');
-            void container.offsetWidth; // 触发重绘重排
-            container.classList.add('glow-hit');
-        }
-    }
-
-    /* ================= 4. 字幕与 TTS 处理模块 ================= */
-    document.getElementById('sub-upload').addEventListener('change', async (e) => {
-        let file = e.target.files[0];
-        if(!file) return;
-        let text = await file.text();
-        subtitles = [];
-        
-        if (file.name.endsWith('.json')) {
-            let arr = JSON.parse(text);
-            subtitles = arr.map(i => ({ start: i.from, end: i.to, text: i.content }));
-        } 
-        else if (file.name.endsWith('.vtt')) {
-            let blocks = text.split(/\n\s*\n/);
-            blocks.forEach(block => {
-                let lines = block.split('\n');
-                let timeLine = lines.find(l => l.includes('-->'));
-                if(timeLine) {
-                    let parts = timeLine.split('-->');
-                    let start = parseTime(parts[0]);
-                    let end = parseTime(parts[1]);
-                    let content = lines.slice(lines.indexOf(timeLine)+1).join(' ');
-                    if(content.trim()) subtitles.push({start, end, text: content.trim()});
+        function startPedometer() {
+            window.addEventListener('devicemotion', (e) => {
+                let acc = Math.sqrt(
+                    Math.pow(e.accelerationIncludingGravity.x, 2) +
+                    Math.pow(e.accelerationIncludingGravity.y, 2) +
+                    Math.pow(e.accelerationIncludingGravity.z, 2)
+                );
+                let delta = Math.abs(acc - lastAcc);
+                lastAcc = acc;
+                // 阈值判定为一步
+                if (delta > 2.5) {
+                    triggerStep();
                 }
             });
         }
-        else if (file.name.endsWith('.lrc')) {
-            let lines = text.split('\n');
-            let lrcRegex = /\[(\d{2}):(\d{2}\.\d{2,3})\](.*)/;
-            lines.forEach((line) => {
-                let match = line.match(lrcRegex);
-                if(match && match[3].trim()) {
-                    let start = parseInt(match[1]) * 60 + parseFloat(match[2]);
-                    subtitles.push({start, text: match[3].trim()});
-                }
-            });
-            // LRC 格式补全结束时间
-            for(let i=0; i<subtitles.length; i++) {
-                subtitles[i].end = (i < subtitles.length - 1) ? subtitles[i+1].start : subtitles[i].start + 5;
+
+        function triggerStep() {
+            // 核心逻辑：如果在播放中（预算 > 0），叠加无效。
+            // 只有当预算耗尽（播放结束）时触发，才注入新的预算。
+            if (playbackBudget <= 0) {
+                let duration = parseFloat(document.getElementById('step-duration').value);
+                playbackBudget = duration;
+            }
+
+            // 全屏状态下产生爱心
+            if (document.fullscreenElement) {
+                createHeart();
             }
         }
-        
-        subtitles.sort((a,b) => a.start - b.start);
-        syncSubIndex();
-        alert("字幕解析成功，已开启TTS朗读模式。");
-    });
 
-    function parseTime(timeStr) {
-        let parts = timeStr.trim().split(':');
-        if(parts.length === 3) return parseInt(parts[0])*3600 + parseInt(parts[1])*60 + parseFloat(parts[2]);
-        if(parts.length === 2) return parseInt(parts[0])*60 + parseFloat(parts[1]);
-        return 0;
-    }
+        // 预热按钮
+        document.getElementById('warmup-btn').addEventListener('click', () => {
+            playbackBudget = 225; // 3分45秒
+        });
 
-    // 拖拽进度条后，同步当前时间的字幕索引
-    function syncSubIndex() {
-        if(!subtitles.length) return;
-        nextSubIndex = subtitles.length;
-        for(let i=0; i<subtitles.length; i++) {
-            subtitles[i].ttsDone = false; // 重置 TTS 状态
-            if(media.currentTime < subtitles[i].end && nextSubIndex === subtitles.length) {
-                nextSubIndex = i;
-            }
+        function createHeart() {
+            let heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerText = '❤️';
+            heart.style.left = Math.random() * 80 + 10 + '%';
+            heart.style.bottom = '20px';
+            container.appendChild(heart);
+            setTimeout(() => {
+                if(container.contains(heart)) container.removeChild(heart);
+            }, 2000);
         }
-    }
 
-    // 在播放过程中精准拦截，调用 TTS
-    media.addEventListener('timeupdate', () => {
-        if(!subtitles.length || nextSubIndex >= subtitles.length) return;
-        
-        let sub = subtitles[nextSubIndex];
-        
-        // 当视频进度触碰到或者进入当前字幕的开始时间时，暂停并朗读
-        if (media.currentTime >= sub.start && media.currentTime < sub.end && !sub.ttsDone) {
-            media.pause();
-            if(isRhythmActive) rhythmAudio.pause();
-            
-            ttsIsSpeaking = true;
-            let utterance = new SpeechSynthesisUtterance(sub.text);
-            utterance.lang = 'zh-CN';
-            utterance.rate = 1.2; // 稍快语速，防止卡顿
-            
-            utterance.onend = () => {
-                ttsIsSpeaking = false;
-                sub.ttsDone = true;
-                // TTS读完后，如果此时有效播放窗口仍在运行，则恢复播放
-                if (systemPlayTimer) {
-                    media.play().catch(e=>{});
-                    if(isRhythmActive) rhythmAudio.play();
-                }
-            };
-            
-            utterance.onerror = (e) => {
-                console.error("TTS 错误: ", e);
-                ttsIsSpeaking = false;
-                sub.ttsDone = true;
-                if(systemPlayTimer) media.play();
-            };
-            
-            window.speechSynthesis.speak(utterance);
-        }
-        
-        // 当前字幕播放完毕后，移动到下一个
-        if (media.currentTime >= sub.end && sub.ttsDone) {
-            nextSubIndex++;
-        }
-    });
+        // 启动主循环
+        initApp();
 
-    /* ================= 5. 音乐律动分析与乱跳引擎 ================= */
-    
-    document.getElementById('music-upload').addEventListener('change', (e) => {
-        let file = e.target.files[0];
-        if(!file) return;
-        rhythmAudio.src = URL.createObjectURL(file);
-        isRhythmActive = true;
-    });
-
-    function initAudioRhythm() {
-        let AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-        let source = audioCtx.createMediaElementSource(rhythmAudio);
-        musicAnalyser = audioCtx.createAnalyser();
-        musicAnalyser.fftSize = 256;
-        source.connect(musicAnalyser);
-        musicAnalyser.connect(audioCtx.destination);
-        dataArray = new Uint8Array(musicAnalyser.frequencyBinCount);
-        
-        if(audioCtx.state === 'suspended') audioCtx.resume();
-        checkRhythmBeat();
-    }
-
-    function checkRhythmBeat() {
-        requestAnimationFrame(checkRhythmBeat);
-        if(!isRhythmActive || !musicAnalyser || rhythmAudio.paused) return;
-        
-        musicAnalyser.getByteFrequencyData(dataArray);
-        // 检测低频(Bass/Kick)
-        let sum = 0;
-        for(let i = 0; i < 10; i++) sum += dataArray[i];
-        let avg = sum / 10;
-        
-        let threshold = parseInt(document.getElementById('beat-threshold').value) || 200;
-        
-        if (avg > threshold && (Date.now() - lastJumpTime > 3000)) { // 3秒跳跃冷却时间
-            lastJumpTime = Date.now();
-            triggerBeatJump();
-        }
-    }
-
-    function triggerBeatJump() {
-        if(!media.duration) return;
-        let startIgnore = (parseFloat(document.getElementById('ignore-start').value) || 0) * 60;
-        let endIgnore = (parseFloat(document.getElementById('ignore-end').value) || 0) * 60;
-        
-        let minTime = startIgnore;
-        let maxTime = media.duration - endIgnore;
-        if(maxTime <= minTime) { minTime = 0; maxTime = media.duration; }
-        
-        let randTime = Math.random() * (maxTime - minTime) + minTime;
-        media.currentTime = randTime;
-        syncSubIndex(); // 跳跃后重置字幕状态
-
-        // 全屏跳跃震动
-        if (document.fullscreenElement) {
-            container.classList.remove('shake-hit');
-            void container.offsetWidth; // trigger reflow
-            container.classList.add('shake-hit');
-        }
-    }
-</script>
+    </script>
 </body>
 </html>
