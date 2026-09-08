@@ -4,290 +4,211 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>STEPVISION · 步频放映室</title>
-<meta name="description" content="步数解锁播放 · 字幕朗读 · 节奏卡点切换 · 本地流式大文件播放器">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#22252e; --panel:#2b2f3b; --panel2:#262a35; --pit:#1b1e26;
   --dark:rgba(0,0,0,.55); --light:rgba(255,255,255,.05);
   --accent:#00e0ff; --accent-ink:#03242c;
-  --text:#cfd8e6; --muted:#7c869e; --radius:18px;
+  --text:#cfd8e6; --muted:#7c869e; --radius:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
 body{
-  background:var(--bg); color:var(--text); overflow-x:hidden;
+  background:var(--bg);color:var(--text);overflow-x:hidden;
   font-family:"Rajdhani","PingFang SC","HarmonyOS Sans SC","Microsoft YaHei","Noto Sans SC",sans-serif;
-  padding:18px 14px 52px; min-height:100vh;
-  -webkit-tap-highlight-color:transparent;
+  padding:12px 12px 44px;min-height:100vh;-webkit-tap-highlight-color:transparent;
 }
-.wrap{max-width:1180px;margin:0 auto}
+.wrap{max-width:1040px;margin:0 auto}
+.neu{background:var(--panel);border-radius:var(--radius);box-shadow:9px 11px 24px var(--dark),-7px -8px 18px var(--light)}
 
 /* ============ 顶栏 ============ */
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-.brand{display:flex;align-items:center;gap:12px}
-.brand svg{width:40px;height:40px;flex:none}
-.brand h1{font-size:22px;font-weight:700;letter-spacing:.14em;color:#e8f1fa;line-height:1}
-.brand h1 b{color:var(--accent);font-weight:700}
-.brand span{display:block;font-size:11px;letter-spacing:.42em;color:var(--muted);margin-top:4px}
-.pills{display:flex;gap:8px;flex-wrap:wrap}
-.pill{
-  padding:7px 14px;border-radius:11px;font-size:13px;font-weight:600;letter-spacing:.08em;
-  background:var(--pit);color:var(--muted);
-  box-shadow:inset 4px 4px 8px rgba(0,0,0,.6),inset -3px -3px 6px rgba(255,255,255,.05);
-}
-.pill b{color:var(--text);font-weight:600}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:30px;height:30px;flex:none}
+.brand h1{font-size:17px;font-weight:700;letter-spacing:.12em;color:#e8f1fa;line-height:1;white-space:nowrap}
+.brand h1 b{color:var(--accent)}
+.brand span{font-size:10px;letter-spacing:.34em;color:var(--muted);margin-top:3px;display:block}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:5px 10px;border-radius:9px;font-size:11.5px;font-weight:600;letter-spacing:.06em;background:var(--pit);color:var(--muted);box-shadow:inset 3px 3px 6px rgba(0,0,0,.6),inset -2px -2px 5px rgba(255,255,255,.05);white-space:nowrap}
+.pill b{color:var(--text)}
 .pill.warn{color:var(--accent)}
 .pill.off{color:#e08c8c}
-.pill.on::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:7px;vertical-align:1px}
-.pill:not(.on)::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#4a5163;margin-right:7px;vertical-align:1px}
+.pill::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:#4a5163;margin-right:6px;vertical-align:1px}
+.pill.on::before{background:var(--accent)}
 
 /* ============ 播放器 ============ */
-.player-shell{
-  position:relative;width:100%;aspect-ratio:16/9;max-height:62vh;
-  background:#0b0d12;border-radius:var(--radius);overflow:hidden;
-  box-shadow:12px 14px 30px var(--dark),-10px -10px 24px var(--light);
-  margin-bottom:18px;
-}
+.player-shell{position:relative;width:100%;aspect-ratio:16/9;max-height:62vh;background:#0b0d12;border-radius:var(--radius);overflow:hidden;box-shadow:10px 12px 26px var(--dark),-8px -9px 20px var(--light);margin-bottom:12px}
 .player-shell video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#0b0d12}
 .player-shell.shake{animation:shake .45s}
 @keyframes shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,-2px)}80%{transform:translate(4px,3px)}}
-
-.center-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);pointer-events:none;z-index:2;transition:opacity .4s}
+.center-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);pointer-events:none;z-index:2;transition:opacity .4s}
 .center-hint.off{opacity:0}
-.center-hint svg{width:52px;height:52px;opacity:.5}
-.center-hint p{font-size:16px;letter-spacing:.2em;color:#9aa5ba}
-.center-hint span{font-size:12px;letter-spacing:.14em}
-
-/* 音频模式可视化 */
-.audio-viz{position:absolute;bottom:16%;left:50%;transform:translateX(-50%);display:none;gap:7px;align-items:flex-end;height:58px;pointer-events:none;z-index:2}
+.center-hint svg{width:44px;height:44px;opacity:.5}
+.center-hint p{font-size:14px;letter-spacing:.22em;color:#9aa5ba}
+.center-hint span{font-size:11px;letter-spacing:.12em}
+.audio-viz{position:absolute;bottom:15%;left:50%;transform:translateX(-50%);display:none;gap:6px;align-items:flex-end;height:52px;pointer-events:none;z-index:2}
 .player-shell[data-kind="audio"] .audio-viz{display:flex}
-.audio-viz i{width:6px;border-radius:3px;background:var(--accent);opacity:.9;height:10px;animation:viz 1.05s ease-in-out infinite alternate;animation-play-state:paused}
+.audio-viz i{width:5px;border-radius:3px;background:var(--accent);opacity:.9;height:8px;animation:viz 1.05s ease-in-out infinite alternate;animation-play-state:paused}
 .player-shell.playing .audio-viz i{animation-play-state:running}
 .audio-viz i:nth-child(2){animation-delay:.13s}.audio-viz i:nth-child(3){animation-delay:.26s}
 .audio-viz i:nth-child(4){animation-delay:.39s}.audio-viz i:nth-child(5){animation-delay:.52s}
 .audio-viz i:nth-child(6){animation-delay:.65s}.audio-viz i:nth-child(7){animation-delay:.78s}
-@keyframes viz{from{height:9px}to{height:54px}}
-
-/* 字幕层 */
-.subtitle-layer{
-  position:absolute;left:50%;transform:translateX(-50%);bottom:12%;max-width:84%;
-  padding:9px 20px;border-radius:11px;background:rgba(11,13,18,.74);backdrop-filter:blur(6px);
-  color:#eaf6ff;font-size:clamp(14px,2.3vw,22px);font-weight:500;line-height:1.55;text-align:center;
-  opacity:0;transition:opacity .2s;pointer-events:none;z-index:3;border-left:3px solid var(--accent);
-}
+@keyframes viz{from{height:8px}to{height:48px}}
+.subtitle-layer{position:absolute;left:50%;transform:translateX(-50%);bottom:11%;max-width:84%;padding:7px 17px;border-radius:10px;background:rgba(11,13,18,.74);backdrop-filter:blur(6px);color:#eaf6ff;font-size:clamp(13px,2.1vw,20px);font-weight:500;line-height:1.5;text-align:center;opacity:0;transition:opacity .2s;pointer-events:none;z-index:3;border-left:3px solid var(--accent)}
 .subtitle-layer.on{opacity:1}
 .subtitle-layer.tts{border-left-color:#8ff0ff}
-.subtitle-layer.tts::after{content:"TTS 朗读中";display:block;font-size:10px;letter-spacing:.3em;color:var(--accent);margin-top:3px}
-
-/* 爱心层（全屏计步） */
+.subtitle-layer.tts::after{content:"TTS 朗读中";display:block;font-size:9px;letter-spacing:.3em;color:var(--accent);margin-top:2px}
 .hearts-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4}
 .heart{position:absolute;opacity:0;animation:rise 2.3s cubic-bezier(.2,.6,.3,1) forwards}
 .heart svg{width:var(--s,24px);height:var(--s,24px);fill:var(--accent);filter:drop-shadow(0 0 7px rgba(0,224,255,.55))}
 .heart.pale svg{fill:rgba(255,255,255,.85);filter:none}
 @keyframes rise{0%{transform:translate(0,0) scale(.6);opacity:0}12%{opacity:.95}100%{transform:translate(var(--dx,0),-42vh) scale(1.18);opacity:0}}
-
-/* 全屏右上状态 */
-.fs-status{
-  position:absolute;top:14px;right:16px;z-index:5;display:none;padding:6px 14px;border-radius:10px;
-  background:rgba(11,13,18,.55);backdrop-filter:blur(8px);font-size:13px;font-weight:600;letter-spacing:.1em;color:#bfe9f5;pointer-events:none;
-}
+.fs-status{position:absolute;top:12px;right:14px;z-index:5;display:none;padding:5px 12px;border-radius:9px;background:rgba(11,13,18,.55);backdrop-filter:blur(8px);font-size:12px;font-weight:600;letter-spacing:.08em;color:#bfe9f5;pointer-events:none}
 .is-fs .fs-status{display:block}
 .fs-status.warn{color:var(--accent)}
-
-/* 全屏底部细进度条（常驻） */
 .fs-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(6,8,12,.6);opacity:0;pointer-events:none;transition:height .2s,opacity .3s;z-index:5;cursor:pointer;touch-action:none}
 .is-fs .fs-progress{opacity:1;pointer-events:auto}
 .fs-progress:hover{height:8px}
 .fs-progress i{display:block;height:100%;width:0;background:var(--accent)}
 .fs-progress.flash i{animation:fsflash .8s ease-out}
-@keyframes fsflash{0%{background:#ffffff;box-shadow:0 0 18px 3px rgba(0,224,255,.95)}100%{background:var(--accent)}}
-
-/* 控制层（全屏时自动隐藏，暂停时也不弹任何标志） */
-.control-layer{
-  position:absolute;left:10px;right:10px;bottom:10px;z-index:6;
-  display:flex;align-items:center;gap:10px;padding:8px 12px;
-  background:rgba(22,25,33,.74);backdrop-filter:blur(12px);border-radius:14px;
-  transition:opacity .35s,transform .35s;
-}
+@keyframes fsflash{0%{background:#fff;box-shadow:0 0 18px 3px rgba(0,224,255,.95)}100%{background:var(--accent)}}
+.control-layer{position:absolute;left:8px;right:8px;bottom:8px;z-index:6;display:flex;align-items:center;gap:8px;padding:6px 9px;background:rgba(22,25,33,.74);backdrop-filter:blur(12px);border-radius:12px;transition:opacity .35s,transform .35s}
 .is-fs .control-layer{opacity:0;transform:translateY(10px);pointer-events:none}
 .is-fs .control-layer.show{opacity:1;transform:translateY(0);pointer-events:auto}
 .player-shell.hidecursor{cursor:none}
-.cbtn{
-  width:40px;height:40px;flex:none;border:none;border-radius:50%;cursor:pointer;
-  background:var(--panel2);color:#dfe9f4;display:flex;align-items:center;justify-content:center;
-  box-shadow:4px 4px 9px rgba(0,0,0,.5),-3px -3px 7px rgba(255,255,255,.08);transition:.18s;
-}
+.cbtn{width:36px;height:36px;flex:none;border:none;border-radius:50%;cursor:pointer;background:var(--panel2);color:#dfe9f4;display:flex;align-items:center;justify-content:center;box-shadow:4px 4px 8px rgba(0,0,0,.5),-3px -3px 6px rgba(255,255,255,.08);transition:.16s}
 .cbtn:hover{color:var(--accent)}
-.cbtn:active{box-shadow:inset 3px 3px 7px rgba(0,0,0,.55),inset -2px -2px 5px rgba(255,255,255,.05);transform:scale(.95)}
-.cbtn svg{width:18px;height:18px}
+.cbtn:active{box-shadow:inset 3px 3px 6px rgba(0,0,0,.55),inset -2px -2px 4px rgba(255,255,255,.05);transform:scale(.94)}
+.cbtn svg{width:16px;height:16px}
 .cbtn.accent{background:var(--accent);color:var(--accent-ink)}
-.time-label{font-size:13px;font-weight:600;letter-spacing:.06em;color:#aeb9cc;white-space:nowrap;font-variant-numeric:tabular-nums}
-.time-label b{color:var(--accent);margin-left:8px;font-weight:600}
-.pbar{flex:1;height:22px;display:flex;align-items:center;position:relative;cursor:pointer;touch-action:none}
-.pbar .track{position:absolute;left:0;right:0;height:8px;border-radius:6px;background:var(--pit);box-shadow:inset 3px 3px 6px rgba(0,0,0,.65),inset -2px -2px 4px rgba(255,255,255,.05)}
-.pbar .fill{position:absolute;left:0;height:8px;border-radius:6px;background:var(--accent);width:0}
-.pbar .fill::after{content:'';position:absolute;right:-5px;top:-3px;width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 9px rgba(0,224,255,.65)}
-.bubble{position:absolute;bottom:26px;transform:translateX(-50%);padding:3px 9px;border-radius:8px;background:rgba(11,13,18,.9);color:#dff6ff;font-size:12px;font-weight:600;opacity:0;pointer-events:none;white-space:nowrap;transition:opacity .15s;font-variant-numeric:tabular-nums}
+.time-label{font-size:12px;font-weight:600;letter-spacing:.04em;color:#aeb9cc;white-space:nowrap;font-variant-numeric:tabular-nums}
+.time-label b{color:var(--accent);margin-left:7px;font-weight:600}
+.pbar{flex:1;height:20px;display:flex;align-items:center;position:relative;cursor:pointer;touch-action:none}
+.pbar .track{position:absolute;left:0;right:0;height:6px;border-radius:5px;background:var(--pit);box-shadow:inset 2px 2px 5px rgba(0,0,0,.65),inset -1px -1px 3px rgba(255,255,255,.05)}
+.pbar .fill{position:absolute;left:0;height:6px;border-radius:5px;background:var(--accent);width:0}
+.pbar .fill::after{content:'';position:absolute;right:-4px;top:-3px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(0,224,255,.65)}
+.bubble{position:absolute;bottom:24px;transform:translateX(-50%);padding:2px 8px;border-radius:7px;background:rgba(11,13,18,.9);color:#dff6ff;font-size:11px;font-weight:600;opacity:0;pointer-events:none;white-space:nowrap;transition:opacity .15s;font-variant-numeric:tabular-nums}
 .pbar.drag .bubble{opacity:1}
-.vol-group{display:flex;align-items:center;gap:6px}
-.vol-group input[type=range]{width:80px}
-@media (max-width:760px){ .vol-group{display:none} .time-label{font-size:11px} }
+.vol-group{display:flex;align-items:center;gap:5px}
+.vol-group input[type=range]{width:72px}
+@media (max-width:760px){.vol-group{display:none}.time-label{font-size:10.5px}}
 
-/* ============ 上传槽（一排三枚，等大） ============ */
-.upload-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:18px}
-.upload-slot{
-  display:flex;align-items:center;gap:13px;padding:16px;cursor:pointer;border-radius:var(--radius);
-  background:var(--panel);transition:transform .2s,box-shadow .2s;
-  box-shadow:7px 8px 16px var(--dark),-6px -6px 14px var(--light);
-}
-.upload-slot:hover{transform:translateY(-2px)}
-.upload-slot:active{transform:translateY(0)}
-.upload-slot .slot-ic{width:46px;height:46px;flex:none;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--accent);background:var(--pit);box-shadow:inset 4px 4px 8px rgba(0,0,0,.55),inset -3px -3px 6px rgba(255,255,255,.05)}
-.upload-slot .slot-ic svg{width:22px;height:22px}
-.upload-slot strong{display:block;font-size:15px;letter-spacing:.06em;color:#dfe9f4}
-.upload-slot em{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45;word-break:break-all;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.upload-slot em.ok{color:#9fd8e6}
-.upload-slot input{display:none}
-
-/* ============ 播放列表 ============ */
-.playlist-wrap{border-radius:var(--radius);background:var(--panel);padding:14px 16px;box-shadow:7px 8px 16px var(--dark),-6px -6px 14px var(--light)}
-.pl-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
-.pl-head h3{font-size:14px;letter-spacing:.18em;color:#aeb9cc;font-weight:600}
-.pl-head .pl-count{font-size:13px;color:var(--muted)}
-.pl-head .pl-shuf{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+/* ============ 工作台：上传排 + 播放列表 ============ */
+.dock{padding:11px;margin-bottom:0}
+.dock-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px}
+.up-tile{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:11px;background:var(--pit);cursor:pointer;transition:.16s;box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);min-width:0}
+.up-tile:hover{box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04),0 0 0 1px rgba(0,224,255,.3)}
+.up-tile:active{transform:translateY(1px)}
+.uic{width:32px;height:32px;flex:none;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--accent);background:#232835}
+.uic svg{width:15px;height:15px}
+.up-tile>div{min-width:0}
+.up-tile strong{display:block;font-size:12.5px;letter-spacing:.05em;color:#dfe9f4;white-space:nowrap}
+.up-tile em{display:block;font-style:normal;font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up-tile em.ok{color:#9fd8e6}
+.up-tile input{display:none}
+.dock-sep{height:1px;background:rgba(255,255,255,.05);margin:11px 2px 9px}
+.pl-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:0 2px}
+.pl-head h3{font-size:12px;letter-spacing:.2em;color:#aeb9cc;font-weight:600}
+.pl-head .pl-count{font-size:11.5px;color:var(--muted)}
+.pl-head .pl-shuf{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
 .pl-head .pl-shuf.on{color:var(--accent)}
-.pl-head .pl-shuf svg{width:15px;height:15px}
-.playlist{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;scrollbar-color:#3a4152 transparent}
-.playlist::-webkit-scrollbar{height:6px}
+.pl-head .pl-shuf svg{width:13px;height:13px}
+.playlist{display:flex;gap:8px;overflow-x:auto;padding-bottom:5px;scrollbar-width:thin;scrollbar-color:#3a4152 transparent}
+.playlist::-webkit-scrollbar{height:5px}
 .playlist::-webkit-scrollbar-thumb{background:#3a4152;border-radius:4px}
-.pl-empty{padding:14px 4px;font-size:13px;color:var(--muted);letter-spacing:.1em}
-.pl-item{
-  position:relative;min-width:196px;max-width:230px;flex:1;display:flex;align-items:center;gap:10px;
-  padding:11px 12px;border-radius:12px;cursor:pointer;background:var(--pit);transition:.2s;
-  box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);
-}
-.pl-item:hover{box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04),0 0 0 1px rgba(0,224,255,.28)}
-.pl-item.active{box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04),0 0 0 1.5px var(--accent)}
-.pl-item.active::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:2px;background:var(--accent)}
-.pl-idx{font-size:15px;font-weight:700;color:#4d566b;flex:none;font-variant-numeric:tabular-nums}
+.pl-empty{padding:10px 4px;font-size:11.5px;color:var(--muted);letter-spacing:.1em}
+.pl-item{position:relative;min-width:172px;max-width:214px;flex:1;display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:10px;cursor:pointer;background:var(--pit);transition:.18s;box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04)}
+.pl-item:hover{box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04),0 0 0 1px rgba(0,224,255,.28)}
+.pl-item.active{box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04),0 0 0 1.5px var(--accent)}
+.pl-item.active::before{content:'';position:absolute;left:0;top:11px;bottom:11px;width:3px;border-radius:2px;background:var(--accent)}
+.pl-idx{font-size:13px;font-weight:700;color:#4d566b;flex:none;font-variant-numeric:tabular-nums}
 .pl-item.active .pl-idx{color:var(--accent)}
 .pl-meta{min-width:0;flex:1}
-.pl-meta strong{display:block;font-size:13px;color:#d7e1ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
-.pl-meta span{display:block;font-size:11px;color:var(--muted);margin-top:3px}
-.pl-x{width:26px;height:26px;flex:none;border:none;background:transparent;color:#5b6478;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.15s}
-.pl-x:hover{color:#ff8f8f;background:rgba(255,110,110,.1)}
-.pl-x svg{width:13px;height:13px}
+.pl-meta strong{display:block;font-size:12px;color:#d7e1ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.pl-meta span{display:block;font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap}
+.pl-x{width:24px;height:24px;flex:none;border:none;background:transparent;color:#5b6478;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.14s}
+.pl-x:hover{color:#ff8f8f;background:rgba(255,110,110,.12)}
+.pl-x svg{width:11px;height:11px}
 
 /* ============ 通用控件 ============ */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:11px 16px;border:none;border-radius:12px;cursor:pointer;
-  background:var(--panel2);color:var(--text);font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.06em;
-  box-shadow:5px 5px 11px var(--dark),-4px -4px 9px var(--light);transition:.18s;
-}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border:none;border-radius:10px;cursor:pointer;background:var(--panel2);color:var(--text);font-family:inherit;font-size:12.5px;font-weight:600;letter-spacing:.04em;box-shadow:4px 5px 10px var(--dark),-3px -4px 8px var(--light);transition:.16s}
 .btn:hover{filter:brightness(1.1)}
-.btn:active{box-shadow:inset 4px 4px 8px rgba(0,0,0,.5),inset -3px -3px 7px rgba(255,255,255,.04);transform:translateY(1px)}
+.btn:active{box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);transform:translateY(1px)}
 .btn:disabled{opacity:.38;cursor:not-allowed;filter:none}
-.btn.accent{background:var(--accent);color:var(--accent-ink);box-shadow:5px 5px 12px rgba(0,0,0,.45),-4px -4px 10px rgba(255,255,255,.14),inset 1px 1px 0 rgba(255,255,255,.4)}
-.btn.small{padding:9px 12px;font-size:13px}
+.btn.accent{background:var(--accent);color:var(--accent-ink);box-shadow:4px 5px 11px rgba(0,0,0,.45),-3px -4px 9px rgba(255,255,255,.14),inset 1px 1px 0 rgba(255,255,255,.4)}
 .btn.wide{width:100%}
-.btn svg{width:16px;height:16px}
-
-input[type=number]{
-  background:var(--pit);border:none;color:var(--text);border-radius:10px;padding:8px 10px;width:96px;
-  font-family:inherit;font-size:14px;font-weight:600;text-align:center;
-  box-shadow:inset 4px 4px 8px rgba(0,0,0,.55),inset -3px -3px 6px rgba(255,255,255,.05);
-  font-variant-numeric:tabular-nums;
-}
+.btn svg{width:14px;height:14px}
+input[type=number]{background:var(--pit);border:none;color:var(--text);border-radius:9px;padding:7px 6px;width:100%;font-family:inherit;font-size:13px;font-weight:600;text-align:center;box-shadow:inset 3px 3px 7px rgba(0,0,0,.55),inset -2px -2px 5px rgba(255,255,255,.05);font-variant-numeric:tabular-nums}
 input[type=number]:focus{outline:1.5px solid rgba(0,224,255,.45)}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
-
-input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:26px;cursor:pointer}
-input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:6px;background:var(--pit);box-shadow:inset 3px 3px 6px rgba(0,0,0,.65),inset -2px -2px 4px rgba(255,255,255,.05)}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-6px;border-radius:50%;background:var(--accent);border:none;box-shadow:3px 3px 8px rgba(0,0,0,.5),-2px -2px 6px rgba(255,255,255,.2)}
-input[type=range]::-moz-range-track{height:8px;border-radius:6px;background:var(--pit);box-shadow:inset 3px 3px 6px rgba(0,0,0,.65)}
-input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);border:none;box-shadow:3px 3px 8px rgba(0,0,0,.5)}
-
-.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:22px;cursor:pointer;width:100%}
+input[type=range]::-webkit-slider-runnable-track{height:7px;border-radius:5px;background:var(--pit);box-shadow:inset 2px 2px 5px rgba(0,0,0,.65),inset -1px -1px 3px rgba(255,255,255,.05)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;margin-top:-5px;border-radius:50%;background:var(--accent);border:none;box-shadow:3px 3px 7px rgba(0,0,0,.5),-2px -2px 5px rgba(255,255,255,.2)}
+input[type=range]::-moz-range-track{height:7px;border-radius:5px;background:var(--pit);box-shadow:inset 2px 2px 5px rgba(0,0,0,.65)}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:var(--accent);border:none;box-shadow:3px 3px 7px rgba(0,0,0,.5)}
+.switch{display:inline-flex;align-items:center;gap:9px;cursor:pointer;user-select:none}
 .switch input{display:none}
-.sw-track{width:44px;height:24px;border-radius:12px;background:var(--pit);position:relative;flex:none;transition:.25s;box-shadow:inset 3px 3px 7px rgba(0,0,0,.6),inset -2px -2px 5px rgba(255,255,255,.05)}
-.sw-track i{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#5a647e;transition:.25s;box-shadow:2px 2px 5px rgba(0,0,0,.5)}
+.sw-track{width:38px;height:21px;border-radius:11px;background:var(--pit);position:relative;flex:none;transition:.22s;box-shadow:inset 3px 3px 6px rgba(0,0,0,.6),inset -2px -2px 4px rgba(255,255,255,.05)}
+.sw-track i{position:absolute;top:3px;left:3px;width:15px;height:15px;border-radius:50%;background:#5a647e;transition:.22s;box-shadow:2px 2px 4px rgba(0,0,0,.5)}
 .switch input:checked+.sw-track{background:rgba(0,224,255,.16)}
-.switch input:checked+.sw-track i{left:23px;background:var(--accent)}
-.switch em{font-style:normal;color:var(--muted);font-size:13px}
+.switch input:checked+.sw-track i{left:20px;background:var(--accent)}
+.switch em{font-style:normal;color:var(--muted);font-size:12px}
 .switch input:checked~em{color:#9fd8e6}
 
-/* ============ 设置面板（底部抽屉） ============ */
-.settings-panel{
-  position:fixed;left:10px;right:10px;bottom:5px;z-index:70;max-height:min(62vh,540px);
-  display:flex;flex-direction:column;border-radius:var(--radius);background:var(--panel);
-  transform:translateY(calc(100% + 16px));transition:transform .4s cubic-bezier(.22,.9,.32,1);
-  box-shadow:10px 12px 30px rgba(0,0,0,.6),-8px -8px 22px var(--light);
-}
+/* ============ 设置抽屉 ============ */
+.settings-panel{position:fixed;left:8px;right:8px;bottom:4px;z-index:70;max-height:min(56vh,470px);display:flex;flex-direction:column;border-radius:var(--radius);background:var(--panel);transform:translateY(calc(100% + 14px));transition:transform .4s cubic-bezier(.22,.9,.32,1);box-shadow:10px 12px 28px rgba(0,0,0,.6),-8px -8px 20px var(--light)}
 .settings-panel.open{transform:translateY(0)}
-.sp-head{display:flex;align-items:center;gap:12px;padding:13px 20px 9px;flex:none}
-.sp-grip{width:44px;height:5px;border-radius:3px;background:#41495c;flex:none}
-.sp-head h2{font-size:14px;letter-spacing:.3em;color:#aeb9cc;font-weight:600;flex:1}
-.sp-body{overflow-y:auto;padding:4px 20px 20px;scrollbar-width:thin;scrollbar-color:#3a4152 transparent}
-.sp-body::-webkit-scrollbar{width:6px}
+.sp-head{display:flex;align-items:center;gap:12px;padding:10px 16px 6px;flex:none}
+.sp-grip{width:40px;height:4px;border-radius:3px;background:#41495c;flex:none}
+.sp-head h2{font-size:12px;letter-spacing:.3em;color:#aeb9cc;font-weight:600;flex:1}
+.sp-body{overflow-y:auto;padding:2px 16px 16px;scrollbar-width:thin;scrollbar-color:#3a4152 transparent}
+.sp-body::-webkit-scrollbar{width:5px}
 .sp-body::-webkit-scrollbar-thumb{background:#3a4152;border-radius:4px}
-.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(252px,1fr));gap:14px}
-.card{background:var(--panel2);border-radius:14px;padding:16px;box-shadow:5px 6px 14px rgba(0,0,0,.38),-4px -5px 12px rgba(255,255,255,.035)}
-.card h3{display:flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.22em;color:#aeb9cc;font-weight:600;margin-bottom:13px}
-.card h3 svg{width:15px;height:15px;color:var(--accent);flex:none}
-.field-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0}
-.field-row label{font-size:13px;color:var(--muted)}
-.field-row input[type=range]{flex:1;max-width:130px}
-.hint{font-size:12px;line-height:1.7;color:#68718a;margin-top:11px}
-.hint b{color:#9fd8e6;font-weight:600}
-.state-line{font-size:13px;color:var(--muted);padding:9px 12px;border-radius:10px;background:var(--pit);box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);word-break:break-all;line-height:1.5}
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:11px}
+.card{background:var(--panel2);border-radius:12px;padding:12px;box-shadow:4px 5px 11px rgba(0,0,0,.38),-3px -4px 9px rgba(255,255,255,.035)}
+.card h3{display:flex;align-items:center;gap:7px;font-size:11.5px;letter-spacing:.22em;color:#aeb9cc;font-weight:600;margin-bottom:10px}
+.card h3 svg{width:13px;height:13px;color:var(--accent);flex:none}
+.f-col{display:flex;flex-direction:column;gap:5px;margin:7px 0}
+.f-col>label{font-size:11px;color:var(--muted);letter-spacing:.05em}
+.f-row{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:8px 0}
+.f-row>label{font-size:11.5px;color:var(--muted)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:7px 0}
+.duo>div{display:flex;flex-direction:column;gap:5px}
+.duo label{font-size:11px;color:var(--muted);letter-spacing:.05em}
+.row-btn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.state-line{font-size:11.5px;color:var(--muted);padding:7px 10px;border-radius:9px;background:var(--pit);box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .state-line b{color:#9fd8e6;font-weight:600}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}
-.row2 .btn{padding:10px 8px;font-size:13px}
-.ratelabel{font-size:13px;color:var(--accent);font-weight:700;min-width:52px;text-align:right;font-variant-numeric:tabular-nums}
+.mini-hint{font-size:10.5px;line-height:1.6;color:#68718a;margin-top:8px}
+.ratelabel{font-size:12px;color:var(--accent);font-weight:700;min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
 
-/* ============ mini 进度条（常驻最底） ============ */
-.mini-progress{position:fixed;left:0;right:0;bottom:0;height:5px;z-index:80;background:rgba(8,10,15,.75);cursor:pointer;touch-action:none;transition:height .15s}
+/* ============ mini 进度条 / 边缘把手 / toast ============ */
+.mini-progress{position:fixed;left:0;right:0;bottom:0;height:4px;z-index:80;background:rgba(8,10,15,.75);cursor:pointer;touch-action:none;transition:height .15s}
 .mini-progress::before{content:'';position:absolute;top:-8px;left:0;right:0;height:14px}
 .mini-progress:hover{height:8px}
 .mini-progress i{display:block;height:100%;width:0;background:var(--accent)}
-
-/* ============ 边缘把手 ============ */
-.edge{position:fixed;right:0;top:38%;z-index:85;display:flex;flex-direction:column;gap:10px;transform:translateY(-50%)}
-.handle{
-  writing-mode:vertical-rl;padding:15px 7px;border:none;cursor:pointer;border-radius:11px 0 0 11px;
-  background:var(--panel);color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.3em;
-  box-shadow:-6px 5px 14px rgba(0,0,0,.5),-3px -3px 9px var(--light);display:flex;align-items:center;gap:6px;transition:.2s;
-}
+.edge{position:fixed;right:0;top:40%;z-index:85;display:flex;flex-direction:column;gap:9px;transform:translateY(-50%)}
+.handle{writing-mode:vertical-rl;padding:13px 6px;border:none;cursor:pointer;border-radius:10px 0 0 10px;background:var(--panel);color:var(--muted);font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.28em;box-shadow:-5px 5px 12px rgba(0,0,0,.5),-3px -3px 8px var(--light);display:flex;align-items:center;gap:5px;transition:.18s}
 .handle:hover{color:var(--accent)}
-.handle svg{width:13px;height:13px}
+.handle svg{width:12px;height:12px}
 .handle.on{color:var(--accent-ink);background:var(--accent)}
-
-/* ============ Toast ============ */
-.toast-wrap{position:fixed;right:14px;bottom:20px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none}
-.toast{
-  background:rgba(36,40,51,.94);color:var(--text);padding:10px 16px;border-radius:12px;max-width:min(80vw,430px);
-  font-size:13px;font-weight:500;letter-spacing:.04em;opacity:0;transform:translateY(10px);transition:.3s;
-  box-shadow:6px 8px 18px rgba(0,0,0,.5),-4px -4px 10px rgba(255,255,255,.04);border-left:3px solid var(--accent);
-}
+.toast-wrap{position:fixed;right:12px;bottom:16px;z-index:100;display:flex;flex-direction:column;gap:7px;align-items:flex-end;pointer-events:none}
+.toast{background:rgba(36,40,51,.94);color:var(--text);padding:9px 14px;border-radius:11px;max-width:min(80vw,400px);font-size:12.5px;font-weight:500;letter-spacing:.03em;opacity:0;transform:translateY(10px);transition:.3s;box-shadow:6px 8px 16px rgba(0,0,0,.5),-4px -4px 9px rgba(255,255,255,.04);border-left:3px solid var(--accent)}
 .toast.in{opacity:1;transform:none}
 .toast.dim{border-left-color:#4a5163;color:var(--muted)}
 
 @media (max-width:760px){
-  body{padding:12px 10px 46px}
-  .brand h1{font-size:18px}
-  .handle{padding:12px 6px;font-size:11px}
-  .edge{top:34%}
+  body{padding:9px 8px 40px}
+  .brand h1{font-size:15px}
+  .handle{padding:11px 5px;font-size:10px}
   .settings-grid{grid-template-columns:1fr}
+  .duo{gap:7px}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- 顶栏 -->
   <header class="topbar">
     <div class="brand">
       <svg viewBox="0 0 44 44">
@@ -307,27 +228,21 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
     </div>
   </header>
 
-  <!-- 播放器（全屏目标容器） -->
+  <!-- 播放器 -->
   <section class="player-shell" id="playerShell" data-kind="video">
     <video id="video" playsinline webkit-playsinline preload="auto"></video>
-
     <div class="center-hint" id="centerHint">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M7 4v16M17 4v16M2.5 9h4.5M2.5 15h4.5M17 9h4.5M17 15h4.5" stroke-linecap="round"/><path d="M10.5 9.5l4 2.5-4 2.5z" fill="currentColor" stroke="none"/></svg>
-      <p>上传媒体文件开始放映</p>
-      <span>支持超大视频 · 本地流式解码 · 随意拖动</span>
+      <p>上传媒体文件开始放映</p><span>支持超大视频 · 本地流式解码</span>
     </div>
-
     <div class="audio-viz" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-
     <div class="subtitle-layer" id="subLayer"></div>
     <div class="hearts-layer" id="heartsLayer"></div>
     <div class="fs-status" id="fsStatus">自由播放</div>
-
     <div class="fs-progress" id="fsBar"><i id="fsFill"></i></div>
-
     <div class="control-layer" id="controlLayer">
       <button class="cbtn accent" id="btnPlay" title="播放 / 暂停"></button>
-      <span class="time-label" id="timeLabel">00:00 / 00:00<b id="rateBadge" style="display:none">×1.00</b></span>
+      <span class="time-label"><span id="timeText">00:00 / 00:00</span><b id="rateBadge" style="display:none">×1.00</b></span>
       <div class="pbar" id="mainBar">
         <span class="track"></span><span class="fill" id="mainFill"></span>
         <span class="bubble" id="bubble">00:00</span>
@@ -340,27 +255,26 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
     </div>
   </section>
 
-  <!-- 上传三槽 -->
-  <section class="upload-row">
-    <label class="upload-slot">
-      <span class="slot-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
-      <div><strong>媒体文件</strong><em id="slotMediaInfo">视频 / 音频 · 可多选 · 追加到播放列表</em></div>
-      <input type="file" id="slotMediaInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.3gp,.ogv">
-    </label>
-    <label class="upload-slot">
-      <span class="slot-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 13.5h6M6 16.5h9"/><path d="M6.5 8.5h4"/></svg></span>
-      <div><strong>字幕轨（可选）</strong><em id="subInfo">JSON / LRC / VTT · 到点先朗读再播原文</em></div>
-      <input type="file" id="slotSubInput" accept=".json,.lrc,.vtt,.txt">
-    </label>
-    <label class="upload-slot">
-      <span class="slot-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></span>
-      <div><strong>音乐律动（可选）</strong><em id="musicInfo">上传音乐 · 按节奏卡点随机跳转</em></div>
-      <input type="file" id="slotMusicInput" accept="audio/*,.mp3,.flac,.wav,.aac,.ogg,.m4a,.opus">
-    </label>
-  </section>
-
-  <!-- 播放列表 -->
-  <section class="playlist-wrap" id="playlistWrap">
+  <!-- 工作台：上传排 + 播放列表 -->
+  <section class="dock neu" id="playlistWrap">
+    <div class="dock-row">
+      <label class="up-tile">
+        <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
+        <div><strong>媒体文件</strong><em id="slotMediaInfo">视频 / 音频 · 可多选</em></div>
+        <input type="file" id="slotMediaInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.3gp,.ogv">
+      </label>
+      <label class="up-tile">
+        <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 13.5h6M6 16.5h9"/><path d="M6.5 8.5h4"/></svg></span>
+        <div><strong>字幕轨</strong><em id="subInfo">JSON / LRC / VTT</em></div>
+        <input type="file" id="slotSubInput" accept=".json,.lrc,.vtt,.txt">
+      </label>
+      <label class="up-tile">
+        <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></span>
+        <div><strong>音乐律动</strong><em id="musicInfo">按节奏随机跳转</em></div>
+        <input type="file" id="slotMusicInput" accept="audio/*,.mp3,.flac,.wav,.aac,.ogg,.m4a,.opus">
+      </label>
+    </div>
+    <div class="dock-sep"></div>
     <div class="pl-head">
       <h3>播放列表</h3><span class="pl-count" id="plCount">0 项</span>
       <span class="pl-shuf" id="plShufBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>乱序</span>
@@ -369,80 +283,69 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
   </section>
 </div>
 
-<!-- 边缘把手：面板 / 全屏（相对独立，贴边收拢） -->
+<!-- 边缘把手 -->
 <aside class="edge">
   <button class="handle" id="handlePanel" title="显示 / 隐藏设置面板"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>面板</button>
   <button class="handle" id="handleFs" title="进入 / 退出全屏"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>全屏</button>
 </aside>
 
-<!-- 底部设置抽屉 -->
+<!-- 设置抽屉 -->
 <footer class="settings-panel" id="settingsPanel">
-  <div class="sp-head">
-    <span class="sp-grip"></span>
-    <h2>控制台</h2>
-    <button class="btn small" id="spClose">收起</button>
-  </div>
+  <div class="sp-head"><span class="sp-grip"></span><h2>控制台</h2><button class="btn" id="spClose" style="padding:6px 12px">收起</button></div>
   <div class="sp-body">
     <div class="settings-grid">
 
       <div class="card">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-7 4.5 14 2.5-7H21"/></svg>步数引擎</h3>
         <button class="btn accent wide" id="btnSensor">开启计步传感器</button>
-        <div class="field-row"><label>每步解锁（秒）</label><input type="number" id="stepSec" min="1" max="3600" step="1"></div>
-        <div class="field-row"><label>结算提前量（秒）</label><input type="number" id="settleSec" min="0" max="600" step="1"></div>
-        <div class="row2">
+        <div class="duo">
+          <div><label>每步解锁（秒）</label><input type="number" id="stepSec" min="1" max="3600" step="1"></div>
+          <div><label>结算提前量（秒）</label><input type="number" id="settleSec" min="0" max="600" step="1"></div>
+        </div>
+        <div class="row-btn">
           <button class="btn accent" id="btnWarm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>预热 2:15</button>
           <button class="btn" id="btnSimStep">模拟一步</button>
         </div>
-        <div class="state-line" id="sensorState" style="margin-top:11px">传感器：未开启 · 当前为<b>自由播放</b></div>
-        <p class="hint">结算规则：播放剩余时间大于提前量时，步数<b>只计数不叠加</b>；只有进入最后提前量窗口、或播放时间已经结束后触发的步数，才会激活新一轮（整段重置，不叠加旧余额）。</p>
+        <div class="state-line" id="sensorState" style="margin-top:9px">传感器：未开启 · 自由播放</div>
       </div>
 
       <div class="card">
-        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2.5" fill="none"/></svg>播放控制</h3>
-        <div class="field-row"><label>视频音量</label><input type="range" id="volRange2" min="0" max="1" step="0.01"></div>
-        <div class="field-row"><label>播放倍速</label><input type="range" id="rateRange" min="0.25" max="3" step="0.05"></div>
-        <div class="field-row"><label>倍速精确输入</label>
-          <div style="display:flex;align-items:center;gap:9px"><input type="number" id="rateNum" min="0.1" max="4" step="0.05"><span class="ratelabel" id="rateLabel">×1.00</span></div>
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2.5"/></svg>播放控制</h3>
+        <div class="f-col"><label>视频音量</label><input type="range" id="volRange2" min="0" max="1" step="0.01"></div>
+        <div class="f-col"><label>播放倍速</label><input type="range" id="rateRange" min="0.25" max="3" step="0.05"></div>
+        <div class="f-row"><label>倍速精确输入</label>
+          <div style="display:flex;align-items:center;gap:8px"><input type="number" id="rateNum" min="0.1" max="4" step="0.05" style="width:84px"><span class="ratelabel" id="rateLabel">×1.00</span></div>
         </div>
-        <label class="switch" style="margin-top:8px"><input type="checkbox" id="shufSwitch"><span class="sw-track"><i></i></span><em>乱序播放整个列表</em></label>
-        <p class="hint">倍速与音量<b>全局记忆</b>：无论上传 / 切换多少个视频，设置都持续生效，无需重新调整。</p>
+        <label class="switch"><input type="checkbox" id="shufSwitch"><span class="sw-track"><i></i></span><em>乱序播放</em></label>
       </div>
 
       <div class="card">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 13.5h6M6 16.5h9"/></svg>字幕轨</h3>
         <div class="state-line" id="subState">未加载 · 原文连续播放</div>
-        <div class="row2">
-          <button class="btn" id="subRemove" disabled>移除字幕</button>
+        <div class="row-btn">
           <button class="btn" id="subRePick">更换字幕</button>
+          <button class="btn" id="subRemove" disabled>移除字幕</button>
         </div>
-        <p class="hint">进度到达字幕时间点后：<b>暂停 → TTS 朗读中文 → 从该段起点播放原文</b>；无字幕区间正常推进、正常播放。移除即解除该功能。</p>
+        <p class="mini-hint">进度到达字幕点：先 TTS 朗读中文，再从该段起点播放原文。</p>
       </div>
 
       <div class="card">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>音乐律动</h3>
         <div class="state-line" id="musicState">未加载 · 律动关闭</div>
-        <label class="switch" style="margin:11px 0 2px"><input type="checkbox" id="musicSwitch"><span class="sw-track"><i></i></span><em>律动开关（按节奏跳转）</em></label>
-        <div class="field-row"><label>音乐音量</label><input type="range" id="musicVol" min="0" max="1" step="0.01"></div>
-        <div class="field-row"><label>节奏阈值系数</label><input type="number" id="beatSens" min="1.1" max="3" step="0.05"></div>
-        <div class="field-row"><label>跳跃冷却（秒）</label><input type="number" id="beatCooldown" min="0.1" max="30" step="0.01"></div>
-        <div class="field-row"><label>前部禁区（分钟）</label><input type="number" id="headMin" min="0" max="600" step="0.5"></div>
-        <div class="field-row"><label>尾部禁区（分钟）</label><input type="number" id="tailMin" min="0" max="600" step="0.5"></div>
-        <div class="row2">
-          <button class="btn" id="musicRemove" disabled>移除音乐</button>
-          <button class="btn" id="musicRePick">更换音乐</button>
+        <label class="switch" style="margin:9px 0 2px"><input type="checkbox" id="musicSwitch"><span class="sw-track"><i></i></span><em>律动开关</em></label>
+        <div class="f-col"><label>音乐音量</label><input type="range" id="musicVol" min="0" max="1" step="0.01"></div>
+        <div class="duo">
+          <div><label>节奏阈值系数</label><input type="number" id="beatSens" min="1.1" max="3" step="0.05"></div>
+          <div><label>跳跃冷却（秒）</label><input type="number" id="beatCooldown" min="0.1" max="30" step="0.01"></div>
         </div>
-        <p class="hint">本回合跳跃 <b id="jumpCount">0</b> 次</p>
-      </div>
-
-      <div class="card">
-        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 4 12.7c-.6 1.5-1.4 2.3-2.5 2.3h-3c-1.1 0-1.9-.8-2.5-2.3A7 7 0 0 1 12 2z"/><path d="M10 19.5h4M10.5 22h3"/></svg>引擎原理</h3>
-        <p class="hint" style="margin-top:0">
-          <b>卡点方案 · 自适应频谱通量</b>：AnalyserNode 每帧采样音乐频谱，取低频段（鼓 / 贝斯能量区）平均能量 E；同时用指数平滑维护约 1 秒的响度基线 B（代表"当前正常响度"）。当 E &gt; B × 阈值系数，即出现一次能量突增 → 判定为节拍。阈值系数越小触发越密（轻拍也切），越大只响应重拍。冷却时间在两次跳跃间强制隔离，杜绝一秒连跳几十次的画面闪烁。<br><br>
-          <b>大文件</b>：本地文件经 Blob URL 交给浏览器流式解码，按需读取，内存占用与文件体积无关，几个 GB 也秒开、任意 seek；跳转定位走解码器关键帧索引后精确解码到目标帧，兼容任意帧率与关键帧间隔。<br><br>
-          <b>计步</b>：加速度合量去重力后做施密特峰值检测，回落过零判一步，附 320ms 防抖。<br><br>
-          <b>快捷键</b>：空格 播放/暂停 · ← → ±5s · S 模拟计步 · F 全屏 · 双击画面全屏
-        </p>
+        <div class="duo">
+          <div><label>前部禁区（分）</label><input type="number" id="headMin" min="0" max="600" step="0.5"></div>
+          <div><label>尾部禁区（分）</label><input type="number" id="tailMin" min="0" max="600" step="0.5"></div>
+        </div>
+        <div class="row-btn">
+          <button class="btn" id="musicRePick">更换音乐</button>
+          <button class="btn" id="musicRemove" disabled>移除音乐</button>
+        </div>
       </div>
 
     </div>
@@ -469,12 +372,13 @@ const SVG_MUTE='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="c
 const SVG_HEART='<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
 const SVG_X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>';
 
-/* ============ 元素引用 ============ */
+/* ============ 元素 ============ */
 const video=$('video'), playerShell=$('playerShell'), controlLayer=$('controlLayer'),
   subLayer=$('subLayer'), heartsLayer=$('heartsLayer'), centerHint=$('centerHint'),
   mainBar=$('mainBar'), mainFill=$('mainFill'), bubble=$('bubble'),
   miniBar=$('miniBar'), miniFill=$('miniFill'), fsBar=$('fsBar'), fsFill=$('fsFill'),
-  btnPlay=$('btnPlay'), btnFs=$('btnFs'), btnMute=$('btnMute'), timeLabel=$('timeLabel'), rateBadge=$('rateBadge'),
+  btnPlay=$('btnPlay'), btnFs=$('btnFs'), btnMute=$('btnMute'),
+  timeText=$('timeText'), rateBadge=$('rateBadge'),
   volRange=$('volRange'), volRange2=$('volRange2'),
   playlist=$('playlist'), playlistWrap=$('playlistWrap'), plCount=$('plCount'), plShufBadge=$('plShufBadge'),
   settingsPanel=$('settingsPanel'), musicAudio=$('musicAudio'), toastWrap=$('toastWrap'),
@@ -482,7 +386,7 @@ const video=$('video'), playerShell=$('playerShell'), controlLayer=$('controlLay
 
 btnPlay.innerHTML=SVG_PLAY; btnFs.innerHTML=SVG_FS; btnMute.innerHTML=SVG_VOL;
 
-/* ============ 全局状态（含持久化设置，参数变更只写属性，绝不触碰播放进度） ============ */
+/* ============ 状态（参数只写属性与内存，绝不触碰播放进度） ============ */
 const S={ rate:1, volume:1, stepSec:30, settleSec:5, beatSens:1.6, beatCooldown:2, headMin:0, tailMin:0, musicVol:0.7, shuffle:false };
 try{ Object.assign(S, JSON.parse(localStorage.getItem('stepvision')||'{}')); }catch(e){}
 function persist(){ try{ localStorage.setItem('stepvision', JSON.stringify(S)); }catch(e){} }
@@ -492,7 +396,7 @@ let stepMode=false, steps=0, quota=0, quotaToastShown=false;
 let cues=[], subIdx=0, lastSubText=null;
 let ttsState='idle', ttsCancelRef=null;
 let shuffle=S.shuffle;
-let beatOn=false, musicUrl=null, jumpCount=0, lastJump=0, beatAvg=0.05;
+let beatOn=false, musicUrl=null, musicName='', jumpCount=0, lastJump=0, beatAvg=0.05;
 let audioCtx=null, musicAnalyser=null, musicGain=null, freqData=null;
 let barDragging=false, previewRatio=0, hideTimer=0;
 
@@ -504,7 +408,7 @@ function toast(msg,type=''){
   setTimeout(()=>{ el.classList.remove('in'); setTimeout(()=>el.remove(),320); },2600);
 }
 
-/* ============ 媒体文件（Blob URL 流式，几 GB 也按需读取） ============ */
+/* ============ 媒体（Blob URL 流式，几 GB 按需读取） ============ */
 function isAudioFile(f){ return (f.type&&f.type.startsWith('audio'))||/\.(mp3|flac|wav|aac|ogg|m4a|opus|wma|aiff|caf)$/i.test(f.name); }
 function addMediaFiles(files){
   const ok=files.filter(f=>/\.(mp4|mkv|webm|mov|avi|flv|wmv|ts|m2ts|m4v|mpg|mpeg|3gp|ogv|mp3|flac|wav|aac|ogg|m4a|opus|wma)$/i.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
@@ -513,11 +417,11 @@ function addMediaFiles(files){
     const item={ name:f.name, size:f.size, url:URL.createObjectURL(f), duration:null, kind:isAudioFile(f)?'audio':'video' };
     playlistArr.push(item); probeDuration(item);
   }
-  $('slotMediaInfo').textContent=`共 ${playlistArr.length} 个文件 · 最新：${ok[ok.length-1].name}`;
+  $('slotMediaInfo').textContent=`共 ${playlistArr.length} 个 · ${ok[ok.length-1].name}`;
   $('slotMediaInfo').classList.add('ok');
   if(currentIndex<0) loadIndex(0,true); else { renderPlaylist(); toast(`已加入 ${ok.length} 个文件`); }
 }
-function probeDuration(item){ // 只读元数据头，几 GB 文件也瞬间完成
+function probeDuration(item){ // 只读元数据头
   const v=document.createElement('video'); v.preload='metadata'; v.muted=true; v.src=item.url;
   const done=()=>{ if(v.duration&&isFinite(v.duration)) item.duration=v.duration; v.onloadedmetadata=v.onerror=null; v.removeAttribute('src'); v.load(); renderPlaylist(); };
   v.onloadedmetadata=done; v.onerror=done;
@@ -526,10 +430,11 @@ function probeDuration(item){ // 只读元数据头，几 GB 文件也瞬间完�
 ['dragover','dragleave','drop'].forEach(ev=>playerShell.addEventListener(ev,e=>{ e.preventDefault();
   if(ev==='drop'&&e.dataTransfer.files.length) addMediaFiles([...e.dataTransfer.files]); }));
 
-function loadIndex(i,autoplay){
+function loadIndex(i,autoplay,seekTo){ // seekTo：跨文件跳跃时直接定位随机时间点
   if(i<0||i>=playlistArr.length) return;
   currentIndex=i; const it=playlistArr[i];
-  cancelTTS(); pendingSeek=null;
+  cancelTTS();
+  pendingSeek=(seekTo!=null)?seekTo:null;
   video.src=it.url; applyRate(); applyVolume();
   playerShell.dataset.kind=it.kind;
   subIdx=0; if(cues.length) cues.forEach(c=>c.done=false);
@@ -605,7 +510,7 @@ volRange.addEventListener('input',e=>setVolume(+e.target.value,e.target));
 volRange2.addEventListener('input',e=>setVolume(+e.target.value,e.target));
 btnMute.addEventListener('click',()=>{ video.muted=!video.muted; if(!video.muted&&video.volume===0) setVolume(.6); btnMute.innerHTML=video.muted?SVG_MUTE:SVG_VOL; });
 
-video.addEventListener('loadedmetadata',()=>{ // 每个新媒体都必须重应用倍速 —— 这是"换视频不失效"的关键
+video.addEventListener('loadedmetadata',()=>{ // 每个新视频强制重应用倍速 + 应用待定的跳跃落点
   applyRate(); applyVolume();
   const it=playlistArr[currentIndex]; if(it&&it.duration==null&&isFinite(video.duration)) it.duration=video.duration;
   if(pendingSeek!=null){ const t=pendingSeek; pendingSeek=null; seekMedia(t); }
@@ -614,10 +519,10 @@ video.addEventListener('loadedmetadata',()=>{ // 每个新媒体都必须重应�
 video.addEventListener('play',()=>{ playerShell.classList.add('playing'); btnPlay.innerHTML=SVG_PAUSE; quotaToastShown=false; });
 video.addEventListener('pause',()=>{ playerShell.classList.remove('playing'); btnPlay.innerHTML=SVG_PLAY; });
 video.addEventListener('ended',next);
-video.addEventListener('error',()=>{ if(video.currentSrc) toast('浏览器无法解码该文件 · 建议用 Chrome / Edge 或转成 MP4 / WebM','dim'); });
+video.addEventListener('error',()=>{ if(video.currentSrc) toast('浏览器无法解码该文件 · 建议用 Chrome / Edge','dim'); });
 btnPlay.addEventListener('click',togglePlay);
 
-/* ============ 统一 seek（字幕指针重置也在这里） ============ */
+/* ============ 统一 seek（字幕指针同步重置） ============ */
 function seekMedia(t){
   if(!isFinite(t)||!video.duration) return;
   video.currentTime=Math.max(0,Math.min(t,video.duration-0.05));
@@ -658,13 +563,11 @@ function updateProgressUI(force){
   const r=barDragging?previewRatio:(d?t/d:0);
   const w=(r*100).toFixed(2)+'%';
   if(w!==lastW){ lastW=w; mainFill.style.width=w; miniFill.style.width=w; fsFill.style.width=w; }
-  if(force){ lastLabel=''; }
   const lab=(barDragging?fmt(previewRatio*d):fmt(t))+' / '+fmt(d);
-  if(lab!==lastLabel){ lastLabel=lab; timeLabel.firstChild? timeLabel.childNodes[0].nodeValue=lab : 0;
-    if(!timeLabel.firstChild){ timeLabel.textContent=lab; timeLabel.appendChild(rateBadge); } }
+  if(force||lab!==lastLabel){ lastLabel=lab; timeText.textContent=lab; }
 }
 
-/* ============ 计步传感器（施密特峰值检测） ============ */
+/* ============ 计步传感器 ============ */
 let motionAvg=9.8, motionPeak=false, lastStepAt=0;
 function onMotion(e){
   const a=e.accelerationIncludingGravity; if(!a) return;
@@ -678,7 +581,7 @@ async function toggleSensor(){
   if(stepMode){
     window.removeEventListener('devicemotion',onMotion); stepMode=false;
     $('btnSensor').textContent='开启计步传感器';
-    $('sensorState').innerHTML='传感器：未开启 · 当前为<b>自由播放</b>';
+    $('sensorState').textContent='传感器：未开启 · 自由播放';
     toast('计步已关闭 · 恢复自由播放'); updateStatusPills(); return;
   }
   if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){
@@ -687,20 +590,17 @@ async function toggleSensor(){
   }else if(!('ondevicemotion' in window)){ toast('此设备无运动传感器 · 可用「模拟一步」或 S 键','dim'); }
   window.addEventListener('devicemotion',onMotion); stepMode=true; quotaToastShown=false;
   $('btnSensor').textContent='传感器运行中 · 点击关闭';
-  $('sensorState').innerHTML='传感器：<b>运行中</b> · 每步解锁 '+S.stepSec+'s · 结算提前量 '+S.settleSec+'s';
+  $('sensorState').innerHTML='传感器：<b>运行中</b> · 每步 '+S.stepSec+'s · 提前量 '+S.settleSec+'s';
   toast('计步已开启 · 每步解锁 '+S.stepSec+' 秒'); updateStatusPills();
 }
  $('btnSensor').addEventListener('click',toggleSensor);
  $('btnSimStep').addEventListener('click',()=>onStep());
- $('btnWarm').addEventListener('click',()=>{ // 预热：无需计步，直接播放 2 分 15 秒
-  cancelTTS(); quota=135; quotaToastShown=false;
-  if(video.ended) next(); else tryPlay();
-  toast('预热完成 · 播放 2:15');
-});
+ $('btnWarm').addEventListener('click',()=>{ cancelTTS(); quota=135; quotaToastShown=false;
+  if(video.ended) next(); else tryPlay(); toast('预热完成 · 播放 2:15'); });
 function onStep(){
   steps++; spawnHeart(); updateStatusPills();
   if(!stepMode) return;
-  if(quota<=S.settleSec){ // 只有"最后提前量窗口内"或"时间已结束"才激活，整段重置、不叠加
+  if(quota<=S.settleSec){ // 结算窗口内或时间已结束才激活，整段重置、不叠加
     quota=S.stepSec;
     if(video.ended) next(); else if(video.paused) tryPlay();
     toast(`步数触发 · 解锁新一段 ${S.stepSec}s`);
@@ -709,7 +609,7 @@ function onStep(){
   }
 }
 
-/* ============ 字幕（JSON / LRC / VTT + TTS 朗读 → 原文） ============ */
+/* ============ 字幕（JSON / LRC / VTT + TTS） ============ */
 function parseSubtitle(text){
   const t=text.replace(/^\uFEFF/,'').trim();
   if(t.startsWith('[')){
@@ -755,7 +655,7 @@ function loadSubtitleFile(f){
       cs.sort((a,b)=>a.from-b.from);
       cues=cs; subIdx=0; cancelTTS();
       $('subInfo').textContent=`${f.name} · ${cs.length} 段`; $('subInfo').classList.add('ok');
-      $('subState').innerHTML=`<b>${esc(f.name)}</b> · ${cs.length} 段 · 到点先读后播`;
+      $('subState').innerHTML=`<b>${esc(f.name)}</b> · ${cs.length} 段`;
       $('subRemove').disabled=false;
       toast(`字幕轨已加载 · ${cs.length} 段`); updateStatusPills();
     }catch(e){ toast('字幕解析失败 · 请检查 JSON / LRC / VTT 格式'); }
@@ -766,18 +666,18 @@ function loadSubtitleFile(f){
  $('subRePick').addEventListener('click',()=>$('slotSubInput').click());
  $('subRemove').addEventListener('click',()=>{
   cues=[]; subIdx=0; cancelTTS(); setSubtitleText('');
-  $('subInfo').textContent='JSON / LRC / VTT · 到点先朗读再播原文'; $('subInfo').classList.remove('ok');
+  $('subInfo').textContent='JSON / LRC / VTT'; $('subInfo').classList.remove('ok');
   $('subState').textContent='未加载 · 原文连续播放'; $('subRemove').disabled=true;
   toast('字幕已移除 · 功能解除'); updateStatusPills();
 });
 function setSubtitleText(s){ if(s===lastSubText) return; lastSubText=s; subLayer.textContent=s; subLayer.classList.toggle('on',!!s); }
-function startTTS(c){ // 暂停视频 → 朗读 → 从该段起点恢复播放原文
+function startTTS(c){ // 暂停 → 朗读 → 从该段起点恢复播放原文
   ttsState='speaking'; video.pause();
   setSubtitleText(c.content); subLayer.classList.add('tts');
+  let finished=false;
   const finish=resume=>{
-    if(ttsCancelRef){ const f=ttsCancelRef; ttsCancelRef=null; if(!resume) return f; }
-    ttsState='idle'; ttsCancelRef=null; clearTimeout(guard);
-    subLayer.classList.remove('tts');
+    if(finished) return; finished=true; ttsState='idle'; clearTimeout(guard);
+    subLayer.classList.remove('tts'); ttsCancelRef=null;
     if(resume){
       c.done=true; video.currentTime=c.from;
       subIdx=cues.indexOf(c);
@@ -786,12 +686,13 @@ function startTTS(c){ // 暂停视频 → 朗读 → 从该段起点恢复播放
     setSubtitleText('');
   };
   ttsCancelRef=()=>finish(false);
-  if(!('speechSynthesis'in window)){ finish(true); return; }
+  if(!('speechSynthesis' in window)){ finish(true); return; }
   const u=new SpeechSynthesisUtterance(c.content);
   u.lang='zh-CN'; u.rate=1;
   u.onend=()=>finish(true); u.onerror=()=>finish(true);
-  try{ speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){ finish(true); return; }
-  const guard=setTimeout(()=>finish(true),Math.max(2600,c.content.length*400)); // 兜底：朗读卡死也能继续
+  try{ speechSynthesis.cancel(); speechSynthesis.speak(u); }
+  catch(e){ finish(true); return; }
+  const guard=setTimeout(()=>finish(true),Math.max(2600,c.content.length*400)); // 朗读卡死兜底
 }
 function cancelTTS(){ if(ttsCancelRef) ttsCancelRef(); }
 function subtitleTick(){
@@ -805,6 +706,9 @@ function subtitleTick(){
 }
 
 /* ============ 音乐律动 ============ */
+function updMusicState(){
+  $('musicState').innerHTML=musicUrl?`<b>${esc(musicName)}</b> · ${beatOn?'律动中':'已暂停'} · 跳跃 ${jumpCount} 次`:'未加载 · 律动关闭';
+}
 function ensureMusicGraph(){
   if(!audioCtx){
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -821,16 +725,15 @@ function startBeat(){
   ensureMusicGraph();
   musicGain.gain.value=S.musicVol; beatOn=true; $('musicSwitch').checked=true;
   musicAudio.play().catch(()=>toast('点击页面任意处以启动音乐','dim'));
-  updateStatusPills();
+  updMusicState(); updateStatusPills();
 }
-function stopBeat(){ musicAudio.pause(); beatOn=false; updateStatusPills(); }
+function stopBeat(){ musicAudio.pause(); beatOn=false; updMusicState(); updateStatusPills(); }
  $('musicSwitch').addEventListener('change',e=>e.target.checked?startBeat():stopBeat());
  $('slotMusicInput').addEventListener('change',e=>{
   const f=e.target.files[0]; if(!f) return;
   if(musicUrl) URL.revokeObjectURL(musicUrl);
-  musicUrl=URL.createObjectURL(f); musicAudio.src=musicUrl;
+  musicUrl=URL.createObjectURL(f); musicName=f.name; musicAudio.src=musicUrl;
   $('musicInfo').textContent=f.name; $('musicInfo').classList.add('ok');
-  $('musicState').innerHTML=`<b>${esc(f.name)}</b> · 律动就绪`;
   $('musicRemove').disabled=false;
   startBeat(); toast('音乐已加载 · 律动开启');
   e.target.value='';
@@ -839,9 +742,9 @@ function stopBeat(){ musicAudio.pause(); beatOn=false; updateStatusPills(); }
  $('musicRemove').addEventListener('click',()=>{
   stopBeat(); $('musicSwitch').checked=false;
   musicAudio.removeAttribute('src'); musicAudio.load();
-  if(musicUrl){ URL.revokeObjectURL(musicUrl); musicUrl=null; }
-  $('musicInfo').textContent='上传音乐 · 按节奏卡点随机跳转'; $('musicInfo').classList.remove('ok');
-  $('musicState').textContent='未加载 · 律动关闭'; $('musicRemove').disabled=true;
+  if(musicUrl){ URL.revokeObjectURL(musicUrl); musicUrl=null; musicName=''; }
+  $('musicInfo').textContent='按节奏随机跳转'; $('musicInfo').classList.remove('ok');
+  updMusicState(); $('musicRemove').disabled=true;
   toast('音乐已移除 · 律动解除');
 });
  $('musicVol').addEventListener('input',e=>{
@@ -852,11 +755,9 @@ function beatTick(){
   if(!beatOn||!audioCtx||musicAudio.paused) return;
   musicAnalyser.getByteFrequencyData(freqData);
   let low=0; for(let i=0;i<5;i++) low+=freqData[i]; low/=(5*255); // 低频段能量（鼓/贝斯区）
-  beatAvg=beatAvg*0.95+low*0.05;                                   // 指数平滑基线 ≈ 近 1 秒正常响度
+  beatAvg=beatAvg*0.95+low*0.05;                                   // 指数平滑响度基线
   const now=performance.now();
-  if(low>0.1&&low>beatAvg*S.beatSens&&now-lastJump>S.beatCooldown*1000){
-    lastJump=now; doJump();
-  }
+  if(low>0.1&&low>beatAvg*S.beatSens&&now-lastJump>S.beatCooldown*1000){ lastJump=now; doJump(); }
 }
 function doJump(){
   const n=playlistArr.length; if(!n) return;
@@ -869,22 +770,22 @@ function doJump(){
     if(head+tail>0){ toast('禁区覆盖了整个时长 · 本次未跳跃','dim'); return; }
     lo=0; hi=Math.max(dur-0.5,0);
   }
-  const t=lo+Math.random()*(hi-lo);
-  jumpCount++; $('jumpCount').textContent=jumpCount;
+  const t=lo+Math.random()*(hi-lo); // 落点：当前进度之前或之后的任意允许位置
+  jumpCount++; updMusicState();
   jumpTo(idx,t);
 }
 function jumpTo(idx,t){
   const wasPlaying=!video.paused&&!video.ended;
   cancelTTS();
-  if(idx!==currentIndex){ pendingSeek=t; loadIndex(idx,false); if(wasPlaying) tryPlay(); }
+  if(idx!==currentIndex){ loadIndex(idx,false,t); if(wasPlaying) tryPlay(); } // 随机落点作为加载参数传入
   else seekMedia(t);
-  if(playerShell.classList.contains('is-fs')){ // 全屏：细进度条变色 + 容器震动
+  if(playerShell.classList.contains('is-fs')){
     fsBar.classList.remove('flash'); void fsBar.offsetWidth; fsBar.classList.add('flash');
     playerShell.classList.remove('shake'); void playerShell.offsetWidth; playerShell.classList.add('shake');
   }
 }
 
-/* ============ 全屏（自建控制层：无暂停大图标，无操作自动隐藏） ============ */
+/* ============ 全屏 ============ */
 async function toggleFs(){
   try{
     if(document.fullscreenElement){ await document.exitFullscreen(); }
@@ -917,7 +818,6 @@ controlLayer.addEventListener('dblclick',e=>e.stopPropagation());
 fsBar.addEventListener('click',e=>e.stopPropagation());
 fsBar.addEventListener('dblclick',e=>e.stopPropagation());
 
-/* 视频本体：单击播放/暂停，双击全屏（不弹任何暂停标志） */
 let clickTimer=null;
 video.addEventListener('click',()=>{
   if(clickTimer) return;
@@ -925,7 +825,7 @@ video.addEventListener('click',()=>{
 });
 video.addEventListener('dblclick',()=>{ clearTimeout(clickTimer); clickTimer=null; toggleFs(); });
 
-/* ============ 计步爱心（全屏时上层随机位置上漂） ============ */
+/* ============ 计步爱心 ============ */
 function spawnHeart(){
   if(!playerShell.classList.contains('is-fs')) return;
   const h=document.createElement('div'); h.className='heart'+(Math.random()<0.4?' pale':'');
@@ -938,7 +838,7 @@ function spawnHeart(){
   setTimeout(()=>h.remove(),2500);
 }
 
-/* ============ 设置面板抽屉 + 边缘把手 ============ */
+/* ============ 面板抽屉 + 边缘把手 ============ */
 function togglePanel(){
   const open=settingsPanel.classList.toggle('open');
   $('handlePanel').classList.toggle('on',open);
@@ -948,7 +848,7 @@ function togglePanel(){
  $('spClose').addEventListener('click',togglePanel);
 if(localStorage.getItem('sv-panel')!=='0'){ settingsPanel.classList.add('open'); $('handlePanel').classList.add('on'); }
 
-/* ============ 参数输入（只写属性与状态，绝不触碰播放进度） ============ */
+/* ============ 参数输入 ============ */
 function bindNum(id,key,min,max,round){
   const el=$(id); el.value=S[key];
   el.addEventListener('change',()=>{
@@ -964,7 +864,7 @@ bindNum('beatCooldown','beatCooldown',0.1,30,true);
 bindNum('headMin','headMin',0,600);
 bindNum('tailMin','tailMin',0,600);
  $('volRange2').value=S.volume; volRange.value=S.volume; $('musicVol').value=S.musicVol;
- $('rateRange').value=S.rate; setRate(S.rate,null);
+setRate(S.rate,null);
  $('shufSwitch').checked=shuffle;
  $('shufSwitch').addEventListener('change',e=>{ shuffle=S.shuffle=e.target.checked; persist(); renderPlaylist(); });
 
@@ -978,7 +878,7 @@ window.addEventListener('keydown',e=>{
   else if(e.key==='f'||e.key==='F'){ toggleFs(); }
 });
 
-/* ============ 状态胶囊 ============ */
+/* ============ 状态 ============ */
 function updateStatusPills(){
   pillQuota.textContent=stepMode?(quota>0?'剩余 '+fmt(quota):'已锁定 · 待计步'):'自由播放';
   pillQuota.classList.toggle('warn',stepMode&&quota>0&&quota<=S.settleSec);
@@ -991,7 +891,7 @@ function updateStatusPills(){
   fsStatus.classList.toggle('warn',stepMode&&quota>0&&quota<=S.settleSec);
 }
 
-/* ============ 主循环（rAF：扣时间 / 进度 / 字幕 / 节拍，全部只改样式与文本，不触发布局重排） ============ */
+/* ============ 主循环 ============ */
 let lastTs=performance.now(), lastText=0;
 function loop(ts){
   const dt=Math.min(0.1,(ts-lastTs)/1000); lastTs=ts;
@@ -1008,7 +908,7 @@ function loop(ts){
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-renderPlaylist(); updateStatusPills(); applyVolume();
+renderPlaylist(); updateStatusPills(); updMusicState(); applyVolume();
 </script>
 </body>
 </html>
