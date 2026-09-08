@@ -16,7 +16,7 @@
 body{
   background:var(--bg);color:var(--text);overflow-x:hidden;
   font-family:"Rajdhani","PingFang SC","HarmonyOS Sans SC","Microsoft YaHei","Noto Sans SC",sans-serif;
-  padding:12px 12px 44px;min-height:100vh;-webkit-tap-highlight-color:transparent;
+  padding:12px 12px 48px;min-height:100vh;-webkit-tap-highlight-color:transparent;
 }
 .wrap{max-width:1040px;margin:0 auto}
 .neu{background:var(--panel);border-radius:var(--radius);box-shadow:9px 11px 24px var(--dark),-7px -8px 18px var(--light)}
@@ -93,8 +93,8 @@ body{
 .vol-group input[type=range]{width:72px}
 @media (max-width:760px){.vol-group{display:none}.time-label{font-size:10.5px}}
 
-/* ============ 工作台：上传排 + 播放列表 ============ */
-.dock{padding:11px;margin-bottom:0}
+/* ============ 工作台 ============ */
+.dock{padding:11px}
 .dock-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px}
 .up-tile{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:11px;background:var(--pit);cursor:pointer;transition:.16s;box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);min-width:0}
 .up-tile:hover{box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04),0 0 0 1px rgba(0,224,255,.3)}
@@ -156,7 +156,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 .switch em{font-style:normal;color:var(--muted);font-size:12px}
 .switch input:checked~em{color:#9fd8e6}
 
-/* ============ 设置抽屉 ============ */
+/* ============ 设置抽屉 + 底栏面板开关 ============ */
 .settings-panel{position:fixed;left:8px;right:8px;bottom:4px;z-index:70;max-height:min(56vh,470px);display:flex;flex-direction:column;border-radius:var(--radius);background:var(--panel);transform:translateY(calc(100% + 14px));transition:transform .4s cubic-bezier(.22,.9,.32,1);box-shadow:10px 12px 28px rgba(0,0,0,.6),-8px -8px 20px var(--light)}
 .settings-panel.open{transform:translateY(0)}
 .sp-head{display:flex;align-items:center;gap:12px;padding:10px 16px 6px;flex:none}
@@ -181,28 +181,34 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 .state-line b{color:#9fd8e6;font-weight:600}
 .mini-hint{font-size:10.5px;line-height:1.6;color:#68718a;margin-top:8px}
 .ratelabel{font-size:12px;color:var(--accent);font-weight:700;min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
+.panel-switch{
+  position:fixed;left:50%;bottom:4px;transform:translateX(-50%);z-index:82;
+  display:flex;align-items:center;gap:9px;padding:8px 18px 8px 15px;border:none;cursor:pointer;
+  border-radius:11px 11px 0 0;background:var(--panel);color:var(--muted);
+  font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.24em;
+  box-shadow:0 -5px 14px rgba(0,0,0,.5),-4px -3px 10px var(--light);transition:.25s;
+}
+.panel-switch:hover{color:var(--accent)}
+.panel-switch .bar{width:22px;height:3px;border-radius:2px;background:#41495c}
+.panel-switch svg{width:12px;height:12px}
+.panel-switch.hide{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(120%)}
 
-/* ============ mini 进度条 / 边缘把手 / toast ============ */
+/* ============ mini 进度条 / toast ============ */
 .mini-progress{position:fixed;left:0;right:0;bottom:0;height:4px;z-index:80;background:rgba(8,10,15,.75);cursor:pointer;touch-action:none;transition:height .15s}
 .mini-progress::before{content:'';position:absolute;top:-8px;left:0;right:0;height:14px}
 .mini-progress:hover{height:8px}
 .mini-progress i{display:block;height:100%;width:0;background:var(--accent)}
-.edge{position:fixed;right:0;top:40%;z-index:85;display:flex;flex-direction:column;gap:9px;transform:translateY(-50%)}
-.handle{writing-mode:vertical-rl;padding:13px 6px;border:none;cursor:pointer;border-radius:10px 0 0 10px;background:var(--panel);color:var(--muted);font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.28em;box-shadow:-5px 5px 12px rgba(0,0,0,.5),-3px -3px 8px var(--light);display:flex;align-items:center;gap:5px;transition:.18s}
-.handle:hover{color:var(--accent)}
-.handle svg{width:12px;height:12px}
-.handle.on{color:var(--accent-ink);background:var(--accent)}
 .toast-wrap{position:fixed;right:12px;bottom:16px;z-index:100;display:flex;flex-direction:column;gap:7px;align-items:flex-end;pointer-events:none}
 .toast{background:rgba(36,40,51,.94);color:var(--text);padding:9px 14px;border-radius:11px;max-width:min(80vw,400px);font-size:12.5px;font-weight:500;letter-spacing:.03em;opacity:0;transform:translateY(10px);transition:.3s;box-shadow:6px 8px 16px rgba(0,0,0,.5),-4px -4px 9px rgba(255,255,255,.04);border-left:3px solid var(--accent)}
 .toast.in{opacity:1;transform:none}
 .toast.dim{border-left-color:#4a5163;color:var(--muted)}
 
 @media (max-width:760px){
-  body{padding:9px 8px 40px}
+  body{padding:9px 8px 44px}
   .brand h1{font-size:15px}
-  .handle{padding:11px 5px;font-size:10px}
   .settings-grid{grid-template-columns:1fr}
   .duo{gap:7px}
+  .panel-switch{padding:7px 14px 7px 12px;letter-spacing:.18em}
 }
 </style>
 </head>
@@ -221,7 +227,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
       <div><h1>STEP<b>VISION</b></h1><span>步频放映室</span></div>
     </div>
     <div class="pills">
-      <div class="pill" id="pillQuota">自由播放</div>
+      <div class="pill" id="pillQuota">已锁定 · 未开启计步</div>
       <div class="pill" id="pillSteps">步数 <b>0</b></div>
       <div class="pill" id="pillSub">字幕</div>
       <div class="pill" id="pillBeat">律动</div>
@@ -233,12 +239,12 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
     <video id="video" playsinline webkit-playsinline preload="auto"></video>
     <div class="center-hint" id="centerHint">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M7 4v16M17 4v16M2.5 9h4.5M2.5 15h4.5M17 9h4.5M17 15h4.5" stroke-linecap="round"/><path d="M10.5 9.5l4 2.5-4 2.5z" fill="currentColor" stroke="none"/></svg>
-      <p>上传媒体文件开始放映</p><span>支持超大视频 · 本地流式解码</span>
+      <p>上传媒体文件开始放映</p><span>计步解锁播放 · 支持超大视频</span>
     </div>
     <div class="audio-viz" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="subtitle-layer" id="subLayer"></div>
     <div class="hearts-layer" id="heartsLayer"></div>
-    <div class="fs-status" id="fsStatus">自由播放</div>
+    <div class="fs-status" id="fsStatus">已锁定</div>
     <div class="fs-progress" id="fsBar"><i id="fsFill"></i></div>
     <div class="control-layer" id="controlLayer">
       <button class="cbtn accent" id="btnPlay" title="播放 / 暂停"></button>
@@ -255,7 +261,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
     </div>
   </section>
 
-  <!-- 工作台：上传排 + 播放列表 -->
+  <!-- 工作台 -->
   <section class="dock neu" id="playlistWrap">
     <div class="dock-row">
       <label class="up-tile">
@@ -283,11 +289,11 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
   </section>
 </div>
 
-<!-- 边缘把手 -->
-<aside class="edge">
-  <button class="handle" id="handlePanel" title="显示 / 隐藏设置面板"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>面板</button>
-  <button class="handle" id="handleFs" title="进入 / 退出全屏"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>全屏</button>
-</aside>
+<!-- 底栏面板开关（控制台收起后露出） -->
+<button class="panel-switch" id="panelSwitch" title="打开控制台">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 14l6-6 6 6"/></svg>
+  <span class="bar"></span>控制台
+</button>
 
 <!-- 设置抽屉 -->
 <footer class="settings-panel" id="settingsPanel">
@@ -306,7 +312,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
           <button class="btn accent" id="btnWarm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>预热 2:15</button>
           <button class="btn" id="btnSimStep">模拟一步</button>
         </div>
-        <div class="state-line" id="sensorState" style="margin-top:9px">传感器：未开启 · 自由播放</div>
+        <div class="state-line" id="sensorState" style="margin-top:9px">传感器：未开启 · 视频已锁定</div>
       </div>
 
       <div class="card">
@@ -336,7 +342,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
         <div class="f-col"><label>音乐音量</label><input type="range" id="musicVol" min="0" max="1" step="0.01"></div>
         <div class="duo">
           <div><label>节奏阈值系数</label><input type="number" id="beatSens" min="1.1" max="3" step="0.05"></div>
-          <div><label>跳跃冷却（秒）</label><input type="number" id="beatCooldown" min="0.1" max="30" step="0.01"></div>
+          <div><label>跳跃冷却（秒）</label><input type="number" id="beatCooldown" min="0.01" max="30" step="0.01"></div>
         </div>
         <div class="duo">
           <div><label>前部禁区（分）</label><input type="number" id="headMin" min="0" max="600" step="0.5"></div>
@@ -381,12 +387,13 @@ const video=$('video'), playerShell=$('playerShell'), controlLayer=$('controlLay
   timeText=$('timeText'), rateBadge=$('rateBadge'),
   volRange=$('volRange'), volRange2=$('volRange2'),
   playlist=$('playlist'), playlistWrap=$('playlistWrap'), plCount=$('plCount'), plShufBadge=$('plShufBadge'),
-  settingsPanel=$('settingsPanel'), musicAudio=$('musicAudio'), toastWrap=$('toastWrap'),
+  settingsPanel=$('settingsPanel'), panelSwitch=$('panelSwitch'),
+  musicAudio=$('musicAudio'), toastWrap=$('toastWrap'),
   fsStatus=$('fsStatus'), pillQuota=$('pillQuota'), pillSteps=$('pillSteps'), pillSub=$('pillSub'), pillBeat=$('pillBeat');
 
 btnPlay.innerHTML=SVG_PLAY; btnFs.innerHTML=SVG_FS; btnMute.innerHTML=SVG_VOL;
 
-/* ============ 状态（参数只写属性与内存，绝不触碰播放进度） ============ */
+/* ============ 状态 ============ */
 const S={ rate:1, volume:1, stepSec:30, settleSec:5, beatSens:1.6, beatCooldown:2, headMin:0, tailMin:0, musicVol:0.7, shuffle:false };
 try{ Object.assign(S, JSON.parse(localStorage.getItem('stepvision')||'{}')); }catch(e){}
 function persist(){ try{ localStorage.setItem('stepvision', JSON.stringify(S)); }catch(e){} }
@@ -408,7 +415,7 @@ function toast(msg,type=''){
   setTimeout(()=>{ el.classList.remove('in'); setTimeout(()=>el.remove(),320); },2600);
 }
 
-/* ============ 媒体（Blob URL 流式，几 GB 按需读取） ============ */
+/* ============ 媒体 ============ */
 function isAudioFile(f){ return (f.type&&f.type.startsWith('audio'))||/\.(mp3|flac|wav|aac|ogg|m4a|opus|wma|aiff|caf)$/i.test(f.name); }
 function addMediaFiles(files){
   const ok=files.filter(f=>/\.(mp4|mkv|webm|mov|avi|flv|wmv|ts|m2ts|m4v|mpg|mpeg|3gp|ogv|mp3|flac|wav|aac|ogg|m4a|opus|wma)$/i.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
@@ -421,7 +428,7 @@ function addMediaFiles(files){
   $('slotMediaInfo').classList.add('ok');
   if(currentIndex<0) loadIndex(0,true); else { renderPlaylist(); toast(`已加入 ${ok.length} 个文件`); }
 }
-function probeDuration(item){ // 只读元数据头
+function probeDuration(item){
   const v=document.createElement('video'); v.preload='metadata'; v.muted=true; v.src=item.url;
   const done=()=>{ if(v.duration&&isFinite(v.duration)) item.duration=v.duration; v.onloadedmetadata=v.onerror=null; v.removeAttribute('src'); v.load(); renderPlaylist(); };
   v.onloadedmetadata=done; v.onerror=done;
@@ -430,7 +437,7 @@ function probeDuration(item){ // 只读元数据头
 ['dragover','dragleave','drop'].forEach(ev=>playerShell.addEventListener(ev,e=>{ e.preventDefault();
   if(ev==='drop'&&e.dataTransfer.files.length) addMediaFiles([...e.dataTransfer.files]); }));
 
-function loadIndex(i,autoplay,seekTo){ // seekTo：跨文件跳跃时直接定位随机时间点
+function loadIndex(i,autoplay,seekTo){
   if(i<0||i>=playlistArr.length) return;
   currentIndex=i; const it=playlistArr[i];
   cancelTTS();
@@ -443,7 +450,8 @@ function loadIndex(i,autoplay,seekTo){ // seekTo：跨文件跳跃时直接定�
 }
 function tryPlay(){
   if(!playlistArr.length){ toast('请先上传媒体文件'); return false; }
-  if(stepMode&&quota<=0){ toast('播放时间已用尽 · 计步或点预热解锁'); return false; }
+  if(!stepMode){ toast('视频已锁定 · 请先开启计步传感器'); return false; } // 未开启传感器一律不可播放
+  if(quota<=0){ toast('本段播放时间已用尽 · 计步或点预热解锁'); return false; }
   video.play().catch(()=>{});
   return true;
 }
@@ -453,7 +461,7 @@ function togglePlay(){
   if(video.paused) tryPlay(); else video.pause();
 }
 function next(){
-  if(playlistArr.length<=1){ video.currentTime=0; if(!stepMode||quota>0) tryPlay(); return; }
+  if(playlistArr.length<=1){ video.currentTime=0; tryPlay(); return; }
   let n=currentIndex;
   if(shuffle){ do{ n=Math.floor(Math.random()*playlistArr.length); }while(n===currentIndex); }
   else n=(currentIndex+1)%playlistArr.length;
@@ -466,7 +474,7 @@ function removeItem(i){
     video.pause(); video.removeAttribute('src'); video.load(); currentIndex=-1;
     renderPlaylist(); toast('列表已清空'); return;
   }
-  if(i===currentIndex){ const old=currentIndex; currentIndex=-1; loadIndex(Math.min(old,playlistArr.length-1), quota>0||!stepMode); }
+  if(i===currentIndex){ const old=currentIndex; currentIndex=-1; loadIndex(Math.min(old,playlistArr.length-1), quota>0); }
   else if(i<currentIndex) currentIndex--;
   renderPlaylist(); toast(`已移除「${it.name}」`);
 }
@@ -488,7 +496,7 @@ playlistWrap.addEventListener('click',e=>{
   const item=e.target.closest('.pl-item'); if(item) loadIndex(+item.dataset.i,true);
 });
 
-/* ============ 倍速 / 音量（全局记忆，换视频后强制重应用） ============ */
+/* ============ 倍速 / 音量 ============ */
 function applyRate(){ try{ video.playbackRate=S.rate; }catch(e){} }
 function applyVolume(){ video.volume=S.volume; btnMute.innerHTML=(video.muted||video.volume===0)?SVG_MUTE:SVG_VOL; }
 function setRate(r,src){
@@ -510,7 +518,7 @@ volRange.addEventListener('input',e=>setVolume(+e.target.value,e.target));
 volRange2.addEventListener('input',e=>setVolume(+e.target.value,e.target));
 btnMute.addEventListener('click',()=>{ video.muted=!video.muted; if(!video.muted&&video.volume===0) setVolume(.6); btnMute.innerHTML=video.muted?SVG_MUTE:SVG_VOL; });
 
-video.addEventListener('loadedmetadata',()=>{ // 每个新视频强制重应用倍速 + 应用待定的跳跃落点
+video.addEventListener('loadedmetadata',()=>{
   applyRate(); applyVolume();
   const it=playlistArr[currentIndex]; if(it&&it.duration==null&&isFinite(video.duration)) it.duration=video.duration;
   if(pendingSeek!=null){ const t=pendingSeek; pendingSeek=null; seekMedia(t); }
@@ -522,7 +530,7 @@ video.addEventListener('ended',next);
 video.addEventListener('error',()=>{ if(video.currentSrc) toast('浏览器无法解码该文件 · 建议用 Chrome / Edge','dim'); });
 btnPlay.addEventListener('click',togglePlay);
 
-/* ============ 统一 seek（字幕指针同步重置） ============ */
+/* ============ 统一 seek ============ */
 function seekMedia(t){
   if(!isFinite(t)||!video.duration) return;
   video.currentTime=Math.max(0,Math.min(t,video.duration-0.05));
@@ -532,7 +540,7 @@ function seekMedia(t){
   updateProgressUI(true);
 }
 
-/* ============ 三条进度条（大条 / mini 细条 / 全屏细条） ============ */
+/* ============ 三条进度条 ============ */
 function makeBar(barEl,fillEl,preview){
   let drag=false;
   const ratioAt=e=>{ const r=barEl.getBoundingClientRect(); return Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)); };
@@ -567,7 +575,7 @@ function updateProgressUI(force){
   if(force||lab!==lastLabel){ lastLabel=lab; timeText.textContent=lab; }
 }
 
-/* ============ 计步传感器 ============ */
+/* ============ 计步传感器（未开启 = 视频锁定） ============ */
 let motionAvg=9.8, motionPeak=false, lastStepAt=0;
 function onMotion(e){
   const a=e.accelerationIncludingGravity; if(!a) return;
@@ -578,11 +586,12 @@ function onMotion(e){
   else if(raw<-1.1){ motionPeak=false; if(now-lastStepAt>320){ lastStepAt=now; onStep(); } }
 }
 async function toggleSensor(){
-  if(stepMode){
+  if(stepMode){ // 关闭传感器 → 立即暂停并重新锁定
     window.removeEventListener('devicemotion',onMotion); stepMode=false;
+    video.pause(); quota=0;
     $('btnSensor').textContent='开启计步传感器';
-    $('sensorState').textContent='传感器：未开启 · 自由播放';
-    toast('计步已关闭 · 恢复自由播放'); updateStatusPills(); return;
+    $('sensorState').textContent='传感器：未开启 · 视频已锁定';
+    toast('传感器已关闭 · 视频锁定'); updateStatusPills(); return;
   }
   if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){
     try{ const p=await DeviceMotionEvent.requestPermission(); if(p!=='granted'){ toast('传感器权限被拒绝'); return; } }
@@ -591,12 +600,16 @@ async function toggleSensor(){
   window.addEventListener('devicemotion',onMotion); stepMode=true; quotaToastShown=false;
   $('btnSensor').textContent='传感器运行中 · 点击关闭';
   $('sensorState').innerHTML='传感器：<b>运行中</b> · 每步 '+S.stepSec+'s · 提前量 '+S.settleSec+'s';
-  toast('计步已开启 · 每步解锁 '+S.stepSec+' 秒'); updateStatusPills();
+  toast('计步已开启 · 视频解锁 · 每步 '+S.stepSec+' 秒'); updateStatusPills();
 }
  $('btnSensor').addEventListener('click',toggleSensor);
  $('btnSimStep').addEventListener('click',()=>onStep());
- $('btnWarm').addEventListener('click',()=>{ cancelTTS(); quota=135; quotaToastShown=false;
-  if(video.ended) next(); else tryPlay(); toast('预热完成 · 播放 2:15'); });
+ $('btnWarm').addEventListener('click',()=>{
+  if(!stepMode){ toast('请先开启计步传感器 · 再用预热解锁'); return; }
+  cancelTTS(); quota=135; quotaToastShown=false;
+  if(video.ended) next(); else tryPlay();
+  toast('预热完成 · 播放 2:15');
+});
 function onStep(){
   steps++; spawnHeart(); updateStatusPills();
   if(!stepMode) return;
@@ -609,7 +622,7 @@ function onStep(){
   }
 }
 
-/* ============ 字幕（JSON / LRC / VTT + TTS） ============ */
+/* ============ 字幕 + TTS ============ */
 function parseSubtitle(text){
   const t=text.replace(/^\uFEFF/,'').trim();
   if(t.startsWith('[')){
@@ -671,7 +684,7 @@ function loadSubtitleFile(f){
   toast('字幕已移除 · 功能解除'); updateStatusPills();
 });
 function setSubtitleText(s){ if(s===lastSubText) return; lastSubText=s; subLayer.textContent=s; subLayer.classList.toggle('on',!!s); }
-function startTTS(c){ // 暂停 → 朗读 → 从该段起点恢复播放原文
+function startTTS(c){
   ttsState='speaking'; video.pause();
   setSubtitleText(c.content); subLayer.classList.add('tts');
   let finished=false;
@@ -681,7 +694,7 @@ function startTTS(c){ // 暂停 → 朗读 → 从该段起点恢复播放原文
     if(resume){
       c.done=true; video.currentTime=c.from;
       subIdx=cues.indexOf(c);
-      if(!stepMode||quota>0) tryPlay();
+      tryPlay();
     }
     setSubtitleText('');
   };
@@ -692,7 +705,7 @@ function startTTS(c){ // 暂停 → 朗读 → 从该段起点恢复播放原文
   u.onend=()=>finish(true); u.onerror=()=>finish(true);
   try{ speechSynthesis.cancel(); speechSynthesis.speak(u); }
   catch(e){ finish(true); return; }
-  const guard=setTimeout(()=>finish(true),Math.max(2600,c.content.length*400)); // 朗读卡死兜底
+  const guard=setTimeout(()=>finish(true),Math.max(2600,c.content.length*400));
 }
 function cancelTTS(){ if(ttsCancelRef) ttsCancelRef(); }
 function subtitleTick(){
@@ -712,7 +725,7 @@ function updMusicState(){
 function ensureMusicGraph(){
   if(!audioCtx){
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    const src=audioCtx.createMediaElementSource(musicAudio); // 只绑定一次，换歌复用
+    const src=audioCtx.createMediaElementSource(musicAudio);
     musicGain=audioCtx.createGain(); musicAnalyser=audioCtx.createAnalyser();
     musicAnalyser.fftSize=256; musicAnalyser.smoothingTimeConstant=0.5;
     freqData=new Uint8Array(musicAnalyser.frequencyBinCount);
@@ -754,14 +767,14 @@ function stopBeat(){ musicAudio.pause(); beatOn=false; updMusicState(); updateSt
 function beatTick(){
   if(!beatOn||!audioCtx||musicAudio.paused) return;
   musicAnalyser.getByteFrequencyData(freqData);
-  let low=0; for(let i=0;i<5;i++) low+=freqData[i]; low/=(5*255); // 低频段能量（鼓/贝斯区）
-  beatAvg=beatAvg*0.95+low*0.05;                                   // 指数平滑响度基线
+  let low=0; for(let i=0;i<5;i++) low+=freqData[i]; low/=(5*255);
+  beatAvg=beatAvg*0.95+low*0.05;
   const now=performance.now();
   if(low>0.1&&low>beatAvg*S.beatSens&&now-lastJump>S.beatCooldown*1000){ lastJump=now; doJump(); }
 }
 function doJump(){
   const n=playlistArr.length; if(!n) return;
-  const idx=n>1?Math.floor(Math.random()*n):currentIndex; // 可跳到列表任意文件
+  const idx=n>1?Math.floor(Math.random()*n):currentIndex;
   const dur=(idx===currentIndex?video.duration:playlistArr[idx]?.duration);
   if(!isFinite(dur)||dur<=0){ toast('目标文件时长未知 · 本次未跳跃','dim'); return; }
   const head=S.headMin*60, tail=S.tailMin*60;
@@ -770,14 +783,14 @@ function doJump(){
     if(head+tail>0){ toast('禁区覆盖了整个时长 · 本次未跳跃','dim'); return; }
     lo=0; hi=Math.max(dur-0.5,0);
   }
-  const t=lo+Math.random()*(hi-lo); // 落点：当前进度之前或之后的任意允许位置
+  const t=lo+Math.random()*(hi-lo);
   jumpCount++; updMusicState();
   jumpTo(idx,t);
 }
 function jumpTo(idx,t){
   const wasPlaying=!video.paused&&!video.ended;
   cancelTTS();
-  if(idx!==currentIndex){ loadIndex(idx,false,t); if(wasPlaying) tryPlay(); } // 随机落点作为加载参数传入
+  if(idx!==currentIndex){ loadIndex(idx,false,t); if(wasPlaying) tryPlay(); }
   else seekMedia(t);
   if(playerShell.classList.contains('is-fs')){
     fsBar.classList.remove('flash'); void fsBar.offsetWidth; fsBar.classList.add('flash');
@@ -795,11 +808,9 @@ async function toggleFs(){
   }catch(e){ toast('无法进入全屏'); }
 }
 btnFs.addEventListener('click',toggleFs);
- $('handleFs').addEventListener('click',toggleFs);
 document.addEventListener('fullscreenchange',()=>{
   const fs=!!document.fullscreenElement;
   playerShell.classList.toggle('is-fs',fs);
-  $('handleFs').classList.toggle('on',fs);
   if(fs) pokeControls(); else { clearTimeout(hideTimer); controlLayer.classList.add('show'); playerShell.classList.remove('hidecursor'); }
 });
 function pokeControls(){
@@ -838,29 +849,29 @@ function spawnHeart(){
   setTimeout(()=>h.remove(),2500);
 }
 
-/* ============ 面板抽屉 + 边缘把手 ============ */
+/* ============ 面板：底栏开关 + 控制台收起 ============ */
 function togglePanel(){
   const open=settingsPanel.classList.toggle('open');
-  $('handlePanel').classList.toggle('on',open);
+  panelSwitch.classList.toggle('hide',open);
   try{ localStorage.setItem('sv-panel',open?'1':'0'); }catch(e){}
 }
- $('handlePanel').addEventListener('click',togglePanel);
+panelSwitch.addEventListener('click',togglePanel);
  $('spClose').addEventListener('click',togglePanel);
-if(localStorage.getItem('sv-panel')!=='0'){ settingsPanel.classList.add('open'); $('handlePanel').classList.add('on'); }
+if(localStorage.getItem('sv-panel')!=='0'){ settingsPanel.classList.add('open'); panelSwitch.classList.add('hide'); }
 
-/* ============ 参数输入 ============ */
+/* ============ 参数输入（冷却精确到两位小数） ============ */
 function bindNum(id,key,min,max,round){
   const el=$(id); el.value=S[key];
   el.addEventListener('change',()=>{
     let v=parseFloat(el.value); if(!isFinite(v)) v=S[key];
-    v=Math.min(max,Math.max(min,v)); if(round) v=Math.round(v*100)/100;
+    v=Math.min(max,Math.max(min,v)); if(round) v=Math.round(v*100)/100; // 两位小数
     S[key]=v; el.value=v; persist();
   });
 }
 bindNum('stepSec','stepSec',1,3600);
 bindNum('settleSec','settleSec',0,600);
 bindNum('beatSens','beatSens',1.1,3,true);
-bindNum('beatCooldown','beatCooldown',0.1,30,true);
+bindNum('beatCooldown','beatCooldown',0.01,30,true); // 冷却：0.01 秒起步，强制两位小数
 bindNum('headMin','headMin',0,600);
 bindNum('tailMin','tailMin',0,600);
  $('volRange2').value=S.volume; volRange.value=S.volume; $('musicVol').value=S.musicVol;
@@ -880,14 +891,14 @@ window.addEventListener('keydown',e=>{
 
 /* ============ 状态 ============ */
 function updateStatusPills(){
-  pillQuota.textContent=stepMode?(quota>0?'剩余 '+fmt(quota):'已锁定 · 待计步'):'自由播放';
+  pillQuota.textContent=!stepMode?'已锁定 · 未开启计步':(quota>0?'剩余 '+fmt(quota):'已锁定 · 待计步');
+  pillQuota.classList.toggle('off',!stepMode||(stepMode&&quota<=0));
   pillQuota.classList.toggle('warn',stepMode&&quota>0&&quota<=S.settleSec);
-  pillQuota.classList.toggle('off',stepMode&&quota<=0);
   pillSteps.innerHTML='步数 <b>'+steps+'</b>';
   pillSub.classList.toggle('on',cues.length>0);
   pillSub.textContent=cues.length?(ttsState==='speaking'?'朗读中':'字幕'):'字幕';
   pillBeat.classList.toggle('on',beatOn);
-  fsStatus.textContent=(stepMode?(quota>0?'剩余 '+fmt(quota):'待计步'):'自由播放')+' · 步 '+steps;
+  fsStatus.textContent=(!stepMode?'锁定 · 待开启计步':(quota>0?'剩余 '+fmt(quota):'锁定 · 待计步'))+' · 步 '+steps;
   fsStatus.classList.toggle('warn',stepMode&&quota>0&&quota<=S.settleSec);
 }
 
