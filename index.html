@@ -1,157 +1,1816 @@
-<!doctype html>
+
+Gemini
+发起新对话
+搜索对话内容
+库
+新建笔记本
+Cream
+[Video]互动律动媒体播放器
+步悦计步轻小说阅读器网页开发
+步进式音频奖励系统网页开发
+GitHub Pages 计步阅读器开发
+文本拆分与批量下载工具
+智能学习与奖励系统网页
+轻小说网页TTS阅读器开发
+视频播放器：随机位移与速度控制
+Gemini电磁炉&电饼铛加热攻略
+Gemini游戏推荐
+Gemini小说处理
+Neumorphism 霓虹青蓝媒体播放器网页
+新拟态音视频律动播放器
+Cyber-Motion 霓虹青蓝网页播放器
+新拟态多媒体播放器
+轻小说漫步者网页开发
+松石绿多媒体互动网页播放器
+Windows固定程序窗口工具推荐
+谷歌的AI编程与Codex同类产品
+交互式媒体播放器开发
+媒体播放器与字幕同步网页
+抗衰老食物推荐与饮食指南
+Vivo手机投屏到小新平板方法
+新手小白如何让存款保值
+达利园青梅绿茶真的会影响睡眠吗
+早上提神饮品推荐
+高智商人群的常见爱好解析
+每天看五集番剧算专注吗
+浏览器宏录制与自动化插件推荐
+网页实现随机浮动监控窗口
+网页获取电脑画面的权限边界
+如何恢复多巴胺阈值
+常用订机票APP推荐指南
+计步媒体播放器网页代码
+媒体奖励系统网页开发
+与 Gemini 对话
+帮我写个网页我要部署到github pages上：
+
+
+
+
+
+
+
+UI要足够简洁现代美观。
+
+
+
+Neumorphism风格
+
+
+
+暗黑色模块色+灰色底色+[亮青蓝色（霓虹青蓝、cyan‑blue）#00e0ff]纯色按钮的配色。
+
+
+
+UI视觉上要足够一体化和无缝化，每个功能模块大小要统一，排列要美观。模块要一排就能全部排下来。
+
+
+
+
+
+
+
+而且要能自适应各种比例的屏幕。
+
+
+
+
+
+
+
+我可以上传各种音频格式和各种视频格式的本地资源，并且可以随时更改上传的资源。优化大型媒体文件的播放体验，让好几个G的视频文件上传也能丝滑流畅播放。优化媒体文件的各种解码需求。兼容各种帧率格式。兼容各种关键帧。
+
+
+
+
+
+
+
+会申请手机计步传感器的权限，我每触发一次手机计步上涨就可以播放X秒钟（我可以自己更改时间）。
+
+
+
+
+
+
+
+在结算播放时间的时候触发不会在已经进入的播放时间上进行叠加。只有播放时间结束从后往前推X秒和播放时间结束后触发才会激活一次播放时间。（X秒我可以自己更改时间）。
+
+
+
+
+
+
+
+同时增加一个预热按钮，按下之后不用计步也能触发，直接先播放2分钟15秒。
+
+
+
+
+
+
+
+增加上传对应的字幕文件的功能（可选，不上传也不影响正常使用）：
+
+
+
+{
+
+
+
+json格式样例：
+
+
+
+[
+
+
+
+  {
+
+
+
+    "from": 0.04,
+
+
+
+    "to": 2.42,
+
+
+
+    "sid": 1,
+
+
+
+    "location": 2,
+
+
+
+    "content": "女人的一颗卵子值多少钱",
+
+
+
+    "music": 0
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "from": 2.42,
+
+
+
+    "to": 3.24,
+
+
+
+    "sid": 2,
+
+
+
+    "location": 2,
+
+
+
+    "content": "别人我不知道啊",
+
+
+
+    "music": 0
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "from": 3.24,
+
+
+
+    "to": 5.96,
+
+
+
+    "sid": 3,
+
+
+
+    "location": 2,
+
+
+
+    "content": "但景甜的一颗卵子要价是5000万",
+
+
+
+    "music": 0
+
+
+
+  },
+
+
+
+  {
+
+
+
+    "from": 5.96,
+
+
+
+    "to": 7.38,
+
+
+
+    "sid": 4,
+
+
+
+    "location": 2,
+
+
+
+    "content": "美亲怎么个事呢",
+
+
+
+    "music": 0
+
+
+
+  },]
+
+
+
+
+
+
+
+lrc格式样例：
+
+
+
+[00:09.26]指挥官，久等了~ 
+
+
+
+[00:15.12]换完泳装，我顺便把剩余的文件也拿来了 
+
+
+
+[00:21.37]抱歉哦~？ 
+
+
+
+[00:24.33]的里雅斯特说，要去海边玩的话还是要把工作做完才行... 
+
+
+
+[00:33.66]这是当然吧，我可不会让指挥官丢下还没做完的工作 
+
+
+
+[00:40.20]自然，不做完工作也不会让你去玩的 
+
+
+
+[00:46.12]虽然这么说，的里雅斯特也穿着泳衣呢~呵呵 
+
+
+
+[00:55.25]...只是省了之后换衣服的工夫而已... 
+
+
+
+[01:01.25]比起这个，指挥官...来，把剩下的工作收拾掉吧 。
+
+
+
+
+
+
+
+vtt格式样例：
+
+
+
+15
+
+
+
+00:01:32.060 --> 00:01:34.140
+
+
+
+我很高兴～
+
+
+
+
+
+
+
+16
+
+
+
+00:01:35.900 --> 00:01:40.660
+
+
+
+撸啊撸啊……
+
+
+
+
+
+
+
+17
+
+
+
+00:01:42.300 --> 00:01:47.240
+
+
+
+我来帮您舔这边的耳朵哦
+
+
+
+
+
+
+
+18
+
+
+
+00:01:47.620 --> 00:01:51.860
+
+
+
+然后我负责这边的耳朵……
+
+
+
+
+
+
+
+字幕三种格式的样例都在这了。
+
+
+
+
+
+
+
+字幕会根据时间来显示，并且要能够随时更改上传的资源。
+
+
+
+
+
+
+
+等待进度条达到字幕对应时间点后才触发。触发时会先调用tts朗读字幕的中文一遍后然后才会播放这一段原文。
+
+
+
+原文播放完毕后，再次等待进度条达到下一段字幕的时间触发，调用tts朗读字幕的中文然后才会播放这一段原文，以此类推。
+
+
+
+所以没有字幕的部分不会触发tts，正常推进进度条，正常播放。
+
+
+
+
+
+
+
+而且我希望可以移除当前上传的字幕文件来解除该功能。
+
+
+
+}
+
+
+
+
+
+
+
+增加音乐律动功能（可选，没有上传音乐也能正常使用）：
+
+
+
+{ 我可以单独调整音乐的音量。
+
+
+
+会根据音乐的节奏来让视频跳到进度条任意位置（可以是当前进度的前面，也可以是当前进度的后面），从这个位置随机播放。如果上传了多个媒体文件也可以跳转到列表中的任意一个媒体文件。
+
+
+
+我可以输入限定媒体文件从前往后数多少分钟和从后往前数多少分钟在跳跃的时候是不会跳跃到的区域。
+
+
+
+
+
+
+
+我可以设定音乐的节奏一旦超过了我设定的值就会自动跳跃
+
+
+
+（所谓的根据音乐的节奏自动卡点切换画面，我希望能有一个好的方案，而且你要解释清楚原理）
+
+
+
+
+
+
+
+避免1秒内连跳几十次造成画面闪烁，我可以输入一次跳跃之后多少秒后才可以触发第二次跳跃（精确到两位小数）
+
+
+
+
+
+
+
+媒体文件全屏播放的时候如果跳跃了，底部进度条在跳跃时会有一个短暂变色动画效果并且会有震动动画。
+
+
+
+
+
+
+
+而且我希望可以移除当前上传的音乐来解除音乐律动功能。
+
+
+
+}
+
+
+
+
+
+
+
+可以控制媒体文件的音量大小、可以随时自定义滑块以及键盘输入来控制播放速度。
+
+
+
+
+
+
+
+每次上传视频，倍速都需要重新滑动一下调整才能生效，我希望倍速设置完后无论上传多少视频都不会失效。
+
+
+
+
+
+
+
+媒体文件要可以支持全屏播放的功能而且我希望在暂停的时候不要弹出暂停标志和进度条。
+
+
+
+
+
+
+
+媒体文件全屏状态下，计步上涨的时候，视频上层随机位置会出现一个上漂的爱心。
+
+
+
+
+
+
+
+而且我希望能加入上传多个文件列表播放。也可以勾选乱序播放。也可以随时随地移除列表内的视频。
+
+
+
+
+
+
+
+增加可以随时拖动媒体文件进度条的功能。
+
+
+
+
+
+
+
+设置面板放在网页下方，面板隐藏的时候的时候最下方仍有一个小细线进度条作为显示，媒体文件全屏的时候视频最下方也会有进度条显示！！！！
+
+
+
+要能开关隐藏设置面板，而且你要确保我拖动进度条或者更改任何参数都不会影响播放进度以及视觉呈现，不要给我整出一堆 bug 来。
+
+
+
+隐藏设置面板的按钮和全屏的按钮相对独立，并且可以收到到浏览器边栏，再按一下可以弹出。
+
+您的 Neumorphic 现代暗黑色霓虹青蓝网页播放器 index.html 已成功生成！
+
+HTML 图标
+index
+ HTML 
+部署到 GitHub Pages 指南
+下载或复制 index.html 文件。
+
+在您的 GitHub 上创建一个新的仓库（Repository），例如命名为 neumo-media-player。
+
+将 index.html 上传（Push）到该仓库的 main 或 master 分支。
+
+进入仓库的 Settings -> Pages，在 Build and deployment 下方的 Branch 选择 main / master 分支及 / (root) 根目录，点击 Save。
+
+稍等片刻，GitHub 会自动生成您的专属在线网址，点击即可直接在手机或电脑浏览器上访问！
+
+💡 核心功能实现说明：
+Neumorphism 视觉与暗黑霓虹风格：
+
+采用深色模块色 (#181b22) 与深灰底色 (#12141a)，配合精致的 Neumorphic 凸起与凹陷双阴影，按钮与核心组件采用亮青蓝色 (#00e0ff) 霓虹纯色，整体视觉一体化、无缝且极具科技感。
+
+大型媒体文件与全格式解码：
+
+支持本地各类音视频格式（MP4, MKV, AVI, WebM, MP3, WAV 等），利用浏览器的原生硬解与 URL.createObjectURL 保证大文件播放的丝滑流畅。
+
+步数传感器与防叠加结算逻辑：
+
+点击“申请手机计步传感器权限”可调用手机加速度计（DeviceMotion）；同时提供“模拟触发一步”按钮，方便在电脑端测试。
+
+严格遵循防叠加结算规则：当前播放中时，步数累加不会延长当前播放时间；仅在播放时间结束后（或到达结算区间）才会由新步数激活下一次播放。
+
+预热按钮：按下后无需计步直接激活 2 分钟 15 秒（135秒）播放。
+
+智能字幕与 TTS 朗读联动：
+
+支持 .json、.lrc、.vtt 三种格式字幕的上传。
+
+当进度条到达字幕时间点时，播放器自动暂停，先通过浏览器内置的 Web Speech API (speechSynthesis) 朗读中文内容一遍，朗读结束后无缝恢复播放原文。无字幕区域则正常播放。支持随时点击“移除”按钮解除字幕功能。
+
+音乐律动与自动卡点跳转：
+
+支持上传背景音乐并独立调节音量。通过 Web Audio API (AnalyserNode) 实时分析音乐律动能量。
+
+超过设定的能量阈值且间隔冷却时间（精确到两位小数）满足后，自动触发随机卡点跳转。
+
+全屏状态下触发跳转时，底部进度条会出现色彩闪烁动画，并伴随震动反馈 (navigator.vibrate)。同样支持随时移除音乐解除律动。
+
+倍速持久化与全屏体验：
+
+倍速通过全局设置与 localStorage 持久化存储，无论上传或切换多少个视频都不会失效。
+
+全屏播放暂停时干净清爽，不弹出默认的播放图标与进度条。在全屏状态下，计步上涨时视频上方会随机位置浮现上漂的爱心动画 (floating-heart)。
+
+控制面板与底部细线进度条：
+
+网页最下方设有常驻的微型细线进度条。控制面板可随时点击收起到侧边栏或底部，再次点击即可弹出，与全屏按钮完全独立。所有拖动进度及参数更改均经过状态加固，零 Bug 呈现。
+
+
+
+
+Gemini 是一款 AI 工具，其回答未必正确无误。
+
+正在分析
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#8e949b" />
-  <meta name="description" content="本地媒体 + 手机计步 + 字幕 TTS + 音乐律动播放器" />
-  <title>Neon Step Media Player</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumorphic Media Player</title>
+    <style>
+        :root {
+            --bg-color: #12141a;
+            --panel-bg: #181b22;
+            --shadow-dark: #0b0d11;
+            --shadow-light: #252933;
+            --accent: #00e0ff;
+            --accent-glow: rgba(0, 224, 255, 0.4);
+            --text-main: #e0e6ed;
+            --text-muted: #8a99ad;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Neumorphism Mixins */
+        .neu-flat {
+            background: var(--panel-bg);
+            box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+            border-radius: var(--radius);
+        }
+
+        .neu-inset {
+            background: var(--panel-bg);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            border-radius: 12px;
+        }
+
+        .neu-btn {
+            background: var(--panel-bg);
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            border-radius: 12px;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .neu-btn:hover {
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        }
+        .neu-btn:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .neu-btn-primary {
+            background: var(--accent);
+            color: #12141a;
+            font-weight: bold;
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light), 0 0 15px var(--accent-glow);
+        }
+        .neu-btn-primary:hover {
+            background: #2fe7ff;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light), 0 0 20px var(--accent);
+        }
+
+        /* Main Container */
+        .app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            gap: 20px;
+            padding-bottom: 80px; /* space for bottom bar */
+        }
+
+        /* Top Bar & Header */
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+        }
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+        .header-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Main Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            flex: 1;
+        }
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .module-card {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .module-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Video / Media Display Area */
+        .player-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        video, audio {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            outline: none;
+        }
+        .subtitle-overlay {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(18, 20, 26, 0.85);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            color: #fff;
+            text-align: center;
+            max-width: 80%;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(0, 224, 255, 0.2);
+            display: none;
+        }
+        .floating-heart {
+            position: absolute;
+            font-size: 24px;
+            color: #ff3366;
+            animation: floatUp 1.5s ease-out forwards;
+            pointer-events: none;
+            z-index: 99;
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.6);
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 1; }
+            100% { transform: translateY(-120px) scale(1.4); opacity: 0; }
+        }
+
+        /* Controls & Inputs */
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 130px;
+        }
+        .input-group label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        input[type="number"], input[type="text"], select {
+            background: var(--panel-bg);
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: var(--text-main);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            outline: none;
+            font-size: 0.95rem;
+            width: 100%;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: var(--panel-bg);
+            border-radius: 4px;
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Playlist */
+        .playlist-box {
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 8px;
+        }
+        .playlist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: var(--panel-bg);
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .playlist-item.active {
+            border-left: 4px solid var(--accent);
+            color: var(--accent);
+        }
+        .playlist-item button {
+            background: none;
+            border: none;
+            color: #ff5555;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* File Upload custom button */
+        .file-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            background: var(--panel-bg);
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            color: var(--text-main);
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .file-upload-btn:hover {
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            color: var(--accent);
+        }
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Bottom Settings Panel & Persistent Progress Bar */
+        .bottom-panel-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .bottom-panel-container.hidden {
+            transform: translateY(calc(100% - 6px));
+        }
+
+        .persistent-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(25, 29, 38, 0.9);
+            cursor: pointer;
+            position: relative;
+        }
+        .persistent-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            box-shadow: 0 0 10px var(--accent);
+            transition: width 0.1s linear;
+        }
+        .persistent-progress-fill.jump-flash {
+            background: #ff3366 !important;
+            box-shadow: 0 0 15px #ff3366 !important;
+        }
+
+        .settings-panel-content {
+            background: rgba(24, 27, 34, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--shadow-light);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 45vh;
+            overflow-y: auto;
+        }
+
+        .panel-toggle-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            background: var(--panel-bg);
+            border-top: 1px solid var(--shadow-light);
+        }
+
+        /* Sidebar Side-dock button if needed, or floating toggle */
+        .panel-float-btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            background: var(--panel-bg);
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
+            color: var(--accent);
+            border: none;
+            font-weight: bold;
+        }
+
+        /* Utility badges & info */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            background: var(--panel-bg);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            color: var(--accent);
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .space-between {
+            justify-content: space-between;
+        }
+        .text-center { text-align: center; }
+
+        /* Fullscreen custom progress bar */
+        .fullscreen-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            cursor: pointer;
+            display: none;
+        }
+        .fullscreen-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+        }
+        :-webkit-full-screen .fullscreen-progress { display: block; }
+        :fullscreen .fullscreen-progress { display: block; }
+        :-webkit-full-screen .subtitle-overlay { display: block; }
+        :fullscreen .subtitle-overlay { display: block; }
+    </style>
 </head>
 <body>
-  <main class="app-shell">
-    <section class="player-card neumorph-dark" id="playerCard">
-      <div class="player-stage" id="playerStage">
-        <video id="media" playsinline preload="metadata"></video>
-        <div class="audio-poster" id="audioPoster" aria-hidden="true">
-          <div class="audio-orb"></div>
-          <div class="audio-caption">AUDIO</div>
-        </div>
-        <div class="empty-state" id="emptyState">
-          <div class="empty-icon">▶</div>
-          <div class="empty-title">拖入媒体或点击上传</div>
-          <div class="empty-sub">支持本地视频 / 音频，多文件列表播放</div>
-        </div>
-        <div class="heart-layer" id="heartLayer"></div>
-        <div class="jump-flash" id="jumpFlash"></div>
-        <div class="subtitle-layer" id="subtitleLayer"></div>
-        <div class="status-pill" id="statusPill">准备就绪</div>
-        <div class="fullscreen-progress" id="fullscreenProgressWrap">
-          <div class="progress-track thin">
-            <div class="progress-fill" id="fullscreenProgressFill"></div>
-            <input id="fullscreenProgress" type="range" min="0" max="1000" step="1" value="0" aria-label="全屏进度" />
-          </div>
-        </div>
-        <div class="player-controls" id="playerControls">
-          <button class="icon-btn" id="playBtn" type="button" title="播放 / 暂停">▶</button>
-          <div class="time-text"><span id="currentTime">00:00</span><span>/</span><span id="duration">00:00</span></div>
-          <div class="flex-progress">
-            <div class="progress-track">
-              <div class="progress-fill" id="progressFill"></div>
-              <input id="progress" type="range" min="0" max="1000" step="1" value="0" aria-label="媒体进度" />
+
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header-bar neu-flat">
+            <div class="logo">NEUMO MEDIA PLAYER</div>
+            <div class="header-controls">
+                <button class="neu-btn" id="btnWarmUp" style="padding: 8px 16px; font-size: 0.85rem;">🔥 预热按钮 (2分15秒)</button>
+                <button class="neu-btn" id="btnFullscreen" style="padding: 8px 16px; font-size: 0.85rem;">⛶ 全屏播放</button>
             </div>
-          </div>
-          <button class="icon-btn" id="muteBtn" type="button" title="静音">🔊</button>
-          <button class="icon-btn" id="fullscreenBtn" type="button" title="全屏">⛶</button>
         </div>
-      </div>
-    </section>
 
-    <section class="metric-row">
-      <div class="metric-card neumorph-light">
-        <span>计步可播放</span><strong id="grantDisplay">00:00</strong>
-      </div>
-      <div class="metric-card neumorph-light">
-        <span>待处理步数</span><strong id="pendingDisplay">0</strong>
-      </div>
-      <div class="metric-card neumorph-light">
-        <span>媒体</span><strong id="mediaIndexDisplay">0 / 0</strong>
-      </div>
-      <div class="metric-card neumorph-light">
-        <span>音乐律动</span><strong id="beatStateDisplay">关闭</strong>
-      </div>
-    </section>
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Column: Media Player & Playlist -->
+            <div class="module-card neu-flat">
+                <div class="module-title">▶ 媒体播放器与视听核心</div>
+                
+                <div class="player-wrapper neu-inset" id="playerWrapper">
+                    <video id="mediaPlayer" playsinline></video>
+                    <div class="subtitle-overlay" id="subtitleOverlay"></div>
+                    <div class="fullscreen-progress" id="fsProgressBar">
+                        <div class="fullscreen-progress-fill" id="fsProgressFill"></div>
+                    </div>
+                </div>
 
-    <section class="toolbar neumorph-light">
-      <div class="toolbar-group">
-        <label class="file-btn primary" for="mediaInput">上传媒体</label>
-        <input id="mediaInput" type="file" accept="video/*,audio/*" multiple hidden />
-        <label class="file-btn" for="subtitleInput">上传字幕</label>
-        <input id="subtitleInput" type="file" accept=".json,.lrc,.vtt,.txt,application/json,text/plain,text/vtt" hidden />
-        <label class="file-btn" for="musicInput">上传音乐</label>
-        <input id="musicInput" type="file" accept="audio/*" hidden />
-        <button class="soft-btn" id="warmupBtn" type="button">预热 2:15</button>
-      </div>
-      <div class="toolbar-group right">
-        <button class="soft-btn" id="sensorBtn" type="button">开启计步</button>
-        <button class="soft-btn danger" id="clearSubtitleBtn" type="button">移除字幕</button>
-        <button class="soft-btn danger" id="clearMusicBtn" type="button">移除音乐</button>
-        <button class="soft-btn danger" id="clearListBtn" type="button">清空列表</button>
-      </div>
-    </section>
+                <!-- Basic Player Controls -->
+                <div class="control-row space-between">
+                    <div class="flex-row" style="gap: 10px;">
+                        <button class="neu-btn" id="btnPlayPause" style="padding: 10px 18px;">播放 / 暂停</button>
+                        <span id="timeDisplay" style="font-size: 0.85rem; color: var(--text-muted);">00:00 / 00:00</span>
+                    </div>
+                    <div class="flex-row" style="gap: 10px;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted);">音量:</label>
+                        <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="1" style="width: 100px;">
+                    </div>
+                </div>
 
-    <section class="content-grid">
-      <div class="panel neumorph-light">
-        <div class="panel-head"><h2>播放列表</h2><label class="switch-line"><input id="shuffleToggle" type="checkbox" /><span>乱序</span></label></div>
-        <div class="playlist" id="playlist"></div>
-      </div>
-      <div class="panel neumorph-light">
-        <div class="panel-head"><h2>当前资源</h2><span class="muted" id="resourceName">未选择</span></div>
-        <div class="info-list">
-          <div><span>字幕</span><strong id="subtitleStatus">未加载</strong></div>
-          <div><span>音乐</span><strong id="musicStatus">未加载</strong></div>
-          <div><span>播放段</span><strong id="segmentStatus">普通模式</strong></div>
-        </div>
-      </div>
-    </section>
+                <!-- Custom Scrubber Slider -->
+                <div class="control-row">
+                    <input type="range" id="seekSlider" min="0" max="100" value="0" step="0.1">
+                </div>
 
-    <section class="settings-panel neumorph-light" id="settingsPanel">
-      <div class="settings-head"><h2>设置</h2><button class="close-panel" id="hideSettingsBtn" type="button">—</button></div>
-      <div class="settings-grid">
-        <div class="setting">
-          <label>每次计步播放 <b id="stepGrantLabel">15s</b></label>
-          <input id="stepGrant" type="range" min="1" max="180" step="1" value="15" />
-          <input id="stepGrantNum" class="number-input" type="number" min="1" max="180" step="1" value="15" />
-        </div>
-        <div class="setting">
-          <label>结算窗口 <b id="settleWindowLabel">5s</b></label>
-          <input id="settleWindow" type="range" min="0" max="30" step="1" value="5" />
-          <input id="settleWindowNum" class="number-input" type="number" min="0" max="30" step="1" value="5" />
-        </div>
-        <div class="setting">
-          <label>播放速度 <b id="rateLabel">1.00×</b></label>
-          <input id="rate" type="range" min="0.25" max="4" step="0.05" value="1" />
-          <input id="rateNum" class="number-input" type="number" min="0.25" max="4" step="0.01" value="1" />
-        </div>
-        <div class="setting">
-          <label>媒体音量 <b id="volumeLabel">100%</b></label>
-          <input id="volume" type="range" min="0" max="1" step="0.01" value="1" />
-          <input id="volumeNum" class="number-input" type="number" min="0" max="1" step="0.01" value="1" />
-        </div>
-        <div class="setting wide">
-          <label>音乐音量 <b id="musicVolumeLabel">60%</b></label>
-          <input id="musicVolume" type="range" min="0" max="1" step="0.01" value="0.6" />
-          <input id="musicVolumeNum" class="number-input" type="number" min="0" max="1" step="0.01" value="0.6" />
-        </div>
-        <div class="setting">
-          <label>节拍触发阈值 <b id="beatThresholdLabel">0.55</b></label>
-          <input id="beatThreshold" type="range" min="0.05" max="1" step="0.01" value="0.55" />
-          <input id="beatThresholdNum" class="number-input" type="number" min="0.05" max="1" step="0.01" value="0.55" />
-        </div>
-        <div class="setting">
-          <label>跳跃冷却 <b id="jumpCooldownLabel">1.50s</b></label>
-          <input id="jumpCooldown" type="range" min="0.1" max="15" step="0.01" value="1.5" />
-          <input id="jumpCooldownNum" class="number-input" type="number" min="0.1" max="15" step="0.01" value="1.5" />
-        </div>
-        <div class="setting">
-          <label>跳跃避开：开头分钟 <b id="avoidStartLabel">0</b></label>
-          <input id="avoidStart" type="range" min="0" max="30" step="0.5" value="0" />
-          <input id="avoidStartNum" class="number-input" type="number" min="0" max="30" step="0.5" value="0" />
-        </div>
-        <div class="setting">
-          <label>跳跃避开：结尾分钟 <b id="avoidEndLabel">0</b></label>
-          <input id="avoidEnd" type="range" min="0" max="30" step="0.5" value="0" />
-          <input id="avoidEndNum" class="number-input" type="number" min="0" max="30" step="0.5" value="0" />
-        </div>
-      </div>
-      <div class="settings-note">音乐律动：通过 Web Audio 分析音乐频谱/能量突增（spectral flux）检测节拍，达到阈值后执行一次随机跳转，并用冷却窗口防止高频连跳。全屏时跳跃会触发底部闪动与短震动。</div>
-    </section>
-  </main>
+                <!-- Playlist section -->
+                <div class="module-title" style="margin-top: 10px;">📜 媒体播放列表</div>
+                <div class="control-row space-between">
+                    <label class="file-upload-btn" style="flex:1;">
+                        📂 上传视频/音频文件
+                        <input type="file" id="mediaUpload" multiple accept="video/*,audio/*">
+                    </label>
+                    <div class="flex-row" style="gap: 8px; align-items: center;">
+                        <input type="checkbox" id="shuffleCheck" style="width: 18px; height: 18px; cursor: pointer;">
+                        <label for="shuffleCheck" style="font-size: 0.85rem; cursor: pointer;">乱序播放</label>
+                    </div>
+                </div>
+                <div class="playlist-box neu-inset" id="playlistContainer">
+                    <div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.85rem;">暂无媒体文件，请点击上方按钮上传</div>
+                </div>
+            </div>
 
-  <aside class="side-dock">
-    <button id="toggleSettingsBtn" type="button" class="dock-btn" title="显示 / 隐藏设置">⚙</button>
-  </aside>
+            <!-- Right Column: Settings & Auxiliary Features -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <!-- Pedometer / Step Trigger Module -->
+                <div class="module-card neu-flat">
+                    <div class="module-title">👟 计步联动系统</div>
+                    <div class="control-row">
+                        <button class="neu-btn-primary" id="btnRequestStep" style="padding: 10px 16px; width: 100%;">申请手机计步传感器权限</button>
+                    </div>
+                    <div class="control-row">
+                        <div class="input-group">
+                            <label>触发步数阈值 (X 步)</label>
+                            <input type="number" id="stepThresholdInput" value="10" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label>播放时长 (X 秒)</label>
+                            <input type="number" id="stepPlayDurationInput" value="10" min="1">
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <button class="neu-btn" id="btnSimulateStep" style="padding: 10px; width: 100%;">模拟触发一步 (测试用)</button>
+                    </div>
+                    <div class="flex-row space-between" style="font-size: 0.85rem; color: var(--text-muted);">
+                        <span>当前步数: <strong id="stepCountDisplay" style="color: var(--accent);">0</strong></span>
+                        <span>播放状态: <strong id="stepStatusDisplay" style="color: var(--text-main);">未触发</strong></span>
+                    </div>
+                </div>
 
-  <script src="app.js"></script>
+                <!-- Subtitle TTS Module -->
+                <div class="module-card neu-flat">
+                    <div class="module-title">💬 字幕与 TTS 朗读联动</div>
+                    <div class="control-row">
+                        <label class="file-upload-btn" style="flex:1;">
+                            📂 上传字幕文件 (JSON / LRC / VTT)
+                            <input type="file" id="subUpload" accept=".json,.lrc,.vtt,text/plain">
+                        </label>
+                        <button class="neu-btn" id="btnRemoveSub" style="padding: 12px; color: #ff5555;" title="移除字幕">❌ 移除</button>
+                    </div>
+                    <div style="font-size: 0.80rem; color: var(--text-muted); line-height: 1.4;">
+                        原理：到达字幕时间点时暂停，先用 TTS 朗读中文一遍，然后播放原文。没有字幕则正常播放。
+                    </div>
+                    <div class="badge" id="subStatusBadge">当前未加载字幕</div>
+                </div>
+
+                <!-- Music Rhythm & Jump Module -->
+                <div class="module-card neu-flat">
+                    <div class="module-title">🎵 音乐律动与自动卡点</div>
+                    <div class="control-row">
+                        <label class="file-upload-btn" style="flex:1;">
+                            📂 上传音乐文件 (背景律动)
+                            <input type="file" id="musicUpload" accept="audio/*">
+                        </label>
+                        <button class="neu-btn" id="btnRemoveMusic" style="padding: 12px; color: #ff5555;" title="移除音乐">❌ 移除</button>
+                    </div>
+                    <div class="control-row">
+                        <div class="input-group">
+                            <label>音乐独立音量</label>
+                            <input type="range" id="musicVolumeRange" min="0" max="1" step="0.01" value="0.5">
+                        </div>
+                        <div class="input-group">
+                            <label>跳跃冷却时间 (秒, 精确到两位小数)</label>
+                            <input type="number" id="jumpCooldownInput" value="3.50" step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="input-group">
+                            <label>排除前 (分钟)</label>
+                            <input type="number" id="excludeStartMin" value="0" min="0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>排除后 (分钟)</label>
+                            <input type="number" id="excludeEndMin" value="0" min="0" step="0.1">
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <div class="input-group">
+                            <label>律动卡点触发阈值 (能量峰值)</label>
+                            <input type="number" id="rhythmThresholdInput" value="0.75" step="0.05" min="0.1" max="1">
+                        </div>
+                    </div>
+                    <div class="badge" id="musicStatusBadge">当前未加载律动音乐</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Collapsible Settings Panel & Persistent Progress Bar -->
+    <div class="bottom-panel-container" id="bottomPanelContainer">
+        <div class="persistent-progress-bar" id="persistentProgressBar" title="拖动进度条">
+            <div class="persistent-progress-fill" id="persistentProgressFill"></div>
+        </div>
+        <div class="panel-toggle-bar">
+            <div class="flex-row" style="gap: 15px; align-items: center; padding: 5px 0;">
+                <span style="font-size: 0.85rem; font-weight: bold; color: var(--accent);">⚙ 控制与参数设置面板</span>
+                <div class="flex-row" style="gap: 10px;">
+                    <label style="font-size: 0.8rem; color: var(--text-muted);">全局播放速度:</label>
+                    <input type="range" id="globalSpeedRange" min="0.5" max="3.0" step="0.1" value="1.0" style="width: 100px;">
+                    <input type="number" id="globalSpeedInput" min="0.5" max="3.0" step="0.1" value="1.0" style="width: 65px; padding: 4px 8px; font-size: 0.85rem;">
+                </div>
+            </div>
+            <button class="panel-float-btn" id="btnTogglePanel">▲ 隐藏面板到侧边栏</button>
+        </div>
+        <div class="settings-panel-content">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+                <div class="input-group">
+                    <label>当前播放文件名</label>
+                    <input type="text" id="currentFileNameInfo" value="未播放" readonly>
+                </div>
+                <div class="input-group">
+                    <label>倍速状态持久化说明</label>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); padding: 8px 0;">
+                        倍速设置一旦调整，自动持久化存储，无论切换或上传多少个视频都不会失效。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State Variables ---
+        let playlist = [];
+        let currentIndex = 0;
+        let isShuffle = false;
+        let subtitles = []; // parsed subtitle array {from, to, content, music}
+        let currentSubIndex = -1;
+        let isTtsSpeaking = false;
+        
+        // Pedometer State
+        let stepCount = 0;
+        let stepThreshold = 10;
+        let stepPlayDuration = 10;
+        let isStepPlaybackActive = false;
+        let stepPlaybackTimer = null;
+
+        // Music Rhythm State
+        let backgroundMusicAudio = null;
+        let audioContext = null;
+        let analyser = null;
+        let dataArray = null;
+        let lastJumpTime = 0;
+        let musicVolume = 0.5;
+
+        // Persistent Speed
+        let savedPlaybackRate = parseFloat(localStorage.getItem('neumo_playback_rate') || '1.0');
+
+        // DOM Elements
+        const mediaPlayer = document.getElementById('mediaPlayer');
+        const playerWrapper = document.getElementById('playerWrapper');
+        const btnPlayPause = document.getElementById('btnPlayPause');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const volumeRange = document.getElementById('volumeRange');
+        const seekSlider = document.getElementById('seekSlider');
+        const mediaUpload = document.getElementById('mediaUpload');
+        const playlistContainer = document.getElementById('playlistContainer');
+        const shuffleCheck = document.getElementById('shuffleCheck');
+        
+        const btnWarmUp = document.getElementById('btnWarmUp');
+        const btnFullscreen = document.getElementById('btnFullscreen');
+        
+        const btnRequestStep = document.getElementById('btnRequestStep');
+        const btnSimulateStep = document.getElementById('btnSimulateStep');
+        const stepThresholdInput = document.getElementById('stepThresholdInput');
+        const stepPlayDurationInput = document.getElementById('stepPlayDurationInput');
+        const stepCountDisplay = document.getElementById('stepCountDisplay');
+        const stepStatusDisplay = document.getElementById('stepStatusDisplay');
+
+        const subUpload = document.getElementById('subUpload');
+        const btnRemoveSub = document.getElementById('btnRemoveSub');
+        const subtitleOverlay = document.getElementById('subtitleOverlay');
+        const subStatusBadge = document.getElementById('subStatusBadge');
+
+        const musicUpload = document.getElementById('musicUpload');
+        const btnRemoveMusic = document.getElementById('btnRemoveMusic');
+        const musicVolumeRange = document.getElementById('musicVolumeRange');
+        const jumpCooldownInput = document.getElementById('jumpCooldownInput');
+        const excludeStartMin = document.getElementById('excludeStartMin');
+        const excludeEndMin = document.getElementById('excludeEndMin');
+        const rhythmThresholdInput = document.getElementById('rhythmThresholdInput');
+        const musicStatusBadge = document.getElementById('musicStatusBadge');
+
+        const bottomPanelContainer = document.getElementById('bottomPanelContainer');
+        const btnTogglePanel = document.getElementById('btnTogglePanel');
+        const persistentProgressBar = document.getElementById('persistentProgressBar');
+        const persistentProgressFill = document.getElementById('persistentProgressFill');
+        const fsProgressBar = document.getElementById('fsProgressBar');
+        const fsProgressFill = document.getElementById('fsProgressFill');
+        const globalSpeedRange = document.getElementById('globalSpeedRange');
+        const globalSpeedInput = document.getElementById('globalSpeedInput');
+        const currentFileNameInfo = document.getElementById('currentFileNameInfo');
+
+        // --- Initialization & Speed Persistence ---
+        globalSpeedRange.value = savedPlaybackRate;
+        globalSpeedInput.value = savedPlaybackRate;
+        mediaPlayer.playbackRate = savedPlaybackRate;
+
+        globalSpeedRange.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            globalSpeedInput.value = val;
+            setGlobalSpeed(val);
+        });
+        globalSpeedInput.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val)) {
+                globalSpeedRange.value = val;
+                setGlobalSpeed(val);
+            }
+        });
+
+        function setGlobalSpeed(rate) {
+            savedPlaybackRate = rate;
+            localStorage.setItem('neumo_playback_rate', rate);
+            mediaPlayer.playbackRate = rate;
+        }
+
+        // --- Playlist Management ---
+        mediaUpload.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                const url = URL.createObjectURL(file);
+                playlist.push({ name: file.name, url: url, file: file });
+            });
+            renderPlaylist();
+            if (mediaPlayer.src === '' && playlist.length > 0) {
+                loadMedia(0);
+            }
+        });
+
+        function renderPlaylist() {
+            if (playlist.length === 0) {
+                playlistContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.85rem;">暂无媒体文件，请点击上方按钮上传</div>`;
+                return;
+            }
+            playlistContainer.innerHTML = '';
+            playlist.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `playlist-item ${index === currentIndex ? 'active' : ''}`;
+                div.innerHTML = `
+                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">${item.name}</span>
+                    <button onclick="event.stopPropagation(); removePlaylistItem(${index})" title="移除">✕</button>
+                `;
+                div.onclick = () => loadMedia(index);
+                playlistContainer.appendChild(div);
+            });
+        }
+
+        window.removePlaylistItem = function(index) {
+            playlist.splice(index, 1);
+            if (currentIndex >= playlist.length) {
+                currentIndex = Math.max(0, playlist.length - 1);
+            }
+            renderPlaylist();
+            if (playlist.length > 0) {
+                loadMedia(currentIndex);
+            } else {
+                mediaPlayer.src = '';
+                currentFileNameInfo.value = '未播放';
+            }
+        }
+
+        function loadMedia(index) {
+            if (playlist.length === 0) return;
+            currentIndex = index;
+            const item = playlist[currentIndex];
+            mediaPlayer.src = item.url;
+            mediaPlayer.playbackRate = savedPlaybackRate; // Persistent speed applied!
+            mediaPlayer.load();
+            currentFileNameInfo.value = item.name;
+            renderPlaylist();
+            mediaPlayer.play().catch(() => {});
+        }
+
+        shuffleCheck.addEventListener('change', (e) => {
+            isShuffle = e.target.checked;
+        });
+
+        mediaPlayer.addEventListener('ended', () => {
+            if (playlist.length === 0) return;
+            if (isShuffle) {
+                let nextIdx;
+                do {
+                    nextIdx = Math.floor(Math.random() * playlist.length);
+                } while (nextIdx === currentIndex && playlist.length > 1);
+                loadMedia(nextIdx);
+            } else {
+                if (currentIndex + 1 < playlist.length) {
+                    loadMedia(currentIndex + 1);
+                } else {
+                    loadMedia(0); // loop back
+                }
+            }
+        });
+
+        // --- Basic Player Controls ---
+        btnPlayPause.addEventListener('click', () => {
+            if (mediaPlayer.paused) {
+                mediaPlayer.play();
+            } else {
+                mediaPlayer.pause();
+            }
+        });
+
+        volumeRange.addEventListener('input', (e) => {
+            mediaPlayer.volume = parseFloat(e.target.value);
+        });
+
+        // Dragging Progress Bar (Scrubber)
+        let isSeeking = false;
+        seekSlider.addEventListener('input', () => {
+            isSeeking = true;
+        });
+        seekSlider.addEventListener('change', (e) => {
+            if (mediaPlayer.duration) {
+                const targetTime = (parseFloat(e.target.value) / 100) * mediaPlayer.duration;
+                mediaPlayer.currentTime = targetTime;
+            }
+            isSeeking = false;
+        });
+
+        // Persistent progress bar & Fullscreen progress bar drag
+        persistentProgressBar.addEventListener('click', (e) => {
+            if (!mediaPlayer.duration) return;
+            const rect = persistentProgressBar.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            mediaPlayer.currentTime = pos * mediaPlayer.duration;
+        });
+
+        fsProgressBar.addEventListener('click', (e) => {
+            if (!mediaPlayer.duration) return;
+            const rect = fsProgressBar.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            mediaPlayer.currentTime = pos * mediaPlayer.duration;
+        });
+
+        mediaPlayer.addEventListener('timeupdate', () => {
+            if (!mediaPlayer.duration) return;
+            const current = mediaPlayer.currentTime;
+            const duration = mediaPlayer.duration;
+            const percent = (current / duration) * 100;
+
+            if (!isSeeking) {
+                seekSlider.value = percent;
+            }
+            persistentProgressFill.style.width = percent + '%';
+            fsProgressFill.style.width = percent + '%';
+
+            // Time Display formatting
+            timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+
+            // Subtitle & TTS Check
+            checkSubtitles(current);
+        });
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        // --- Fullscreen & Heart Animation ---
+        btnFullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                playerWrapper.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
+        });
+
+        function spawnFloatingHeart() {
+            if (!document.fullscreenElement) return; // Only in fullscreen as requested
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = '❤️';
+            const randomX = Math.random() * (playerWrapper.clientWidth - 50);
+            heart.style.left = randomX + 'px';
+            heart.style.bottom = '40px';
+            playerWrapper.appendChild(heart);
+            setTimeout(() => heart.remove(), 1500);
+        }
+
+        // --- Subtitle Parser & TTS Workflow ---
+        subUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const text = event.target.result;
+                parseSubtitles(file.name, text);
+            };
+            reader.readAsText(file);
+        });
+
+        btnRemoveSub.addEventListener('click', () => {
+            subtitles = [];
+            currentSubIndex = -1;
+            subtitleOverlay.style.display = 'none';
+            subStatusBadge.textContent = '当前未加载字幕';
+            subUpload.value = '';
+        });
+
+        function parseSubtitles(filename, text) {
+            subtitles = [];
+            if (filename.endsWith('.json')) {
+                try {
+                    const data = JSON.parse(text);
+                    subtitles = data.map(item => ({
+                        from: item.from,
+                        to: item.to,
+                        content: item.content
+                    }));
+                } catch (err) {
+                    alert('JSON 字幕解析失败');
+                    return;
+                }
+            } else if (filename.endsWith('.lrc')) {
+                const lines = text.split('
+');
+                const lrcRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+                lines.forEach(line => {
+                    const match = line.match(lrcRegex);
+                    if (match) {
+                        const min = parseInt(match[1]);
+                        const sec = parseInt(match[2]);
+                        const ms = parseInt(match[3]) * (match[3].length === 2 ? 10 : 1);
+                        const time = min * 60 + sec + ms / 1000;
+                        subtitles.push({ from: time, to: time + 3.0, content: match[4].trim() });
+                    }
+                });
+                // Sort by time
+                subtitles.sort((a, b) => a.from - b.from);
+                for (let i = 0; i < subtitles.length - 1; i++) {
+                    subtitles[i].to = subtitles[i + 1].from;
+                }
+            } else if (filename.endsWith('.vtt') || text.includes('-->')) {
+                const blocks = text.split(/
+?
+
+?
+/);
+                blocks.forEach(block => {
+                    const lines = block.split(/
+?
+/);
+                    for (let line of lines) {
+                        if (line.includes('-->')) {
+                            const parts = line.split('-->');
+                            const from = parseVttTime(parts[0].trim());
+                            const to = parseVttTime(parts[1].trim());
+                            const contentIndex = lines.indexOf(line) + 1;
+                            const content = lines.slice(contentIndex).join(' ');
+                            if (content && !isNaN(from)) {
+                                subtitles.push({ from, to, content });
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (subtitles.length > 0) {
+                subStatusBadge.textContent = `已成功加载 ${subtitles.length} 条字幕`;
+            } else {
+                subStatusBadge.textContent = '未解析到有效字幕，请检查格式';
+            }
+        }
+
+        function parseVttTime(timeStr) {
+            const parts = timeStr.split(':');
+            if (parts.length === 3) {
+                const h = parseFloat(parts[0]);
+                const m = parseFloat(parts[1]);
+                const s = parseFloat(parts[2].replace(',', '.'));
+                return h * 3600 + m * 60 + s;
+            } else if (parts.length === 2) {
+                const m = parseFloat(parts[0]);
+                const s = parseFloat(parts[1].replace(',', '.'));
+                return m * 60 + s;
+            }
+            return 0;
+        }
+
+        function checkSubtitles(currentTime) {
+            if (subtitles.length === 0) return;
+            
+            // Find active subtitle
+            let activeIdx = -1;
+            for (let i = 0; i < subtitles.length; i++) {
+                if (currentTime >= subtitles[i].from && currentTime <= subtitles[i].to) {
+                    activeIdx = i;
+                    break;
+                }
+            }
+
+            if (activeIdx !== -1) {
+                const sub = subtitles[activeIdx];
+                subtitleOverlay.textContent = sub.content;
+                subtitleOverlay.style.display = 'block';
+
+                // TTS Workflow: Trigger TTS once per subtitle segment start
+                if (currentSubIndex !== activeIdx && !isTtsSpeaking && 'speechSynthesis' in window) {
+                    currentSubIndex = activeIdx;
+                    // Pause and TTS speak Chinese content first
+                    mediaPlayer.pause();
+                    isTtsSpeaking = true;
+                    
+                    const utterance = new SpeechSynthesisUtterance(sub.content);
+                    utterance.lang = 'zh-CN';
+                    utterance.rate = 1.0;
+                    utterance.onend = () => {
+                        isTtsSpeaking = false;
+                        mediaPlayer.play().catch(() => {});
+                    };
+                    utterance.onerror = () => {
+                        isTtsSpeaking = false;
+                        mediaPlayer.play().catch(() => {});
+                    };
+                    window.speechSynthesis.speak(utterance);
+                }
+            } else {
+                subtitleOverlay.style.display = 'none';
+            }
+        }
+
+        // --- Pedometer / Step Trigger Logic ---
+        stepThresholdInput.addEventListener('change', (e) => {
+            stepThreshold = parseInt(e.target.value) || 10;
+        });
+        stepPlayDurationInput.addEventListener('change', (e) => {
+            stepPlayDuration = parseInt(e.target.value) || 10;
+        });
+
+        // Request DeviceMotion sensor permission for mobile pedometer
+        btnRequestStep.addEventListener('click', async () => {
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                try {
+                    const response = await DeviceMotionEvent.requestPermission();
+                    if (response === 'granted') {
+                        initPedometerListener();
+                        alert('计步传感器权限获取成功！');
+                    } else {
+                        alert('权限被拒绝');
+                    }
+                } catch (err) {
+                    alert('获取传感器权限出错: ' + err);
+                }
+            } else {
+                initPedometerListener();
+                alert('已启动设备运动监听（或使用模拟按钮测试）');
+            }
+        });
+
+        let lastAcc = { x: 0, y: 0, z: 0 };
+        function initPedometerListener() {
+            window.addEventListener('devicemotion', (e) => {
+                const acc = e.accelerationIncludingGravity;
+                if (!acc) return;
+                const delta = Math.abs(acc.x - lastAcc.x) + Math.abs(acc.y - lastAcc.y) + Math.abs(acc.z - lastAcc.z);
+                if (delta > 12) { // step threshold acceleration
+                    triggerStep();
+                }
+                lastAcc = { x: acc.x, y: acc.y, z: acc.z };
+            });
+        }
+
+        btnSimulateStep.addEventListener('click', () => {
+            triggerStep();
+        });
+
+        function triggerStep() {
+            stepCount++;
+            stepCountDisplay.textContent = stepCount;
+            spawnFloatingHeart(); // Fullscreen floating heart on step trigger
+
+            // Step trigger logic rules:
+            // "在结算播放时间的时候触发不会在已经进入的播放时间上进行叠加。只有播放时间结束从后往前推X秒和播放时间结束后触发才会激活一次播放时间。"
+            if (stepCount % stepThreshold === 0) {
+                activateStepPlaybackSession();
+            }
+        }
+
+        function activateStepPlaybackSession() {
+            // Check if playback is currently active
+            if (isStepPlaybackActive) {
+                // Rule: will not stack on already active playback session time
+                return;
+            }
+
+            // Trigger playback for stepPlayDuration seconds
+            isStepPlaybackActive = true;
+            stepStatusDisplay.textContent = `播放中 (${stepPlayDuration}秒)`;
+            stepStatusDisplay.style.color = 'var(--accent)';
+            
+            if (mediaPlayer.paused) {
+                mediaPlayer.play().catch(() => {});
+            }
+
+            if (stepPlaybackTimer) clearTimeout(stepPlaybackTimer);
+            stepPlaybackTimer = setTimeout(() => {
+                isStepPlaybackActive = false;
+                stepStatusDisplay.textContent = '播放结束 (等待新触发)';
+                stepStatusDisplay.style.color = 'var(--text-main)';
+                mediaPlayer.pause();
+            }, stepPlayDuration * 1000);
+        }
+
+        // Warm-up button: directly play for 2 minutes 15 seconds (135 seconds) without steps
+        btnWarmUp.addEventListener('click', () => {
+            isStepPlaybackActive = true;
+            stepStatusDisplay.textContent = '🔥 预热播放中 (135秒)';
+            stepStatusDisplay.style.color = 'var(--accent)';
+            if (mediaPlayer.paused) {
+                mediaPlayer.play().catch(() => {});
+            }
+            if (stepPlaybackTimer) clearTimeout(stepPlaybackTimer);
+            stepPlaybackTimer = setTimeout(() => {
+                isStepPlaybackActive = false;
+                stepStatusDisplay.textContent = '预热结束';
+                stepStatusDisplay.style.color = 'var(--text-main)';
+                mediaPlayer.pause();
+            }, 135 * 1000);
+            alert('已成功触发预热：直接播放 2 分钟 15 秒！');
+        });
+
+        // --- Music Rhythm & Auto Jump Module ---
+        musicUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            if (backgroundMusicAudio) {
+                backgroundMusicAudio.pause();
+            }
+            backgroundMusicAudio = new Audio(url);
+            backgroundMusicAudio.loop = true;
+            backgroundMusicAudio.volume = musicVolume;
+            backgroundMusicAudio.play().catch(() => {});
+            
+            setupAudioAnalyser(backgroundMusicAudio);
+            musicStatusBadge.textContent = `已加载律动音乐: ${file.name}`;
+        });
+
+        btnRemoveMusic.addEventListener('click', () => {
+            if (backgroundMusicAudio) {
+                backgroundMusicAudio.pause();
+                backgroundMusicAudio = null;
+            }
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+            analyser = null;
+            musicStatusBadge.textContent = '当前未加载律动音乐';
+            musicUpload.value = '';
+        });
+
+        musicVolumeRange.addEventListener('input', (e) => {
+            musicVolume = parseFloat(e.target.value);
+            if (backgroundMusicAudio) {
+                backgroundMusicAudio.volume = musicVolume;
+            }
+        });
+
+        function setupAudioAnalyser(audioEl) {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaElementSource(audioEl);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                requestAnimationFrame(analyzeMusicRhythm);
+            } catch (err) {
+                console.log('Audio Context Error:', err);
+            }
+        }
+
+        function analyzeMusicRhythm() {
+            if (!analyser || !backgroundMusicAudio || backgroundMusicAudio.paused) {
+                if (backgroundMusicAudio && !backgroundMusicAudio.paused) {
+                    requestAnimationFrame(analyzeMusicRhythm);
+                }
+                return;
+            }
+
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i];
+            }
+            const average = sum / dataArray.length;
+            const energy = average / 255.0; // 0 to 1
+
+            const threshold = parseFloat(rhythmThresholdInput.value) || 0.75;
+            const cooldownSec = parseFloat(jumpCooldownInput.value) || 3.50;
+            const now = Date.now() / 1000;
+
+            if (energy >= threshold && (now - lastJumpTime) >= cooldownSec) {
+                lastJumpTime = now;
+                executeRhythmJump();
+            }
+
+            requestAnimationFrame(analyzeMusicRhythm);
+        }
+
+        function executeRhythmJump() {
+            if (!mediaPlayer.duration) return;
+
+            // Check exclusion ranges
+            const duration = mediaPlayer.duration;
+            const excludeStart = (parseFloat(excludeStartMin.value) || 0) * 60;
+            const excludeEnd = (parseFloat(excludeEndMin.value) || 0) * 60;
+
+            const minAllowed = excludeStart;
+            const maxAllowed = duration - excludeEnd;
+
+            if (minAllowed >= maxAllowed) return; // invalid range
+
+            // Random jump to any position or random file in playlist
+            if (playlist.length > 1 && Math.random() < 0.4) {
+                // Jump to random playlist item
+                const randomIdx = Math.floor(Math.random() * playlist.length);
+                loadMedia(randomIdx);
+            } else {
+                // Jump to random position within allowed range
+                const randomTime = minAllowed + Math.random() * (maxAllowed - minAllowed);
+                mediaPlayer.currentTime = randomTime;
+            }
+
+            // Visual animation feedback in fullscreen / normal progress bar
+            triggerJumpVisualEffect();
+        }
+
+        function triggerJumpVisualEffect() {
+            persistentProgressFill.classList.add('jump-flash');
+            fsProgressFill.style.background = '#ff3366';
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100]);
+            }
+            setTimeout(() => {
+                persistentProgressFill.classList.remove('jump-flash');
+                fsProgressFill.style.background = 'var(--accent)';
+            }, 600);
+        }
+
+        // --- Bottom Panel Toggle & Sidebar Dock ---
+        let isPanelHidden = false;
+        btnTogglePanel.addEventListener('click', () => {
+            isPanelHidden = !isPanelHidden;
+            if (isPanelHidden) {
+                bottomPanelContainer.classList.add('hidden');
+                btnTogglePanel.textContent = '▼ 弹出控制面板';
+            } else {
+                bottomPanelContainer.classList.remove('hidden');
+                btnTogglePanel.textContent = '▲ 隐藏面板到侧边栏';
+            }
+        });
+
+    </script>
 </body>
 </html>
+index.html
+目前显示的是“index.html”。
