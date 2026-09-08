@@ -13,8 +13,8 @@
             /* 亮青蓝色 (纯色) */
             --cyan-blue: #00e0ff;
             /* 新拟态阴影 */
-            --shadow-dark: #0d0e0f;
-            --shadow-light: #232529;
+            --shadow-dark: #0a0b0c;
+            --shadow-light: #202124;
             --text-main: #e0e0e0;
             --text-muted: #888;
         }
@@ -40,12 +40,13 @@
         /* 基础新拟态模块 (暗黑) */
         .neu-module {
             background: var(--module-color);
-            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            box-shadow: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
             border-radius: 16px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 12px;
+            border: 1px solid #1a1c1e;
         }
 
         /* 纯色霓虹青蓝按钮 */
@@ -59,20 +60,16 @@
             font-weight: 700;
             font-size: 13px;
             transition: all 0.2s ease;
-            box-shadow: 3px 3px 6px rgba(0,0,0,0.4), inset 2px 2px 4px rgba(255,255,255,0.4);
+            box-shadow: 3px 3px 6px rgba(0,0,0,0.5), inset 2px 2px 4px rgba(255,255,255,0.4);
             text-align: center;
         }
 
         .neu-btn:active {
-            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.5), inset -1px -1px 3px rgba(255,255,255,0.3);
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.6), inset -1px -1px 3px rgba(255,255,255,0.3);
             transform: scale(0.98);
         }
 
-        .neu-btn.danger {
-            background: #ff3b3b;
-            color: #fff;
-        }
-        
+        .neu-btn.danger { background: #ff3b3b; color: #fff; }
         .neu-btn.outline {
             background: var(--module-color);
             color: var(--cyan-blue);
@@ -81,8 +78,8 @@
         }
 
         input[type="number"], input[type="text"] {
-            background: #0f1011;
-            border: 1px solid #333;
+            background: #0d0e0f;
+            border: 1px solid #222;
             color: var(--cyan-blue);
             padding: 6px 10px;
             border-radius: 6px;
@@ -92,22 +89,23 @@
             font-weight: bold;
         }
 
-        /* 主体布局 */
-        #media-container {
+        /* 播放器容器 (包含视频和悬浮控件，全屏时对它全屏) */
+        #player-container {
             flex: 1;
             position: relative;
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            background: #000;
+            z-index: 10;
         }
 
         video {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            pointer-events: none;
+            pointer-events: none; /* 屏蔽默认交互 */
         }
         video::-webkit-media-controls { display: none !important; }
 
@@ -125,18 +123,15 @@
             overflow-y: auto;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.7);
         }
-
-        #settings-panel.hidden {
-            transform: translateY(100%);
-        }
+        #settings-panel.hidden { transform: translateY(100%); }
 
         /* 模块网格排列，保证大小统一 */
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
             padding-bottom: 30px;
         }
 
@@ -151,35 +146,7 @@
             justify-content: space-between;
         }
 
-        /* FAB整合按钮 */
-        #toggle-fab {
-            position: absolute;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 200;
-            font-size: 22px;
-            transition: all 0.3s;
-            padding: 0;
-        }
-        
-        #toggle-fab.fab-hidden-mode {
-            bottom: 15px;
-            right: 0px;
-            width: 35px;
-            height: 40px;
-            border-radius: 20px 0 0 20px;
-            opacity: 0.6;
-        }
-
-        #toggle-fab.fab-hidden-mode:hover { opacity: 1; }
-
-        /* 进度条 */
+        /* 进度条：始终位于 player-container 底部 */
         #progress-wrapper {
             position: absolute;
             bottom: 0;
@@ -189,14 +156,10 @@
             background: #222;
             z-index: 150;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: height 0.3s ease;
         }
-
-        #settings-panel:not(.hidden) ~ #progress-wrapper {
-            bottom: 55vh;
-            height: 8px;
-            background: #111;
-        }
+        
+        #player-container:hover #progress-wrapper { height: 6px; }
 
         #progress-bar {
             height: 100%;
@@ -207,38 +170,36 @@
             transition: width 0.1s linear;
         }
 
-        /* 律动跳跃时的震动与变色动画 */
+        /* 律动卡点动画 */
         @keyframes beatFlash {
             0% { background: #fff; box-shadow: 0 0 20px #fff; }
             50% { background: #ff00ff; box-shadow: 0 0 20px #ff00ff; }
             100% { background: var(--cyan-blue); box-shadow: 0 0 10px var(--cyan-blue); }
         }
-        .beat-jump-anim {
-            animation: beatFlash 0.4s ease-out;
-        }
+        .beat-jump-anim { animation: beatFlash 0.3s ease-out; }
 
-        /* 进度提示 */
         #progress-thumb {
             position: absolute;
             right: -6px;
-            top: -4px;
+            top: -3px;
             width: 12px;
             height: 12px;
             border-radius: 50%;
             background: #fff;
             opacity: 0;
             transition: opacity 0.2s;
+            pointer-events: none;
         }
-        #settings-panel:not(.hidden) ~ #progress-wrapper:hover #progress-thumb { opacity: 1; }
+        #progress-wrapper:hover #progress-thumb { opacity: 1; }
         
         #progress-tooltip {
             position: absolute;
-            top: -28px;
+            top: -25px;
             right: -15px;
             background: var(--cyan-blue);
             color: #000;
-            font-size: 11px;
-            padding: 3px 6px;
+            font-size: 10px;
+            padding: 2px 5px;
             border-radius: 4px;
             font-weight: bold;
             opacity: 0;
@@ -260,17 +221,66 @@
             100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
         }
 
+        /* 独立悬浮控制组 */
+        #fab-container {
+            position: absolute;
+            bottom: 25px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 200;
+            transition: all 0.3s ease;
+        }
+
+        .fab-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--module-color);
+            color: var(--cyan-blue);
+            border: 2px solid var(--cyan-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: all 0.2s;
+        }
+        .fab-btn:active { transform: scale(0.9); }
+        .fab-btn.primary { background: var(--cyan-blue); color: #000; border: none; }
+
+        /* 隐藏状态 */
+        #fab-container.collapsed .fab-action {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px) scale(0.5);
+            position: absolute;
+        }
+        #fab-container.collapsed { bottom: 10px; right: 0; }
+        #fab-container.collapsed #fab-master {
+            width: 8px;
+            height: 30px;
+            border-radius: 4px 0 0 4px;
+            background: rgba(0, 224, 255, 0.3);
+            border: none;
+            box-shadow: none;
+            right: 0;
+            position: absolute;
+        }
+        #fab-container.collapsed #fab-master:hover { background: var(--cyan-blue); }
+
         /* 列表与其他控件 */
         input[type="file"] { display: none; }
         .file-label { display: inline-block; flex: 1; }
-        
         .flex-row { display: flex; gap: 10px; align-items: center; justify-content: space-between; }
         .flex-col { display: flex; flex-direction: column; gap: 8px; }
 
         #playlist {
             max-height: 90px;
             overflow-y: auto;
-            background: #0f1011;
+            background: #0d0e0f;
             padding: 8px;
             border-radius: 8px;
             border: 1px solid #222;
@@ -279,7 +289,7 @@
             display: flex;
             justify-content: space-between;
             padding: 6px;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid #1a1c1e;
             font-size: 12px;
             cursor: pointer;
             color: var(--text-muted);
@@ -288,50 +298,44 @@
         .playlist-item.active { color: var(--cyan-blue); font-weight: bold; }
         .remove-btn { color: #ff3b3b; cursor: pointer; padding-left: 10px; }
 
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100px;
-            background: transparent;
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-        }
+        /* 滑块美化 */
+        input[type=range] { -webkit-appearance: none; width: 100px; background: transparent; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #333; border-radius: 2px; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 14px;
-            width: 14px;
-            border-radius: 50%;
-            background: var(--cyan-blue);
-            margin-top: -5px;
-            cursor: pointer;
+            -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%;
+            background: var(--cyan-blue); margin-top: -5px; cursor: pointer;
         }
         .status-text { font-size: 11px; color: var(--text-muted); }
+
+        /* 隐藏滚动条 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <!-- 媒体展示区 -->
-    <div id="media-container">
+    <!-- 播放器主容器 (全屏目标) -->
+    <div id="player-container">
         <video id="main-video" playsinline></video>
         <audio id="rhythm-audio"></audio>
-    </div>
 
-    <!-- 进度条 -->
-    <div id="progress-wrapper">
-        <div id="progress-bar">
-            <div id="progress-thumb">
-                <div id="progress-tooltip">0%</div>
+        <!-- 进度条 -->
+        <div id="progress-wrapper">
+            <div id="progress-bar">
+                <div id="progress-thumb"><div id="progress-tooltip">0%</div></div>
             </div>
+        </div>
+
+        <!-- 独立悬浮按钮组 -->
+        <div id="fab-container">
+            <button class="fab-btn fab-action primary" id="btn-fullscreen" title="全屏切换">⛶</button>
+            <button class="fab-btn fab-action" id="btn-toggle-panel" title="隐藏/显示面板">⚙</button>
+            <button class="fab-btn" id="fab-master" title="隐藏所有按钮">👁</button>
         </div>
     </div>
 
-    <!-- 全屏与隐藏控制按钮 -->
-    <button id="toggle-fab" class="neu-btn">⛶</button>
-
-    <!-- 设置面板 -->
+    <!-- 底部设置面板 -->
     <div id="settings-panel">
         <div class="grid-container">
             
@@ -348,7 +352,7 @@
                 </div>
                 <div id="playlist"></div>
                 <div class="flex-row" style="justify-content: flex-start;">
-                    <span class="status-text">媒体音量:</span>
+                    <span class="status-text">音量:</span>
                     <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
                     <span class="status-text" style="margin-left:10px;">倍速:</span>
                     <input type="number" id="speed-input" value="1.0" step="0.1" style="width:50px;">
@@ -356,25 +360,25 @@
                 </div>
             </div>
 
-            <!-- 模块 2：计步与播放 -->
+            <!-- 模块 2：计步与播放控制 -->
             <div class="neu-module">
-                <h3>计步器控制</h3>
+                <h3>计步器与控制</h3>
                 <div class="flex-row">
-                    <button id="play-pause-btn" class="neu-btn outline" style="flex:1;">▶ 自由播放/暂停</button>
+                    <button id="play-pause-btn" class="neu-btn outline" style="flex:1;">▶ 自由播放</button>
                     <button id="warmup-btn" class="neu-btn" style="flex:1;">🔥 预热(2分15秒)</button>
                 </div>
                 <button id="enable-step-btn" class="neu-btn outline">👣 授权手机传感器计步</button>
                 <div class="flex-row">
                     <div class="flex-col" style="flex:1;">
-                        <span class="status-text">单次增加时间(秒)</span>
+                        <span class="status-text">步数增加时间(秒)</span>
                         <input type="number" id="step-duration" value="5" step="0.1" style="width:100%;">
                     </div>
                     <div class="flex-col" style="flex:1;">
-                        <span class="status-text">倒数重叠防抖窗口(秒)</span>
+                        <span class="status-text">倒数防叠窗口(秒)</span>
                         <input type="number" id="step-window" value="1" step="0.1" style="width:100%;">
                     </div>
                 </div>
-                <div class="status-text">规则：当剩余播放时间 <= 防抖窗口时，计步才会激活增加时间，防止疯狂叠加。</div>
+                <div class="status-text">规则：当播放剩余时间 <= 防叠窗口时，新步数才会刷新播放时间。</div>
             </div>
 
             <!-- 模块 3：字幕处理 -->
@@ -385,10 +389,10 @@
                         <input type="file" id="sub-upload" accept=".json,.lrc,.vtt">
                         📝 上传字幕文件
                     </label>
-                    <button id="remove-sub-btn" class="neu-btn danger">移除</button>
+                    <button id="remove-sub-btn" class="neu-btn danger" style="padding:10px;">移除</button>
                 </div>
                 <div class="status-text" id="sub-status" style="color:var(--cyan-blue);">未加载字幕</div>
-                <div class="status-text">进度条推进到字幕时间 -> 暂停画面 -> 调用系统TTS朗读中文 -> 恢复播放当前画面 -> 寻找下一条。</div>
+                <div class="status-text" style="line-height:1.4;">到达字幕时间 -> 暂停视频 -> TTS读中文 -> 恢复视频播放原文。</div>
             </div>
 
             <!-- 模块 4：音乐律动 -->
@@ -399,7 +403,7 @@
                         <input type="file" id="music-upload" accept="audio/*">
                         🎵 上传律动音乐
                     </label>
-                    <button id="remove-music-btn" class="neu-btn danger">移除</button>
+                    <button id="remove-music-btn" class="neu-btn danger" style="padding:10px;">移除</button>
                 </div>
                 <div class="flex-row" style="justify-content: flex-start;">
                     <span class="status-text">音乐音量:</span>
@@ -411,7 +415,7 @@
                         <input type="number" id="beat-threshold" value="200">
                     </div>
                     <div class="flex-col">
-                        <span class="status-text">冷却(秒)</span>
+                        <span class="status-text">冷却时间(秒)</span>
                         <input type="number" id="beat-cooldown" value="0.5" step="0.01">
                     </div>
                 </div>
@@ -425,66 +429,58 @@
                         <input type="number" id="safe-end" value="1" step="0.1">
                     </div>
                 </div>
-                <div class="status-text" style="font-size:10px; line-height:1.2;">原理：WebAudioAPI提取音乐实时低频(Bass)能量，突破阈值且过冷却期后，在避让区外随机生成时间戳，画面瞬间跃迁，实现不断音卡点切镜。</div>
+                <div class="status-text" style="font-size:10px; line-height:1.3;">原理：提取低频Bass能量，破阈值并过冷却期后，可在列表多视频间随机无缝切换并跳至安全区。</div>
             </div>
 
         </div>
     </div>
 
     <script>
-        // DOM 元素获取
+        // DOM 获取
         const video = document.getElementById('main-video');
         const rhythmAudio = document.getElementById('rhythm-audio');
-        const container = document.getElementById('media-container');
-        const toggleFab = document.getElementById('toggle-fab');
+        const playerContainer = document.getElementById('player-container');
         const settingsPanel = document.getElementById('settings-panel');
         const progressWrapper = document.getElementById('progress-wrapper');
         const progressBar = document.getElementById('progress-bar');
         const progressTooltip = document.getElementById('progress-tooltip');
         const playlistDiv = document.getElementById('playlist');
-        const subStatus = document.getElementById('sub-status');
         
-        // 核心播放控制状态
+        // 核心状态
         let playlist = [];
         let currentIndex = -1;
         let isShuffle = false;
         let globalSpeed = 1.0;
         
-        // 播放预算（秒），精确倒计时
         let playbackBudget = 0; 
         let lastFrameTime = performance.now();
         
-        // 字幕TTS状态
         let isTTSPlaying = false; 
         let subtitles = [];
         let currentSubIndex = 0;
         let synth = window.speechSynthesis;
 
-        // 音频律动状态
         let audioCtx, analyser, dataArray;
         let lastJumpTime = 0;
         let rhythmEnabled = false;
+        let needsRandomJumpAfterLoad = false; // 用于跨视频跳转的标记
 
-        // 传感器计步状态
         let lastAcc = 0;
 
         // --- 初始化与主循环 ---
         function initApp() {
             requestAnimationFrame(mainLoop);
-            // iOS解锁语音机制
-            document.body.addEventListener('click', () => {
-                if(synth.getVoices().length === 0) synth.getVoices();
-            }, {once: true});
+            document.body.addEventListener('click', () => { if(synth.getVoices().length === 0) synth.getVoices(); }, {once: true});
         }
 
         function mainLoop(now) {
             let dt = (now - lastFrameTime) / 1000;
             lastFrameTime = now;
 
-            // 1. 播放时间结算逻辑
+            // 1. 播放倒计时与防重叠结算
             if (playbackBudget > 0 && !isTTSPlaying) {
                 if (video.paused && video.src) {
-                    video.play().catch(e=>console.log("Play interrupted:", e));
+                    video.play().catch(e => console.log("Play error:", e));
                     if(rhythmEnabled && rhythmAudio.src) rhythmAudio.play().catch(e=>{});
                 }
                 playbackBudget -= dt;
@@ -495,12 +491,12 @@
                     if(rhythmEnabled) rhythmAudio.pause();
                 }
             } else if (!isTTSPlaying && playbackBudget <= 0 && !video.paused) {
-                // 确保预算归零时停止（拦截拖动进度条带来的自动播放）
+                // 拖动进度条等产生的意外播放拦截
                 video.pause();
                 if(rhythmEnabled) rhythmAudio.pause();
             }
 
-            // 2. 字幕 TTS 拦截逻辑
+            // 2. 字幕TTS
             if (subtitles.length > 0 && currentSubIndex < subtitles.length && video.src) {
                 let nextSub = subtitles[currentSubIndex];
                 if (video.currentTime >= nextSub.start && !isTTSPlaying) {
@@ -511,24 +507,17 @@
                     let utterance = new SpeechSynthesisUtterance(nextSub.text);
                     utterance.lang = 'zh-CN';
                     utterance.rate = 1.2;
-                    utterance.onend = () => {
-                        isTTSPlaying = false;
-                        currentSubIndex++;
-                    };
-                    utterance.onerror = () => {
-                        isTTSPlaying = false;
-                        currentSubIndex++;
-                    }
+                    utterance.onend = () => { isTTSPlaying = false; currentSubIndex++; };
+                    utterance.onerror = () => { isTTSPlaying = false; currentSubIndex++; };
                     synth.speak(utterance);
                 }
             }
 
-            // 3. 音乐律动逻辑
+            // 3. 音乐律动检测
             if (rhythmEnabled && !rhythmAudio.paused && analyser) {
                 analyser.getByteFrequencyData(dataArray);
                 let sum = 0;
-                // 采集极低频部分(Bass)
-                for(let i = 0; i < 8; i++) sum += dataArray[i];
+                for(let i = 0; i < 8; i++) sum += dataArray[i]; // 低频区
                 let avg = sum / 8;
 
                 let threshold = parseFloat(document.getElementById('beat-threshold').value);
@@ -536,11 +525,11 @@
 
                 if (avg > threshold && (now - lastJumpTime > cooldown)) {
                     lastJumpTime = now;
-                    jumpVideoToSafeZone();
+                    performBeatJump();
                 }
             }
 
-            // 4. 更新进度条 UI
+            // 4. 进度条更新
             if (video.duration) {
                 let percent = (video.currentTime / video.duration) * 100;
                 progressBar.style.width = percent + '%';
@@ -550,54 +539,83 @@
             requestAnimationFrame(mainLoop);
         }
 
-        // --- 跳跃控制 ---
-        function jumpVideoToSafeZone() {
-            if(!video.duration) return;
-            let safeStart = parseFloat(document.getElementById('safe-start').value) * 60;
-            let safeEnd = video.duration - (parseFloat(document.getElementById('safe-end').value) * 60);
+        // --- 律动跨文件跳转逻辑 ---
+        function performBeatJump() {
+            if (playlist.length === 0) return;
             
-            if (safeStart >= safeEnd || safeStart < 0) {
-                safeStart = 0; safeEnd = video.duration;
+            // 随机抽取一个视频（支持多媒体文件跳转）
+            let targetIndex = Math.floor(Math.random() * playlist.length);
+            
+            if (targetIndex !== currentIndex) {
+                // 跨文件切换
+                needsRandomJumpAfterLoad = true;
+                playMedia(targetIndex, false); // false代表不用它自动注入预算，保持现有播放状态
+            } else {
+                // 当前文件跳转
+                executeRandomSeek();
             }
             
-            let randomTime = safeStart + Math.random() * (safeEnd - safeStart);
-            video.currentTime = randomTime;
-            updateSubIndexOnSeek();
-            
-            // 底部变色动画
+            // 底部变色特效
             progressBar.classList.remove('beat-jump-anim');
             void progressBar.offsetWidth;
             progressBar.classList.add('beat-jump-anim');
             
-            // 震动
-            if(document.fullscreenElement && navigator.vibrate) {
-                navigator.vibrate(50);
-            }
+            // 全屏震动
+            if(document.fullscreenElement && navigator.vibrate) navigator.vibrate(50);
         }
 
-        // --- 全屏与整合面板开关 ---
-        toggleFab.addEventListener('click', () => {
-            let isHidden = settingsPanel.classList.toggle('hidden');
-            if (isHidden) {
-                toggleFab.classList.add('fab-hidden-mode');
-                toggleFab.innerText = '⚙';
-                if (!document.fullscreenElement) {
-                    container.requestFullscreen().catch(err => console.log(err));
-                }
+        function executeRandomSeek() {
+            if(!video.duration) return;
+            let safeStart = parseFloat(document.getElementById('safe-start').value) * 60;
+            let safeEnd = video.duration - (parseFloat(document.getElementById('safe-end').value) * 60);
+            if (safeStart >= safeEnd || safeStart < 0) { safeStart = 0; safeEnd = video.duration; }
+            
+            video.currentTime = safeStart + Math.random() * (safeEnd - safeStart);
+            updateSubIndexOnSeek();
+        }
+
+        // 监听元数据加载完成，用于跨文件跳转后的随机时间定位
+        video.addEventListener('loadedmetadata', () => {
+            if (needsRandomJumpAfterLoad) {
+                executeRandomSeek();
+                needsRandomJumpAfterLoad = false;
+            }
+        });
+
+        // --- FAB 悬浮控制组 ---
+        const fabMaster = document.getElementById('fab-master');
+        const fabContainer = document.getElementById('fab-container');
+        const btnFullscreen = document.getElementById('btn-fullscreen');
+        const btnTogglePanel = document.getElementById('btn-toggle-panel');
+
+        // 总控隐藏/显示
+        fabMaster.addEventListener('click', () => {
+            let collapsed = fabContainer.classList.toggle('collapsed');
+            fabMaster.innerText = collapsed ? '' : '👁';
+        });
+
+        // 面板隐藏/显示独立按钮
+        btnTogglePanel.addEventListener('click', () => {
+            settingsPanel.classList.toggle('hidden');
+            // 面板隐藏时进度条会自动变细(依靠CSS中 settings-panel:not(.hidden) ~ #progress-wrapper 的逻辑已实现)
+        });
+
+        // 全屏独立按钮
+        btnFullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                playerContainer.requestFullscreen().catch(err => console.log(err));
             } else {
-                toggleFab.classList.remove('fab-hidden-mode');
-                toggleFab.innerText = '⛶';
-                if (document.fullscreenElement) {
-                    document.exitFullscreen().catch(e=>{});
-                }
+                document.exitFullscreen().catch(err => console.log(err));
             }
         });
 
         document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                settingsPanel.classList.remove('hidden');
-                toggleFab.classList.remove('fab-hidden-mode');
-                toggleFab.innerText = '⛶';
+            if (document.fullscreenElement) {
+                btnFullscreen.innerText = '🗗';
+                settingsPanel.classList.add('hidden'); // 全屏自动收起面板
+            } else {
+                btnFullscreen.innerText = '⛶';
+                settingsPanel.classList.remove('hidden'); // 退出全屏展示面板
             }
         });
 
@@ -608,7 +626,6 @@
             let pos = (e.clientX - rect.left) / rect.width;
             video.currentTime = pos * video.duration;
             updateSubIndexOnSeek();
-            // 防止拖动时意外播放，不注入 budget
         });
 
         function updateSubIndexOnSeek() {
@@ -618,18 +635,14 @@
         }
         video.addEventListener('seeked', updateSubIndexOnSeek);
 
-        // --- 媒体库列表控制 (支持大型文件) ---
+        // --- 媒体库 (大型文件支持) ---
         document.getElementById('media-upload').addEventListener('change', (e) => {
             let files = Array.from(e.target.files);
-            // URL.createObjectURL 直接映射本地大文件，不占用内存
             files.forEach(file => {
-                playlist.push({
-                    name: file.name,
-                    url: URL.createObjectURL(file)
-                });
+                playlist.push({ name: file.name, url: URL.createObjectURL(file) });
             });
             renderPlaylist();
-            if (currentIndex === -1 && playlist.length > 0) playMedia(0);
+            if (currentIndex === -1 && playlist.length > 0) playMedia(0, true);
         });
 
         function renderPlaylist() {
@@ -640,22 +653,18 @@
                 
                 let title = document.createElement('span');
                 title.innerText = item.name;
-                title.onclick = () => playMedia(index);
+                title.onclick = () => playMedia(index, true);
                 
                 let del = document.createElement('span');
                 del.className = 'remove-btn';
                 del.innerText = '✖';
                 del.onclick = (e) => {
                     e.stopPropagation();
-                    URL.revokeObjectURL(item.url); // 释放内存指针
+                    URL.revokeObjectURL(item.url); 
                     playlist.splice(index, 1);
                     if (currentIndex === index) {
-                        video.src = '';
-                        currentIndex = -1;
-                        playbackBudget = 0;
-                    } else if (currentIndex > index) {
-                        currentIndex--;
-                    }
+                        video.src = ''; currentIndex = -1; playbackBudget = 0;
+                    } else if (currentIndex > index) currentIndex--;
                     renderPlaylist();
                 };
                 
@@ -665,25 +674,22 @@
             });
         }
 
-        function playMedia(index) {
+        // isUserTrigger 表示是否是用户主动切片（给预算预览），律动自动切片不给额外预算
+        function playMedia(index, isUserTrigger = false) {
             if (index < 0 || index >= playlist.length) return;
             currentIndex = index;
             video.src = playlist[index].url;
-            video.playbackRate = globalSpeed; // 倍速不失效
+            video.playbackRate = globalSpeed; // 保持全局倍速
             currentSubIndex = 0; 
             renderPlaylist();
-            playbackBudget = 3; // 上传后给3秒预览
+            if(isUserTrigger) playbackBudget = 3; 
         }
 
         video.addEventListener('ended', () => {
-            if (playlist.length <= 1) {
-                playbackBudget = 0;
-                return;
-            }
+            if (playlist.length <= 1) { playbackBudget = 0; return; }
             let next = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
-            playMedia(next);
-            // 自动下一P注入默认预算
-            playbackBudget = parseFloat(document.getElementById('step-duration').value); 
+            playMedia(next, false);
+            playbackBudget = parseFloat(document.getElementById('step-duration').value); // 下一集给一个步长
         });
 
         let shuffleBtn = document.getElementById('shuffle-btn');
@@ -698,7 +704,7 @@
         let playBtn = document.getElementById('play-pause-btn');
         playBtn.addEventListener('click', () => {
             if (video.paused || playbackBudget <= 0) {
-                playbackBudget = 999999; // 自由播放无限预算
+                playbackBudget = 999999; 
                 playBtn.innerText = '⏸ 暂停';
             } else {
                 playbackBudget = 0;
@@ -713,17 +719,15 @@
         const speedSlider = document.getElementById('speed-slider');
         function updateSpeed(val) {
             globalSpeed = parseFloat(val);
-            speedInput.value = globalSpeed;
-            speedSlider.value = globalSpeed;
+            speedInput.value = globalSpeed; speedSlider.value = globalSpeed;
             video.playbackRate = globalSpeed;
         }
         speedInput.addEventListener('change', e => updateSpeed(e.target.value));
         speedSlider.addEventListener('input', e => updateSpeed(e.target.value));
-
         document.getElementById('volume-slider').addEventListener('input', e => video.volume = e.target.value);
         document.getElementById('music-volume-slider').addEventListener('input', e => rhythmAudio.volume = e.target.value);
 
-        // --- 字幕解析逻辑 ---
+        // --- 字幕解析 ---
         document.getElementById('sub-upload').addEventListener('change', (e) => {
             let file = e.target.files[0];
             if (!file) return;
@@ -732,45 +736,33 @@
                 let text = ev.target.result;
                 let ext = file.name.split('.').pop().toLowerCase();
                 parseSubtitles(text, ext);
-                subStatus.innerText = `[加载成功] ${file.name} - 共${subtitles.length}条`;
-                currentSubIndex = 0;
-                updateSubIndexOnSeek();
+                document.getElementById('sub-status').innerText = `[已加载] ${file.name} (${subtitles.length}条)`;
+                currentSubIndex = 0; updateSubIndexOnSeek();
             };
             reader.readAsText(file);
         });
 
         document.getElementById('remove-sub-btn').addEventListener('click', () => {
-            subtitles = [];
-            currentSubIndex = 0;
-            subStatus.innerText = '未加载字幕';
+            subtitles = []; currentSubIndex = 0;
+            document.getElementById('sub-status').innerText = '未加载字幕';
             document.getElementById('sub-upload').value = '';
         });
 
         function parseSubtitles(text, type) {
             subtitles = [];
             if (type === 'json') {
-                try {
-                    let arr = JSON.parse(text);
-                    subtitles = arr.map(item => ({ start: parseFloat(item.from), text: item.content }));
-                } catch(e) { alert('JSON解析失败'); }
+                try { JSON.parse(text).forEach(i => subtitles.push({ start: parseFloat(i.from), text: i.content })); } catch(e) {}
             } else if (type === 'lrc') {
-                let lines = text.split('\n');
-                let regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
-                lines.forEach(line => {
-                    let match = line.match(regex);
-                    if (match && match[4].trim()) {
-                        let start = parseInt(match[1])*60 + parseInt(match[2]) + parseInt(match[3].padEnd(3,'0'))/1000;
-                        subtitles.push({ start, text: match[4].trim() });
-                    }
+                text.split('\n').forEach(line => {
+                    let m = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/);
+                    if (m && m[4].trim()) subtitles.push({ start: parseInt(m[1])*60 + parseInt(m[2]) + parseInt(m[3].padEnd(3,'0'))/1000, text: m[4].trim() });
                 });
             } else if (type === 'vtt') {
-                let blocks = text.split(/\n\s*\n/);
-                let timeRegex = /(?:(\d{2}):)?(\d{2}):(\d{2})\.(\d{3})\s+-->/;
-                blocks.forEach(block => {
+                text.split(/\n\s*\n/).forEach(block => {
                     let lines = block.split('\n');
-                    let tIdx = lines.findIndex(l => timeRegex.test(l));
+                    let tIdx = lines.findIndex(l => /(?:(\d{2}):)?(\d{2}):(\d{2})\.(\d{3})\s+-->/.test(l));
                     if (tIdx !== -1) {
-                        let m = lines[tIdx].match(timeRegex);
+                        let m = lines[tIdx].match(/(?:(\d{2}):)?(\d{2}):(\d{2})\.(\d{3})\s+-->/);
                         let h = m[1] ? parseInt(m[1]) : 0;
                         let start = h*3600 + parseInt(m[2])*60 + parseInt(m[3]) + parseInt(m[4])/1000;
                         let content = lines.slice(tIdx + 1).join(' ').replace(/<[^>]+>/g, '').trim();
@@ -793,34 +785,27 @@
                 analyser = audioCtx.createAnalyser();
                 analyser.fftSize = 256;
                 let source = audioCtx.createMediaElementSource(rhythmAudio);
-                source.connect(analyser);
-                analyser.connect(audioCtx.destination);
+                source.connect(analyser); analyser.connect(audioCtx.destination);
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
             }
             if(audioCtx.state === 'suspended') audioCtx.resume();
         });
 
         document.getElementById('remove-music-btn').addEventListener('click', () => {
-            rhythmAudio.src = '';
-            rhythmEnabled = false;
+            rhythmAudio.src = ''; rhythmEnabled = false;
             document.getElementById('music-upload').value = '';
         });
 
-        // --- 计步传感器逻辑 ---
+        // --- 计步传感器 ---
         const stepBtn = document.getElementById('enable-step-btn');
         stepBtn.addEventListener('click', () => {
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                 DeviceMotionEvent.requestPermission().then(state => {
-                    if (state === 'granted') {
-                        startPedometer();
-                        stepBtn.style.background = 'var(--cyan-blue)';
-                        stepBtn.style.color = '#000';
-                    } else alert('权限被拒绝');
+                    if (state === 'granted') { startPedometer(); stepBtn.classList.add('primary'); } 
+                    else alert('权限被拒绝');
                 }).catch(console.error);
             } else {
-                startPedometer(); 
-                stepBtn.style.background = 'var(--cyan-blue)';
-                stepBtn.style.color = '#000';
+                startPedometer(); stepBtn.classList.add('primary');
             }
             if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
         });
@@ -828,13 +813,10 @@
         function startPedometer() {
             window.addEventListener('devicemotion', (e) => {
                 let acc = Math.sqrt(
-                    Math.pow(e.accelerationIncludingGravity.x, 2) +
-                    Math.pow(e.accelerationIncludingGravity.y, 2) +
-                    Math.pow(e.accelerationIncludingGravity.z, 2)
+                    Math.pow(e.accelerationIncludingGravity.x, 2) + Math.pow(e.accelerationIncludingGravity.y, 2) + Math.pow(e.accelerationIncludingGravity.z, 2)
                 );
                 let delta = Math.abs(acc - lastAcc);
                 lastAcc = acc;
-                // 检测到明显震动(步数)
                 if (delta > 2.5) triggerStep();
             });
         }
@@ -843,26 +825,21 @@
             let windowSec = parseFloat(document.getElementById('step-window').value);
             let duration = parseFloat(document.getElementById('step-duration').value);
             
-            // 核心防叠加：只有当剩余播放时间 <= 防抖窗口时，才会重置注入播放时间
-            if (playbackBudget <= windowSec) {
-                playbackBudget = duration;
-            }
+            // 核心防叠加：只有在剩余时间 <= 窗口期时，才刷新时长
+            if (playbackBudget <= windowSec) playbackBudget = duration;
 
             if (document.fullscreenElement) createHeart();
         }
 
-        document.getElementById('warmup-btn').addEventListener('click', () => {
-            playbackBudget = 135; // 2分钟15秒
-        });
+        document.getElementById('warmup-btn').addEventListener('click', () => playbackBudget = 135);
 
         function createHeart() {
             let heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.innerText = '❤️';
+            heart.className = 'heart'; heart.innerText = '❤️';
             heart.style.left = Math.random() * 80 + 10 + '%';
-            heart.style.bottom = '20px';
-            container.appendChild(heart);
-            setTimeout(() => { if(container.contains(heart)) container.removeChild(heart); }, 2000);
+            heart.style.bottom = '10px';
+            playerContainer.appendChild(heart);
+            setTimeout(() => { if(playerContainer.contains(heart)) playerContainer.removeChild(heart); }, 2000);
         }
 
         initApp();
