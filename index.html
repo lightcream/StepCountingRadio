@@ -2,844 +2,890 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cyber-Motion Media Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumorphic Media & Rhythm Hub</title>
     <style>
         :root {
-            --bg-color: #1a1a1f;
-            --neu-bg: #222229;
-            --neu-shadow-dark: #121215;
-            --neu-shadow-light: #32323d;
-            --cyan: #00e0ff;
+            --bg-color: #121212;
+            --card-bg: #1a1a1a;
+            --shadow-dark: #0a0a0a;
+            --shadow-light: #262626;
+            --accent: #00e0ff;
             --text-main: #e0e0e0;
-            --text-muted: #888;
+            --text-muted: #888888;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow-x: hidden;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Neumorphism 基础类 */
-        .neu {
-            background: var(--neu-bg);
-            border-radius: 12px;
-            box-shadow: 6px 6px 12px var(--neu-shadow-dark), -6px -6px 12px var(--neu-shadow-light);
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-        .neu-inset {
-            background: var(--neu-bg);
-            border-radius: 8px;
-            box-shadow: inset 4px 4px 8px var(--neu-shadow-dark), inset -4px -4px 8px var(--neu-shadow-light);
-        }
-
-        /* 视频容器 */
-        #player-container {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-            overflow: hidden;
+        /* 新拟态基础组件 */
+        .neu-card {
+            background: var(--card-bg);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            border-radius: 16px;
+            padding: 20px;
             transition: all 0.3s ease;
         }
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            pointer-events: none; /* 禁用原生点击暂停 */
-        }
 
-        /* 全屏时的律动特效 */
-        .rhythm-flash {
-            animation: flash 0.3s ease-out;
-        }
-        @keyframes flash {
-            0% { box-shadow: inset 0 0 50px var(--cyan); }
-            100% { box-shadow: inset 0 0 0 transparent; }
-        }
-        .rhythm-vibrate {
-            animation: vibrate 0.2s linear;
-        }
-        @keyframes vibrate {
-            0%, 100% { transform: translate(0, 0); }
-            25%, 75% { transform: translate(-3px, 2px); }
-            50% { transform: translate(3px, -2px); }
-        }
-
-        /* 爱心特效 */
-        .floating-heart {
-            position: absolute;
-            color: var(--cyan);
-            font-size: 24px;
-            pointer-events: none;
-            animation: floatUp 1.5s ease-out forwards;
-            text-shadow: 0 0 10px var(--cyan);
-            z-index: 999;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            20% { transform: translateY(-20px) scale(1.2); opacity: 1; }
-            100% { transform: translateY(-100px) scale(1); opacity: 0; }
-        }
-
-        /* 极细进度条 */
-        #thin-progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.1);
-            z-index: 100;
-            cursor: pointer;
-        }
-        #thin-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--cyan);
-            box-shadow: 0 0 10px var(--cyan);
-            transition: width 0.1s linear;
-            pointer-events: none;
-        }
-
-        /* 控制面板悬浮按钮 */
-        #toggle-panel-btn, #fullscreen-btn {
-            position: absolute;
-            top: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--cyan);
-            font-weight: bold;
-            z-index: 101;
-        }
-        #toggle-panel-btn { right: 20px; }
-        #fullscreen-btn { right: 80px; }
-        #toggle-panel-btn:active, #fullscreen-btn:active {
-            box-shadow: inset 4px 4px 8px var(--neu-shadow-dark), inset -4px -4px 8px var(--neu-shadow-light);
-        }
-
-        /* 设置面板 */
-        #settings-panel {
-            height: 45vh;
-            padding: 20px;
-            overflow-y: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            transition: transform 0.3s ease, height 0.3s ease;
-        }
-        #settings-panel.hidden {
-            height: 0;
-            padding: 0 20px;
-            transform: translateY(100%);
-            overflow: hidden;
-        }
-        
-        /* 隐藏滚动条 */
-        #settings-panel::-webkit-scrollbar { width: 6px; }
-        #settings-panel::-webkit-scrollbar-thumb { background: var(--neu-shadow-light); border-radius: 3px; }
-
-        .module {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .module-title {
-            color: var(--cyan);
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* 表单控件 */
-        button, input[type="file"]::file-selector-button {
-            background: transparent;
+        .neu-button {
+            background: var(--card-bg);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
             border: none;
             color: var(--text-main);
-            padding: 10px 15px;
+            padding: 10px 20px;
+            border-radius: 10px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .neu-button:active {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .neu-button.primary {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 224, 255, 0.4), 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        }
+
+        .neu-input, .neu-select {
+            background: var(--card-bg);
+            border: none;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 10px;
             outline: none;
-            transition: all 0.2s;
-            text-align: center;
-            font-size: 13px;
-        }
-        button:active, input[type="file"]::file-selector-button:active {
-            box-shadow: inset 4px 4px 8px var(--neu-shadow-dark), inset -4px -4px 8px var(--neu-shadow-light);
-            color: var(--cyan);
-        }
-        .btn-cyan {
-            color: var(--cyan);
-            font-weight: bold;
-        }
-        .btn-danger {
-            color: #ff4757;
+            width: 100%;
         }
 
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            outline: none;
+            background: transparent;
         }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 8px;
+            background: var(--card-bg);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            border-radius: 4px;
+        }
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            background: var(--cyan);
-            box-shadow: 0 0 8px var(--cyan);
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            margin-top: -5px;
             cursor: pointer;
         }
 
-        input[type="number"], input[type="text"] {
-            border: none;
-            color: var(--cyan);
-            padding: 8px;
-            width: 80px;
-            text-align: center;
+        /* 布局容器 */
+        .app-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex: 1;
+        }
+
+        /* 媒体播放视口 */
+        .player-viewport {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+        }
+
+        video, audio {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             outline: none;
+        }
+
+        /* 隐藏原生暂停标志/控制栏 */
+        video::-webkit-media-controls {
+            display: none !important;
+        }
+
+        /* 字幕悬浮显示层 */
+        .subtitle-overlay {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(18, 18, 18, 0.85);
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            color: var(--accent);
+            text-align: center;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            max-width: 80%;
+            z-index: 10;
+        }
+
+        /* 全屏飘心动画 */
+        .floating-heart {
+            position: absolute;
+            font-size: 28px;
+            color: var(--accent);
+            animation: floatUp 2s ease-out forwards;
+            pointer-events: none;
+            z-index: 20;
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-150px) scale(1.3); opacity: 0; }
+        }
+
+        /* 底部持久化细线进度条 */
+        .persistent-progress {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            z-index: 9999;
+            cursor: pointer;
+        }
+        .persistent-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            transition: width 0.1s linear;
+        }
+        .jump-flash {
+            animation: flashBg 0.4s ease;
+        }
+        @keyframes flashBg {
+            0% { background: #ff0055; filter: brightness(2); }
+            100% { background: var(--accent); filter: brightness(1); }
+        }
+
+        /* 模块网格排布：一排全下，大小统一 */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .module-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 列表展示 */
+        .playlist-box, .file-info-box {
+            max-height: 120px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+            padding-right: 4px;
+        }
+        .playlist-item {
+            background: var(--card-bg);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .playlist-item.active {
+            color: var(--accent);
+            font-weight: bold;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* 状态指示器 */
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(0, 224, 255, 0.1);
+            color: var(--accent);
+        }
+
+        /* 控制栏与开关 */
+        .top-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .settings-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .settings-panel.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding: 0;
+            margin: 0;
+            pointer-events: none;
         }
 
         .flex-row {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
             gap: 10px;
+            align-items: center;
         }
 
-        /* 播放列表 */
-        #playlist {
-            max-height: 100px;
-            overflow-y: auto;
-            font-size: 12px;
-        }
-        .playlist-item {
-            padding: 8px;
-            margin-bottom: 5px;
-            cursor: pointer;
-            display: flex;
+        .space-between {
             justify-content: space-between;
         }
-        .playlist-item.active {
-            color: var(--cyan);
-            border-left: 3px solid var(--cyan);
-        }
 
+        /* 响应式微调 */
+        @media(max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 媒体播放区 -->
-    <div id="player-container">
-        <video id="main-video" playsinline></video>
-        
-        <!-- 全屏/隐藏 UI 按钮 -->
-        <div id="fullscreen-btn" class="neu">⛶</div>
-        <div id="toggle-panel-btn" class="neu">☰</div>
+    <div class="app-container">
+        <!-- 顶部工具栏：独立的全屏按钮与隐藏设置面板按钮 -->
+        <div class="neu-card top-toolbar" style="padding: 12px 20px;">
+            <div class="flex-row">
+                <button class="neu-button primary" id="togglePanelBtn">⚙️ 开关设置面板</button>
+                <button class="neu-button" id="fullscreenBtn">📺 全屏播放</button>
+            </div>
+            <div class="flex-row">
+                <span class="status-badge" id="playStateBadge">就绪</span>
+                <span class="status-badge" id="timeBankBadge">剩余播放: 0.0s</span>
+            </div>
+        </div>
 
-        <!-- 极细进度条 -->
-        <div id="thin-progress-bar">
-            <div id="thin-progress-fill"></div>
+        <!-- 媒体播放视口 -->
+        <div class="player-viewport" id="playerViewport">
+            <video id="mediaPlayer" playsinline></video>
+            <div class="subtitle-overlay" id="subtitleDisplay" style="display: none;"></div>
+        </div>
+
+        <!-- 可折叠的设置面板（各个功能模块） -->
+        <div class="settings-panel" id="settingsPanel">
+            <div class="modules-grid">
+
+                <!-- 1. 媒体与列表管理 -->
+                <div class="neu-card">
+                    <div class="module-title">📁 媒体与列表管理</div>
+                    <input type="file" id="mediaUploader" multiple accept="video/*,audio/*" style="display:none;">
+                    <button class="neu-button primary" style="width:100%; margin-bottom:10px;" onclick="document.getElementById('mediaUploader').click()">上传音视频资源</button>
+                    <div class="flex-row space-between" style="font-size:0.9rem; margin-bottom:6px;">
+                        <label><input type="checkbox" id="shuffleToggle"> 乱序播放 (Shuffle)</label>
+                        <span id="fileCountBadge">0 个文件</span>
+                    </div>
+                    <div class="playlist-box" id="playlistContainer"></div>
+                </div>
+
+                <!-- 2. 计步与时间银行模块 -->
+                <div class="neu-card">
+                    <div class="module-title">
+                        <span>👟 计步与预热系统</span>
+                        <button class="neu-button" style="padding:4px 8px; font-size:0.75rem;" id="requestSensorBtn">申请计步权限</button>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px; font-size:0.9rem;">
+                        <div class="flex-row space-between">
+                            <span>步进奖励(秒):</span>
+                            <input type="number" id="stepDurationInput" class="neu-input" style="width: 80px; padding:6px;" value="10" min="1">
+                        </div>
+                        <div class="flex-row gap-10">
+                            <button class="neu-button" style="flex:1;" id="simStepBtn">模拟计步 +1</button>
+                            <button class="neu-button primary" style="flex:1;" id="preheatBtn">预热 2m15s</button>
+                        </div>
+                        <div style="font-size:0.8rem; color:var(--text-muted); line-height: 1.3;">
+                            规则：活跃时间内不叠加；仅在剩余≤X秒或时间耗尽后触发计步方可生效。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 字幕管理模块 -->
+                <div class="neu-card">
+                    <div class="module-title">
+                        <span>💬 字幕管理 (JSON/LRC/VTT)</span>
+                        <button class="neu-button" style="padding:4px 8px; font-size:0.75rem; color:#ff4444;" id="removeSubBtn">移除字幕</button>
+                    </div>
+                    <input type="file" id="subUploader" accept=".json,.lrc,.vtt" style="display:none;">
+                    <button class="neu-button primary" style="width:100%; margin-bottom:10px;" onclick="document.getElementById('subUploader').click()">上传字幕文件</button>
+                    <div id="subStatus" class="status-badge" style="text-align:center;">当前未加载字幕</div>
+                </div>
+
+                <!-- 4. 音乐律动与自动卡点跳跃模块 -->
+                <div class="neu-card">
+                    <div class="module-title">
+                        <span>🎵 音乐律动跳跃</span>
+                        <button class="neu-button" style="padding:4px 8px; font-size:0.75rem; color:#ff4444;" id="removeMusicBtn">移除音乐</button>
+                    </div>
+                    <input type="file" id="musicUploader" accept="audio/*" style="display:none;">
+                    <button class="neu-button primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('musicUploader').click()">上传律动背景音乐</button>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.85rem;">
+                        <div class="flex-row space-between">
+                            <span>音乐音量:</span>
+                            <input type="range" id="musicVolume" min="0" max="1" step="0.05" value="1">
+                        </div>
+                        <div class="flex-row space-between">
+                            <span>防连跳冷却(秒):</span>
+                            <input type="number" id="jumpCooldownInput" class="neu-input" style="width:70px; padding:4px;" value="3.00" step="0.01" min="0">
+                        </div>
+                        <div class="flex-row space-between">
+                            <span>排除区域(前/后 分钟):</span>
+                            <input type="number" id="excludeMinInput" class="neu-input" style="width:60px; padding:4px;" value="1" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 播放控制与持久化倍速模块 -->
+                <div class="neu-card">
+                    <div class="module-title">⚡ 播放控制与倍速</div>
+                    <div style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem;">
+                        <div class="flex-row space-between">
+                            <span>媒体音量:</span>
+                            <input type="range" id="mediaVolume" min="0" max="1" step="0.05" value="1">
+                        </div>
+                        <div class="flex-row space-between">
+                            <span>播放速度 (<span id="speedVal">1.0</span>x):</span>
+                            <input type="range" id="speedSlider" min="0.5" max="3.0" step="0.1" value="1.0">
+                        </div>
+                        <div class="flex-row space-between">
+                            <span>键盘精准输入倍速:</span>
+                            <input type="number" id="speedInput" class="neu-input" style="width:80px; padding:6px;" value="1.0" step="0.1" min="0.2" max="5.0">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
-    <!-- 设置面板 -->
-    <div id="settings-panel">
-        
-        <!-- 模块1：媒体管理 -->
-        <div class="module neu">
-            <div class="module-title">媒体文件池 (Video/Audio)</div>
-            <input type="file" id="media-upload" class="neu-inset" multiple accept="video/*,audio/*">
-            <div class="flex-row">
-                <button class="neu" id="play-pause-btn">播放/暂停</button>
-                <label style="font-size: 12px;">
-                    <input type="checkbox" id="shuffle-checkbox"> 乱序播放
-                </label>
-            </div>
-            <div id="playlist" class="neu-inset"></div>
-        </div>
-
-        <!-- 模块2：基础控制 -->
-        <div class="module neu">
-            <div class="module-title">播放控制</div>
-            <div class="flex-row">
-                <span style="font-size: 12px;">全局倍速:</span>
-                <input type="range" id="speed-slider" class="neu-inset" min="0.1" max="4" step="0.1" value="1">
-                <input type="number" id="speed-input" class="neu-inset" value="1.0" step="0.1">
-            </div>
-            <div class="flex-row">
-                <span style="font-size: 12px;">媒体音量:</span>
-                <input type="range" id="volume-slider" class="neu-inset" min="0" max="1" step="0.01" value="1">
-            </div>
-            <div class="flex-row">
-                <button class="neu btn-cyan" id="warmup-btn" style="width: 100%;">预热 (直接增加 2m15s)</button>
-            </div>
-        </div>
-
-        <!-- 模块3：计步驱动 -->
-        <div class="module neu">
-            <div class="module-title">计步传感器驱动</div>
-            <button class="neu" id="req-sensor-btn">1. 授权获取传感器</button>
-            <div class="flex-row">
-                <span style="font-size: 12px;">单步增加时长(秒):</span>
-                <input type="number" id="step-seconds" class="neu-inset" value="3.0" step="0.1">
-            </div>
-            <div class="flex-row">
-                <span style="font-size: 12px;">防重叠判定(秒):</span>
-                <input type="number" id="overlap-seconds" class="neu-inset" value="3.0" step="0.1" title="剩余播放时间低于此值时，触发计步才会生效">
-            </div>
-            <div style="font-size: 12px; color: var(--cyan); text-align: center;">
-                当前剩余播放时间: <span id="remain-time-display">0.0</span>s
-            </div>
-        </div>
-
-        <!-- 模块4：字幕TTS系统 -->
-        <div class="module neu">
-            <div class="module-title">智能字幕朗读 (可选)</div>
-            <input type="file" id="sub-upload" class="neu-inset" accept=".json,.vtt,.lrc">
-            <button class="neu btn-danger" id="remove-sub-btn">移除当前字幕</button>
-            <div style="font-size: 11px; color: var(--text-muted);">
-                到达字幕时间点时，暂停播放 -> TTS朗读中文 -> 恢复播放。
-            </div>
-        </div>
-
-        <!-- 模块5：音乐律动系统 -->
-        <div class="module neu">
-            <div class="module-title">重拍音乐律动 (可选)</div>
-            <input type="file" id="music-upload" class="neu-inset" accept="audio/*">
-            <div class="flex-row">
-                <button class="neu" id="play-music-btn">播放/暂停音乐</button>
-                <button class="neu btn-danger" id="remove-music-btn">移除音乐</button>
-            </div>
-            <div class="flex-row">
-                <span style="font-size: 12px;">音乐音量:</span>
-                <input type="range" id="music-volume" class="neu-inset" min="0" max="1" step="0.01" value="0.5">
-            </div>
-            <div class="flex-row">
-                <span style="font-size: 12px;" title="0-255，越小越容易触发">触发阈值(Bass):</span>
-                <input type="number" id="rhythm-threshold" class="neu-inset" value="210">
-            </div>
-            <div class="flex-row">
-                <span style="font-size: 12px;">冷却时间(秒):</span>
-                <input type="number" id="rhythm-cooldown" class="neu-inset" value="1.50" step="0.01">
-            </div>
-            <div class="flex-row">
-                <span style="font-size: 11px;">避开首(分):</span>
-                <input type="number" id="exclude-start" class="neu-inset" value="0" style="width: 50px;">
-                <span style="font-size: 11px;">尾(分):</span>
-                <input type="number" id="exclude-end" class="neu-inset" value="0" style="width: 50px;">
-            </div>
-        </div>
-
+    <!-- 底部细线进度条（隐藏面板或全屏时常驻） -->
+    <div class="persistent-progress" id="persistentProgressBar" title="拖动以调整播放进度">
+        <div class="persistent-progress-bar" id="persistentProgressBarInner"></div>
     </div>
 
-    <!-- 隐藏的音频标签用于律动 -->
-    <audio id="bg-music" loop></audio>
+    <!-- 背景音乐音频节点 -->
+    <audio id="bgMusicPlayer" loop style="display:none;"></audio>
 
-<script>
-/** 
- * 全局状态管理 
- */
-const state = {
-    playlist: [], // {name, url, file}
-    currentIndex: -1,
-    globalSpeed: 1.0,
-    remainPlayTime: 0, // 剩余可播放秒数
-    isTTSPlaying: false,
-    subs: [], // {start, end, text, read: boolean}
-    lastJumpTime: 0
-};
+    <script>
+        /* ================= 核心状态与元素绑定 ================= */
+        const mediaPlayer = document.getElementById('mediaPlayer');
+        const bgMusicPlayer = document.getElementById('bgMusicPlayer');
+        const playerViewport = document.getElementById('playerViewport');
+        const persistentProgressBar = document.getElementById('persistentProgressBar');
+        const persistentProgressBarInner = document.getElementById('persistentProgressBarInner');
+        const playStateBadge = document.getElementById('playStateBadge');
+        const timeBankBadge = document.getElementById('timeBankBadge');
+        const subtitleDisplay = document.getElementById('subtitleDisplay');
 
-// DOM 元素引用
-const dom = {
-    video: document.getElementById('main-video'),
-    container: document.getElementById('player-container'),
-    panel: document.getElementById('settings-panel'),
-    thinBar: document.getElementById('thin-progress-bar'),
-    thinFill: document.getElementById('thin-progress-fill'),
-    timeDisplay: document.getElementById('remain-time-display'),
-    bgMusic: document.getElementById('bg-music')
-};
-
-/**
- * 1. 媒体播放与列表管理 (使用 URL.createObjectURL 优化大文件)
- */
-document.getElementById('media-upload').addEventListener('change', (e) => {
-    const files = Array.from(e.target.files);
-    files.forEach(file => {
-        state.playlist.push({
-            name: file.name,
-            url: URL.createObjectURL(file), // 核心：本地文件流式读取，不占内存
-            file: file
-        });
-    });
-    renderPlaylist();
-    if (state.currentIndex === -1 && state.playlist.length > 0) {
-        playMedia(0);
-    }
-});
-
-function renderPlaylist() {
-    const listDOM = document.getElementById('playlist');
-    listDOM.innerHTML = '';
-    state.playlist.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = `playlist-item ${index === state.currentIndex ? 'active' : ''}`;
-        div.innerHTML = `
-            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:80%;">${item.name}</span>
-            <span style="color:#ff4757;" onclick="event.stopPropagation(); removeMedia(${index})">✕</span>
-        `;
-        div.onclick = () => playMedia(index);
-        listDOM.appendChild(div);
-    });
-}
-
-function removeMedia(index) {
-    URL.revokeObjectURL(state.playlist[index].url);
-    state.playlist.splice(index, 1);
-    if (index === state.currentIndex) {
-        dom.video.src = '';
-        state.currentIndex = -1;
-    } else if (index < state.currentIndex) {
-        state.currentIndex--;
-    }
-    renderPlaylist();
-}
-
-function playMedia(index) {
-    if (!state.playlist[index]) return;
-    state.currentIndex = index;
-    dom.video.src = state.playlist[index].url;
-    // 继承全局倍速
-    dom.video.playbackRate = state.globalSpeed;
-    renderPlaylist();
-    
-    // 重置字幕已读状态
-    state.subs.forEach(s => s.read = false);
-}
-
-// 播放/暂停逻辑 (与计步器联动)
-document.getElementById('play-pause-btn').onclick = () => {
-    if (dom.video.paused) {
-        // 如果手动点播放，给无限时间让其自由播放
-        state.remainPlayTime = 999999; 
-        dom.video.play();
-    } else {
-        state.remainPlayTime = 0;
-        dom.video.pause();
-    }
-};
-
-// 列表播放完毕后自动下一集/乱序
-dom.video.addEventListener('ended', () => {
-    if (state.playlist.length <= 1) return;
-    const isShuffle = document.getElementById('shuffle-checkbox').checked;
-    let nextIndex = isShuffle 
-        ? Math.floor(Math.random() * state.playlist.length)
-        : (state.currentIndex + 1) % state.playlist.length;
-    playMedia(nextIndex);
-    dom.video.play();
-});
-
-// 倍速持久化
-const updateSpeed = (val) => {
-    let speed = parseFloat(val);
-    if (speed < 0.1) speed = 0.1;
-    state.globalSpeed = speed;
-    dom.video.playbackRate = speed;
-    document.getElementById('speed-slider').value = speed;
-    document.getElementById('speed-input').value = speed;
-};
-document.getElementById('speed-slider').addEventListener('input', (e) => updateSpeed(e.target.value));
-document.getElementById('speed-input').addEventListener('change', (e) => updateSpeed(e.target.value));
-// 保证每次新视频加载不丢失倍速
-dom.video.addEventListener('loadeddata', () => {
-    dom.video.playbackRate = state.globalSpeed;
-});
-
-// 媒体音量
-document.getElementById('volume-slider').addEventListener('input', (e) => {
-    dom.video.volume = parseFloat(e.target.value);
-});
-
-
-/**
- * 2. 进度条 (细条拖动与点击) & 布局切换
- */
-dom.thinBar.addEventListener('click', (e) => {
-    if (!dom.video.duration) return;
-    const rect = dom.thinBar.getBoundingClientRect();
-    const pos = (e.clientX - rect.left) / rect.width;
-    dom.video.currentTime = pos * dom.video.duration;
-});
-
-// 支持拖拽进度条
-let isDraggingProgress = false;
-dom.thinBar.addEventListener('mousedown', () => isDraggingProgress = true);
-document.addEventListener('mouseup', () => isDraggingProgress = false);
-document.addEventListener('mousemove', (e) => {
-    if (isDraggingProgress && dom.video.duration) {
-        const rect = dom.thinBar.getBoundingClientRect();
-        let pos = (e.clientX - rect.left) / rect.width;
-        pos = Math.max(0, Math.min(1, pos));
-        dom.video.currentTime = pos * dom.video.duration;
-        dom.thinFill.style.width = (pos * 100) + '%';
-    }
-});
-
-// 原生事件绑定 UI
-dom.video.addEventListener('timeupdate', () => {
-    if (!isDraggingProgress && dom.video.duration) {
-        const percent = (dom.video.currentTime / dom.video.duration) * 100;
-        dom.thinFill.style.width = percent + '%';
-    }
-});
-
-// 面板隐藏/显示
-document.getElementById('toggle-panel-btn').onclick = () => {
-    dom.panel.classList.toggle('hidden');
-};
-
-// 网页全屏 (绕过原生播放器UI)
-document.getElementById('fullscreen-btn').onclick = () => {
-    if (!document.fullscreenElement) {
-        dom.container.requestFullscreen().catch(err => {
-            alert(`全屏失败: ${err.message}`);
-        });
-    } else {
-        document.exitFullscreen();
-    }
-};
-
-
-/**
- * 3. 计步器核心逻辑与时间池系统
- */
-let lastAccel = 0;
-let stepCooldown = false;
-
-document.getElementById('req-sensor-btn').onclick = () => {
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-        DeviceMotionEvent.requestPermission()
-            .then(permissionState => {
-                if (permissionState === 'granted') {
-                    window.addEventListener('devicemotion', handleMotion);
-                    alert('传感器授权成功，开始监测计步！');
-                }
-            })
-            .catch(console.error);
-    } else {
-        // 安卓或旧版无需授权
-        window.addEventListener('devicemotion', handleMotion);
-        alert('已启动传感器监测！');
-    }
-};
-
-function handleMotion(e) {
-    const acc = e.accelerationIncludingGravity;
-    if (!acc) return;
-    // 计算向量模长 (排除重力 9.8 后的波动)
-    const magnitude = Math.sqrt(acc.x*acc.x + acc.y*acc.y + acc.z*acc.z);
-    
-    // 简单的计步峰值检测
-    if (magnitude > 13 && lastAccel <= 13 && !stepCooldown) {
-        triggerStep();
-        stepCooldown = true;
-        setTimeout(() => stepCooldown = false, 400); // 步频限制
-    }
-    lastAccel = magnitude;
-}
-
-function triggerStep() {
-    const addSecs = parseFloat(document.getElementById('step-seconds').value) || 3;
-    const overlapSecs = parseFloat(document.getElementById('overlap-seconds').value) || 3;
-    
-    // 规则：只有当时间结束从后往前推X秒，或结束后，触发才会激活
-    if (state.remainPlayTime <= overlapSecs) {
-        state.remainPlayTime = addSecs; // 覆盖，不叠加
-    }
-
-    // 全屏时上漂爱心特效
-    if (document.fullscreenElement) {
-        createFloatingHeart();
-    }
-}
-
-document.getElementById('warmup-btn').onclick = () => {
-    state.remainPlayTime = 135; // 2分钟15秒 = 135秒
-};
-
-function createFloatingHeart() {
-    const heart = document.createElement('div');
-    heart.className = 'floating-heart';
-    heart.innerHTML = '❤';
-    // 随机位置 (横向 10% 到 90%，纵向底端附近)
-    heart.style.left = (10 + Math.random() * 80) + '%';
-    heart.style.bottom = (10 + Math.random() * 20) + '%';
-    dom.container.appendChild(heart);
-    setTimeout(() => heart.remove(), 1500);
-}
-
-// 全局播放状态循环管线 (每 100ms 检查)
-setInterval(() => {
-    // TTS讲话期间，冻结时间流逝和视频播放
-    if (state.isTTSPlaying) {
-        if (!dom.video.paused) dom.video.pause();
-        return; 
-    }
-
-    // 更新倒计时时间池
-    if (state.remainPlayTime > 0 && state.remainPlayTime !== 999999) {
-        state.remainPlayTime -= 0.1;
-        if (state.remainPlayTime < 0) state.remainPlayTime = 0;
-    }
-
-    // 更新 UI
-    dom.timeDisplay.innerText = state.remainPlayTime >= 999999 ? '无限' : state.remainPlayTime.toFixed(1);
-
-    // 控制视频播放/暂停
-    if (state.remainPlayTime > 0) {
-        if (dom.video.paused && dom.video.src) dom.video.play();
-    } else {
-        if (!dom.video.paused) dom.video.pause();
-    }
-
-    checkSubtitles(); // 检查字幕是否到达触发点
-
-}, 100);
-
-
-/**
- * 4. 字幕解析与 TTS 系统
- */
-document.getElementById('sub-upload').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const content = e.target.result;
-        const name = file.name.toLowerCase();
-        state.subs = [];
+        // 状态变量
+        let playlist = [];
+        let currentIndex = 0;
+        let persistentSpeed = 1.0; // 持久化倍速
+        let activePlayTimeRemaining = 0; // 剩余播放时间（秒）
+        let isTimeActive = false;
+        let subtitles = []; // 解析后的字幕数组
+        let currentSubIndex = -1;
+        let isWaitingForTTS = false;
         
-        try {
-            if (name.endsWith('.json')) {
-                const data = JSON.parse(content);
-                state.subs = data.map(item => ({
-                    start: parseFloat(item.from),
-                    text: item.content,
-                    read: false
-                }));
-            } else if (name.endsWith('.lrc')) {
-                const lines = content.split('\n');
-                const regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
-                lines.forEach(line => {
-                    const match = regex.exec(line);
-                    if (match && match[4].trim()) {
-                        const m = parseInt(match[1]);
-                        const s = parseInt(match[2]);
-                        const ms = parseInt(match[3].length === 2 ? match[3]+'0' : match[3]);
-                        state.subs.push({
-                            start: m * 60 + s + ms / 1000,
-                            text: match[4].trim(),
-                            read: false
-                        });
-                    }
+        // 律动相关变量
+        let audioContext = null;
+        let analyser = null;
+        let musicSourceNode = null;
+        let lastJumpTimestamp = 0;
+        let musicActive = false;
+
+        /* ================= 1. 媒体列表与播放管理 ================= */
+        const mediaUploader = document.getElementById('mediaUploader');
+        const playlistContainer = document.getElementById('playlistContainer');
+        const fileCountBadge = document.getElementById('fileCountBadge');
+        const shuffleToggle = document.getElementById('shuffleToggle');
+
+        mediaUploader.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                playlist.push({
+                    name: file.name,
+                    url: URL.createObjectURL(file)
                 });
-            } else if (name.endsWith('.vtt')) {
-                const lines = content.split('\n');
-                const timeRegex = /(\d{2}):(\d{2}):(\d{2})\.(\d{3})\s*-->/;
-                let currentStart = -1;
-                for (let i = 0; i < lines.length; i++) {
-                    const match = timeRegex.exec(lines[i]);
-                    if (match) {
-                        const h = parseInt(match[1]), m = parseInt(match[2]), s = parseInt(match[3]), ms = parseInt(match[4]);
-                        currentStart = h * 3600 + m * 60 + s + ms / 1000;
-                    } else if (currentStart !== -1 && lines[i].trim() !== '' && isNaN(lines[i])) {
-                        state.subs.push({ start: currentStart, text: lines[i].trim(), read: false });
-                        currentStart = -1;
-                    }
+            });
+            fileCountBadge.textContent = `${playlist.length} 个文件`;
+            renderPlaylist();
+            if (mediaPlayer.paused && playlist.length === files.length) {
+                loadMedia(0);
+            }
+        });
+
+        function renderPlaylist() {
+            playlistContainer.innerHTML = '';
+            playlist.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `playlist-item ${index === currentIndex ? 'active' : ''}`;
+                div.innerHTML = `<span>${item.name}</span> <button class="remove-btn" onclick="removeMedia(${index}, event)">×</button>`;
+                div.onclick = () => loadMedia(index);
+                playlistContainer.appendChild(div);
+            });
+        }
+
+        window.removeMedia = function(index, event) {
+            event.stopPropagation();
+            playlist.splice(index, 1);
+            fileCountBadge.textContent = `${playlist.length} 个文件`;
+            if (currentIndex === index) {
+                mediaPlayer.pause();
+                if (playlist.length > 0) {
+                    currentIndex = currentIndex % playlist.length;
+                    loadMedia(currentIndex);
+                } else {
+                    mediaPlayer.src = '';
+                }
+            } else if (currentIndex > index) {
+                currentIndex--;
+            }
+            renderPlaylist();
+        };
+
+        function loadMedia(index) {
+            if (playlist.length === 0) return;
+            currentIndex = index;
+            mediaPlayer.src = playlist[currentIndex].url;
+            mediaPlayer.playbackRate = persistentSpeed; // 确保无论上传多少视频倍速都不失效
+            mediaPlayer.load();
+            renderPlaylist();
+        }
+
+        mediaPlayer.addEventListener('ended', () => {
+            if (playlist.length === 0) return;
+            if (shuffleToggle.checked) {
+                currentIndex = Math.floor(Math.random() * playlist.length);
+            } else {
+                currentIndex = (currentIndex + 1) % playlist.length;
+            }
+            loadMedia(currentIndex);
+            mediaPlayer.play();
+        });
+
+        /* ================= 2. 计步与时间银行系统 ================= */
+        const stepDurationInput = document.getElementById('stepDurationInput');
+        const timeBankBadgeEl = timeBankBadge;
+
+        // 计步时间扣除与检查逻辑
+        setInterval(() => {
+            if (activePlayTimeRemaining > 0) {
+                activePlayTimeRemaining = Math.max(0, activePlayTimeRemaining - 1);
+                timeBankBadgeEl.textContent = `剩余播放: ${activePlayTimeRemaining.toFixed(1)}s`;
+                if (!mediaPlayer.paused && !isWaitingForTTS) {
+                    playStateBadge.textContent = "播放中";
+                    playStateBadge.style.color = "var(--accent)";
+                }
+            } else {
+                if (!mediaPlayer.paused) {
+                    mediaPlayer.pause();
+                    playStateBadge.textContent = "时间耗尽/等待计步";
+                    playStateBadge.style.color = "#ff4444";
                 }
             }
-            alert(`字幕加载成功，共 ${state.subs.length} 条。`);
-        } catch (err) {
-            alert('字幕解析失败: ' + err.message);
+        }, 1000);
+
+        function triggerStep() {
+            const xSec = parseFloat(stepDurationInput.value) || 10;
+            // 规则：不会在已经进入的播放时间上进行叠加。只有播放时间结束从后往前推X秒和播放时间结束后触发才会激活一次播放时间。
+            if (activePlayTimeRemaining <= xSec || activePlayTimeRemaining === 0) {
+                activePlayTimeRemaining += xSec;
+                if (mediaPlayer.paused && playlist.length > 0 && !isWaitingForTTS) {
+                    mediaPlayer.play();
+                }
+            }
+            // 全屏飘心触发
+            if (document.fullscreenElement) {
+                spawnFloatingHeart();
+            }
         }
-    };
-    reader.readAsText(file);
-});
 
-document.getElementById('remove-sub-btn').onclick = () => {
-    state.subs = [];
-    document.getElementById('sub-upload').value = '';
-    alert('字幕功能已解除');
-};
+        document.getElementById('simStepBtn').addEventListener('click', triggerStep);
+        document.getElementById('preheatBtn').addEventListener('click', () => {
+            // 预热按钮：直接先播放2分钟15秒（135秒）
+            activePlayTimeRemaining += 135;
+            if (mediaPlayer.paused && playlist.length > 0) {
+                mediaPlayer.play();
+            }
+        });
 
-function checkSubtitles() {
-    if (state.subs.length === 0 || state.isTTSPlaying || dom.video.paused) return;
-    
-    const curr = dom.video.currentTime;
-    // 寻找当前时间点刚好经过且未读的字幕
-    const sub = state.subs.find(s => !s.read && curr >= s.start && curr <= s.start + 0.5); // 0.5秒判定窗口
-    
-    if (sub) {
-        sub.read = true;
-        // 触发 TTS
-        state.isTTSPlaying = true;
-        dom.video.pause(); // 暂停原文
-        
-        const utterance = new SpeechSynthesisUtterance(sub.text);
-        utterance.lang = 'zh-CN';
-        
-        utterance.onend = () => {
-            state.isTTSPlaying = false; // 结束后管道会自动恢复视频播放
-        };
-        utterance.onerror = () => {
-            state.isTTSPlaying = false;
-        };
-        
-        window.speechSynthesis.speak(utterance);
-    }
-}
+        // 真实手机计步传感器申请 (DeviceMotionEvent / Accelerometer 启发式步数检测)
+        document.getElementById('requestSensorBtn').addEventListener('click', async () => {
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                try {
+                    const response = await DeviceMotionEvent.requestPermission();
+                    if (response === 'granted') {
+                        initStepSensor();
+                        alert("计步传感器权限申请成功！");
+                    } else {
+                        alert("权限被拒绝");
+                    }
+                } catch(e) { console.error(e); }
+            } else {
+                initStepSensor();
+                alert("当前环境已监听设备动作或支持模拟计步。");
+            }
+        });
 
-
-/**
- * 5. 音乐律动 (Web Audio API 分析)
- */
-let audioCtx, analyser, dataArray;
-let isRhythmActive = false;
-
-document.getElementById('music-upload').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    dom.bgMusic.src = URL.createObjectURL(file);
-    dom.bgMusic.volume = parseFloat(document.getElementById('music-volume').value);
-    
-    // 初始化 AudioContext
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256; // 分为128个频段
-        const source = audioCtx.createMediaElementSource(dom.bgMusic);
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        dataArray = new Uint8Array(analyser.frequencyBinCount);
-    }
-    
-    dom.bgMusic.play().then(() => {
-        isRhythmActive = true;
-        analyzeRhythm();
-    }).catch(e => alert('播放音乐失败，请检查浏览器权限。'));
-});
-
-document.getElementById('play-music-btn').onclick = () => {
-    if(dom.bgMusic.paused) {
-        if(audioCtx?.state === 'suspended') audioCtx.resume();
-        dom.bgMusic.play();
-    } else {
-        dom.bgMusic.pause();
-    }
-};
-
-document.getElementById('remove-music-btn').onclick = () => {
-    dom.bgMusic.pause();
-    dom.bgMusic.src = '';
-    isRhythmActive = false;
-    document.getElementById('music-upload').value = '';
-    alert('音乐律动已解除');
-};
-
-document.getElementById('music-volume').addEventListener('input', e => dom.bgMusic.volume = e.target.value);
-
-function analyzeRhythm() {
-    if (!isRhythmActive || dom.bgMusic.paused) return requestAnimationFrame(analyzeRhythm);
-    
-    analyser.getByteFrequencyData(dataArray);
-    
-    // 计算低频段能量平均值 (Bass重音区，通常在频段的前几项)
-    let bassSum = 0;
-    const bassBands = 10; 
-    for(let i = 0; i < bassBands; i++) {
-        bassSum += dataArray[i];
-    }
-    const bassAvg = bassSum / bassBands;
-    
-    const threshold = parseFloat(document.getElementById('rhythm-threshold').value);
-    
-    if (bassAvg > threshold) {
-        const now = performance.now();
-        const cooldown = parseFloat(document.getElementById('rhythm-cooldown').value) * 1000;
-        
-        if (now - state.lastJumpTime > cooldown) {
-            state.lastJumpTime = now;
-            executeRhythmJump();
+        function initStepSensor() {
+            let lastAccel = 0;
+            window.addEventListener('devicemotion', (event) => {
+                const acc = event.accelerationIncludingGravity;
+                if (!acc) return;
+                const currentAccel = Math.sqrt(acc.x**2 + acc.y**2 + acc.z**2);
+                const delta = Math.abs(currentAccel - lastAccel);
+                if (delta > 3.5) { // 简单加速度峰值判定为一次计步
+                    triggerStep();
+                }
+                lastAccel = currentAccel;
+            });
         }
-    }
-    
-    requestAnimationFrame(analyzeRhythm);
-}
 
-function executeRhythmJump() {
-    if (state.playlist.length === 0) return;
+        /* ================= 3. 字幕与 TTS 联动模块 ================= */
+        const subUploader = document.getElementById('subUploader');
+        const subStatus = document.getElementById('subStatus');
 
-    // 1. 乱序跳媒体文件 (如果勾选)
-    if (document.getElementById('shuffle-checkbox').checked && state.playlist.length > 1) {
-        const randIndex = Math.floor(Math.random() * state.playlist.length);
-        if (randIndex !== state.currentIndex) {
-            playMedia(randIndex);
+        subUploader.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const content = evt.target.result;
+                parseSubtitles(file.name, content);
+            };
+            reader.readAsText(file);
+        });
+
+        document.getElementById('removeSubBtn').addEventListener('click', () => {
+            subtitles = [];
+            currentSubIndex = -1;
+            subStatus.textContent = "当前未加载字幕";
+            subtitleDisplay.style.display = 'none';
+        });
+
+        function parseSubtitles(filename, text) {
+            subtitles = [];
+            if (filename.endsWith('.json')) {
+                try {
+                    const raw = JSON.parse(text);
+                    subtitles = raw.map(item => ({ from: item.from, to: item.to, content: item.content }));
+                } catch(err) { alert("JSON字幕解析失败"); }
+            } else if (filename.endsWith('.lrc')) {
+                const lines = text.split('\n');
+                const regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+                lines.forEach(line => {
+                    const match = line.match(regex);
+                    if (match) {
+                        const min = parseInt(match[1]);
+                        const sec = parseInt(match[2]);
+                        const ms = parseInt(match[3].padEnd(3, '0'));
+                        const time = min * 60 + sec + ms / 1000;
+                        const content = match[4].trim();
+                        if (content) subtitles.push({ from: time, to: time + 3, content });
+                    }
+                });
+            } else if (filename.endsWith('.vtt')) {
+                const blocks = text.split(/\r?\n\r?\n/);
+                blocks.forEach(block => {
+                    const parts = block.split('\n');
+                    if (parts.length >= 2) {
+                        const timeLine = parts.find(p => p.includes('-->'));
+                        if (timeLine) {
+                            const [startStr, endStr] = timeLine.split('-->');
+                            const parseVttTime = (tStr) => {
+                                const p = tStr.trim().split(':');
+                                if (p.length === 3) {
+                                    return parseInt(p[0])*3600 + parseInt(p[1])*60 + parseFloat(p[2].replace(',', '.'));
+                                }
+                                return 0;
+                            };
+                            const content = parts.slice(parts.indexOf(timeLine) + 1).join(' ');
+                            subtitles.push({ from: parseVttTime(startStr), to: parseVttTime(endStr), content });
+                        }
+                    }
+                });
+            }
+            subtitles.sort((a,b) => a.from - b.from);
+            subStatus.textContent = `已加载字幕段落: ${subtitles.length} 条`;
         }
-    }
-    
-    // 2. 在安全区间内随机跳转时间
-    if (dom.video.readyState >= 1) {
-        const dur = dom.video.duration;
-        const excStart = parseFloat(document.getElementById('exclude-start').value) * 60 || 0;
-        const excEnd = parseFloat(document.getElementById('exclude-end').value) * 60 || 0;
-        
-        let minTime = excStart;
-        let maxTime = dur - excEnd;
-        
-        if (maxTime <= minTime) { minTime = 0; maxTime = dur; } // 防呆设计
-        
-        const targetTime = minTime + Math.random() * (maxTime - minTime);
-        dom.video.currentTime = targetTime;
-        
-        // 3. 特效反馈
-        if (document.fullscreenElement) {
-            // 震动动画
-            dom.container.classList.remove('rhythm-vibrate');
-            void dom.container.offsetWidth; // trigger reflow
-            dom.container.classList.add('rhythm-vibrate');
+
+        // 字幕与 TTS 触发逻辑
+        mediaPlayer.addEventListener('timeupdate', () => {
+            if (subtitles.length === 0) return;
+            const currentTime = mediaPlayer.currentTime;
+
+            const subIndex = subtitles.findIndex(s => currentTime >= s.from && currentTime <= s.to);
+            if (subIndex !== -1) {
+                subtitleDisplay.style.display = 'block';
+                subtitleDisplay.textContent = subtitles[subIndex].content;
+
+                // 等待进度条达到字幕对应时间点后才触发 TTS 朗读中文一遍，然后播放原文
+                if (subIndex !== currentSubIndex && !isWaitingForTTS) {
+                    currentSubIndex = subIndex;
+                    isWaitingForTTS = true;
+                    mediaPlayer.pause();
+
+                    speakText(subtitles[subIndex].content, () => {
+                        isWaitingForTTS = false;
+                        if (activePlayTimeRemaining > 0) {
+                            mediaPlayer.play();
+                        }
+                    });
+                }
+            } else {
+                subtitleDisplay.style.display = 'none';
+            }
+        });
+
+        function speakText(text, callback) {
+            if (!('speechSynthesis' in window)) {
+                if(callback) callback();
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN';
+            utterance.onend = () => { if(callback) callback(); };
+            utterance.onerror = () => { if(callback) callback(); };
+            window.speechSynthesis.speak(utterance);
+        }
+
+        /* ================= 4. 音乐律动与自动卡点跳转模块 ================= */
+        const musicUploader = document.getElementById('musicUploader');
+        const musicVolume = document.getElementById('musicVolume');
+        const jumpCooldownInput = document.getElementById('jumpCooldownInput');
+        const excludeMinInput = document.getElementById('excludeMinInput');
+
+        musicUploader.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            bgMusicPlayer.src = URL.createObjectURL(file);
+            bgMusicPlayer.play().catch(() => {});
+            musicActive = true;
+            initAudioAnalyzer();
+        });
+
+        document.getElementById('removeMusicBtn').addEventListener('click', () => {
+            bgMusicPlayer.pause();
+            bgMusicPlayer.src = '';
+            musicActive = false;
+            if (audioContext && audioContext.state !== 'closed') {
+                audioContext.close();
+            }
+        });
+
+        musicVolume.addEventListener('input', (e) => {
+            bgMusicPlayer.volume = e.target.value;
+        });
+
+        function initAudioAnalyzer() {
+            if (audioContext) return;
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                musicSourceNode = audioContext.createMediaElementSource(bgMusicPlayer);
+                musicSourceNode.connect(analyser);
+                analyser.connect(audioContext.destination);
+                analyser.fftSize = 256;
+                detectMusicRhythm();
+            } catch(e) { console.error(e); }
+        }
+
+        function detectMusicRhythm() {
+            if (!musicActive) return;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
             
-            // 进度条闪动
-            dom.thinFill.classList.remove('rhythm-flash');
-            void dom.thinFill.offsetWidth;
-            dom.thinFill.classList.add('rhythm-flash');
-            
-            // 物理震动API (限安卓手机)
-            if (navigator.vibrate) navigator.vibrate(50);
-        }
-    }
-}
+            const checkBeat = () => {
+                if (!musicActive) return;
+                analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                for(let i = 0; i < bufferLength; i++) { sum += dataArray[i]; }
+                let average = sum / bufferLength;
 
-</script>
+                // 音乐节奏超过设定阈值（例如能量平均值 > 130）触发自动卡点跳跃
+                const cooldown = parseFloat(jumpCooldownInput.value) || 3.00;
+                const now = Date.now() / 1000;
+
+                if (average > 130 && (now - lastJumpTimestamp >= cooldown)) {
+                    lastJumpTimestamp = now;
+                    triggerRhythmJump();
+                }
+                requestAnimationFrame(checkBeat);
+            };
+            checkBeat();
+        }
+
+        /*
+           【音乐节奏自动卡点跳跃原理说明】：
+           通过 Web Audio API 实时解析背景音乐的频域数据（Frequency Bin Data），计算当前帧音频能量的平均振幅。
+           当振幅突破设定的高能阈值（代表鼓点或节奏高潮爆发），系统结合冷却时间（防连跳）与排除区域限制，
+           随机跳转视频进度或切换列表媒体文件，实现“卡点切换画面”的视觉律动效果。
+        */
+        function triggerRhythmJump() {
+            if (mediaPlayer.duration) {
+                const excludeMin = parseFloat(excludeMinInput.value) || 1;
+                const excludeSec = excludeMin * 60;
+                const totalDur = mediaPlayer.duration;
+
+                if (totalDur > excludeSec * 2) {
+                    const validStart = excludeSec;
+                    const validEnd = totalDur - excludeSec;
+                    const randomTime = validStart + Math.random() * (validEnd - validStart);
+                    mediaPlayer.currentTime = randomTime;
+
+                    // 底部进度条变色动画与震动反馈
+                    persistentProgressBar.classList.add('jump-flash');
+                    setTimeout(() => persistentProgressBar.classList.remove('jump-flash'), 400);
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100]);
+                    }
+                }
+            } else if (playlist.length > 1) {
+                // 如果上传了多个媒体文件，也可以跳转到列表中的任意一个媒体文件
+                let nextIdx;
+                do {
+                    nextIdx = Math.floor(Math.random() * playlist.length);
+                } while (nextIdx === currentIndex);
+                loadMedia(nextIdx);
+                mediaPlayer.play();
+            }
+        }
+
+        /* ================= 5. 播放控制、倍速持久化与全屏特效 ================= */
+        const mediaVolume = document.getElementById('mediaVolume');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedInput = document.getElementById('speedInput');
+        const speedVal = document.getElementById('speedVal');
+
+        mediaVolume.addEventListener('input', (e) => {
+            mediaPlayer.volume = e.target.value;
+        });
+
+        // 倍速持久化逻辑
+        function updateSpeed(val) {
+            persistentSpeed = parseFloat(val);
+            mediaPlayer.playbackRate = persistentSpeed;
+            speedSlider.value = persistentSpeed;
+            speedInput.value = persistentSpeed;
+            speedVal.textContent = persistentSpeed.toFixed(1);
+        }
+
+        speedSlider.addEventListener('input', (e) => updateSpeed(e.target.value));
+        speedInput.addEventListener('input', (e) => {
+            const v = parseFloat(e.target.value);
+            if (!isNaN(v) && v >= 0.2 && v <= 5.0) updateSpeed(v);
+        });
+
+        // 全屏飘心特效
+        function spawnFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = `${Math.random() * 85 + 5}%`;
+            heart.style.bottom = '20px';
+            playerViewport.appendChild(heart);
+            setTimeout(() => heart.remove(), 2000);
+        }
+
+        // 底部持久化细线进度条交互
+        mediaPlayer.addEventListener('timeupdate', () => {
+            if (mediaPlayer.duration) {
+                const pct = (mediaPlayer.currentTime / mediaPlayer.duration) * 100;
+                persistentProgressBarInner.style.width = `${pct}%`;
+            }
+        });
+
+        persistentProgressBar.addEventListener('click', (e) => {
+            if (!mediaPlayer.duration) return;
+            const rect = persistentProgressBar.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            const pct = clickX / width;
+            mediaPlayer.currentTime = pct * mediaPlayer.duration;
+        });
+
+        // 全屏与设置面板独立开关
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const togglePanelBtn = document.getElementById('togglePanelBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                playerViewport.requestFullscreen().catch(err => alert(err.message));
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        let panelVisible = true;
+        togglePanelBtn.addEventListener('click', () => {
+            panelVisible = !panelVisible;
+            if (panelVisible) {
+                settingsPanel.classList.remove('collapsed');
+                togglePanelBtn.textContent = "⚙️ 隐藏设置面板";
+            } else {
+                settingsPanel.classList.add('collapsed');
+                togglePanelBtn.textContent = "⚙️ 显示设置面板";
+            }
+        });
+    </script>
 </body>
 </html>
