@@ -130,10 +130,10 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .vol-group input[type=range]{width:72px}
 @media (max-width:760px){.vol-group{display:none}.time-label{font-size:10.5px}}
 
-/* ============ 上传页面（工作台）：六个上传槽一行排下 + 主列表 + 竖屏列表 ============ */
+/* ============ 上传页面：六个上传槽（添加入口）一行排下 + 三个文件列表 ============ */
 .dock{padding:11px}
 .dock-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(156px,1fr));gap:9px}
-.up-tile{display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:11px;background:var(--pit);cursor:pointer;transition:.16s;box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);min-width:0}
+.up-tile{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:11px;background:var(--pit);cursor:pointer;transition:.16s;box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);min-width:0}
 .up-tile:hover{box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04),0 0 0 1px rgba(0,224,255,.3)}
 .up-tile:active{transform:translateY(1px)}
 .uic{width:30px;height:30px;flex:none;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--accent);background:#232835}
@@ -143,15 +143,11 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .up-tile em{display:block;font-style:normal;font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .up-tile em.ok{color:#9fd8e6}
 .up-tile input{display:none}
-.tile-x{width:20px;height:20px;flex:none;border:none;background:transparent;color:#5b6478;cursor:pointer;border-radius:50%;display:none;align-items:center;justify-content:center;transition:.14s}
-.tile-x.show{display:flex}
-.tile-x:hover{color:#ff8f8f;background:rgba(255,110,110,.12)}
-.tile-x svg{width:10px;height:10px}
 .dock-sep{height:1px;background:rgba(255,255,255,.05);margin:11px 2px 9px}
 .pl-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:0 2px}
 .pl-head h3{font-size:12px;letter-spacing:.2em;color:#aeb9cc;font-weight:600}
 .pl-head .pl-count{font-size:11.5px;color:var(--muted)}
-.pl-head .pl-shuf{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.pl-head .pl-shuf{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);cursor:pointer}
 .pl-head .pl-shuf.on{color:var(--accent)}
 .pl-head .pl-shuf svg{width:13px;height:13px}
 .pl-head .pl-tag{margin-left:auto;font-size:10px;color:#5b6478;letter-spacing:.12em}
@@ -175,6 +171,19 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .pl-mute.muted{color:var(--accent)}
 .pl-x:hover{color:#ff8f8f;background:rgba(255,110,110,.12)}
 .pl-mute svg,.pl-x svg{width:12px;height:12px}
+/* 附件与素材列表（字幕 / 音乐 / 图片 / 音效，逐行管理） */
+.res-list{display:flex;flex-direction:column;gap:5px;max-height:230px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#3a4152 transparent}
+.res-list::-webkit-scrollbar{width:5px}
+.res-list::-webkit-scrollbar-thumb{background:#3a4152;border-radius:4px}
+.res-empty{padding:10px 4px;font-size:11.5px;color:var(--muted);letter-spacing:.1em}
+.res-row{display:flex;align-items:center;gap:9px;padding:5px 9px;border-radius:9px;background:var(--pit);box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04)}
+.res-ic{width:22px;height:22px;flex:none;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--accent);background:#232835}
+.res-ic svg{width:11px;height:11px}
+.res-name{flex:1;min-width:0;font-size:11.5px;color:#d7e1ee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.res-tag{flex:none;font-size:10px;color:var(--muted);letter-spacing:.08em}
+.res-x{width:22px;height:22px;flex:none;border:none;background:transparent;color:#5b6478;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.14s}
+.res-x:hover{color:#ff8f8f;background:rgba(255,110,110,.12)}
+.res-x svg{width:10px;height:10px}
 
 /* ============ 通用控件 ============ */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border:none;border-radius:10px;cursor:pointer;background:var(--panel2);color:var(--text);font-family:inherit;font-size:12.5px;font-weight:600;letter-spacing:.04em;box-shadow:4px 5px 10px var(--dark),-3px -4px 8px var(--light);transition:.16s}
@@ -303,41 +312,37 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
     </div>
   </section>
 
-  <!-- 上传页面（工作台）：六个上传槽一行排下 + 主列表 + 竖屏列表 -->
+  <!-- 上传页面：六个上传槽（添加入口）一行排下 + 播放列表 + 竖屏列表 + 附件素材列表 -->
   <section class="dock neu" id="dock">
     <div class="dock-row">
-      <label class="up-tile">
+      <label class="up-tile" for="slotMediaInput">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
         <div><strong>媒体文件</strong><em id="slotMediaInfo">视频 / 音频 · 可多选</em></div>
         <input type="file" id="slotMediaInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.m2v,.3gp,.ogv,.vob,.rm,.rmvb,.asf,.divx,.f4v,.mka,.mp3,.flac,.wav,.aac,.m4a,.opus,.wma,.aiff,.ape,.amr,.ac3,.dts,.caf">
       </label>
-      <label class="up-tile">
+      <label class="up-tile" for="vInput">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/></svg></span>
         <div><strong>竖屏视频</strong><em id="vInfo">竖屏分屏专用 · 可多选</em></div>
         <input type="file" id="vInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.m2v,.3gp,.ogv,.vob,.rm,.rmvb,.asf,.divx,.f4v">
       </label>
-      <label class="up-tile">
+      <label class="up-tile" for="slotSubInput">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 13.5h6M6 16.5h9"/><path d="M6.5 8.5h4"/></svg></span>
         <div><strong>字幕轨</strong><em id="subInfo">JSON / LRC / VTT</em></div>
-        <button class="tile-x" id="subTileX" title="移除字幕"></button>
         <input type="file" id="slotSubInput" accept=".json,.lrc,.vtt,.txt">
       </label>
-      <label class="up-tile">
+      <label class="up-tile" for="slotMusicInput">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></span>
         <div><strong>音乐律动</strong><em id="musicInfo">按节奏随机跳转</em></div>
-        <button class="tile-x" id="musicTileX" title="移除音乐"></button>
         <input type="file" id="slotMusicInput" accept="audio/*,.mp3,.flac,.wav,.aac,.ogg,.m4a,.opus,.wma,.aiff,.ape,.amr,.ac3,.dts,.caf">
       </label>
-      <label class="up-tile">
+      <label class="up-tile" for="imgInput">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-4.5-4.5L7 20"/></svg></span>
         <div><strong>特效图片</strong><em id="imgInfo">批量上传 · 缺省爱心</em></div>
-        <button class="tile-x" id="imgTileX" title="移除全部图片"></button>
         <input type="file" id="imgInput" multiple accept="image/*,.png,.jpg,.jpeg,.webp,.gif,.svg,.bmp,.ico,.avif">
       </label>
-      <label class="up-tile">
+      <label class="up-tile" for="sfxInput">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></span>
         <div><strong>特效音效</strong><em id="sfxInfo">批量上传 · 随机播放</em></div>
-        <button class="tile-x" id="sfxTileX" title="移除全部音效"></button>
         <input type="file" id="sfxInput" multiple accept="audio/*,.mp3,.wav,.ogg,.aac,.m4a,.opus,.flac,.wma,.aiff,.amr,.ac3,.dts,.caf">
       </label>
     </div>
@@ -345,7 +350,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
     <div class="dock-sep"></div>
     <div class="pl-head">
       <h3>播放列表</h3><span class="pl-count" id="plCount">0 项</span>
-      <span class="pl-shuf" id="plShufBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>乱序</span>
+      <span class="pl-shuf" id="plShufBadge" title="乱序播放"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>乱序</span>
     </div>
     <div class="playlist" id="playlist"><div class="pl-empty">列表为空 · 上传媒体后自动加入</div></div>
 
@@ -355,6 +360,13 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
       <span class="pl-tag">律动 · 竖屏分屏专用</span>
     </div>
     <div class="playlist" id="vPlaylist"><div class="pl-empty">空 · 上传竖屏视频后自动加入</div></div>
+
+    <div class="dock-sep"></div>
+    <div class="pl-head">
+      <h3>附件与素材</h3><span class="pl-count" id="resCount">0 项</span>
+      <span class="pl-tag">字幕 / 音乐 / 图片 / 音效</span>
+    </div>
+    <div class="res-list" id="resList"><div class="res-empty">空 · 通过上方槽上传</div></div>
   </section>
 </div>
 
@@ -372,7 +384,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 </svg>
 
 <!-- 底栏面板开关（控制台收起后露出） -->
-<button class="panel-switch" id="panelSwitch" title="打开控制台">
+<button class="panel-switch" id="panelSwitch" type="button" title="打开控制台">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 14l6-6 6 6"/></svg>
   <span class="bar"></span>控制台
 </button>
@@ -394,7 +406,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
           <label>结算提前量（秒）</label>
           <div class="p-row"><input type="range" id="settleSecR"><input type="number" id="settleSecN"></div>
         </div>
-        <div class="row-btn" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px">
           <button class="btn accent" id="btnWarm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>预热 1:15</button>
           <button class="btn" id="btnSimStep">模拟一步</button>
         </div>
@@ -404,7 +416,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
       <div class="card">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2.5"/></svg>播放控制</h3>
         <div class="param">
-          <label>视频音量</label>
+          <label>主媒体音量</label>
           <div class="p-row"><input type="range" id="volR2"><input type="number" id="volN" min="0" max="1" step="0.01"></div>
         </div>
         <div class="param">
@@ -563,6 +575,10 @@ const SVG_HEART='<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.3
 const SVG_X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>';
 const SVG_VOLS='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
 const SVG_MUTES='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9l6 6M22 9l-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+const IC_SUB='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 14h7M6 17h9"/></svg>';
+const IC_MUSIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>';
+const IC_IMG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-4.5-4.5L7 20"/></svg>';
+const IC_SFX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 9a4 4 0 0 1 0 6"/></svg>';
 
 /* ============ 元素 ============ */
 const video=$('video'), playerShell=$('playerShell'), controlLayer=$('controlLayer'),
@@ -574,12 +590,12 @@ const video=$('video'), playerShell=$('playerShell'), controlLayer=$('controlLay
   volRange=$('volRange'), volR2=$('volR2'), volN=$('volN'), rateR=$('rateR'), rateN=$('rateN'),
   playlist=$('playlist'), plCount=$('plCount'), plShufBadge=$('plShufBadge'),
   vPlaylist=$('vPlaylist'), vCount=$('vCount'),
+  resList=$('resList'), resCount=$('resCount'),
   settingsPanel=$('settingsPanel'), panelSwitch=$('panelSwitch'),
   musicAudio=$('musicAudio'), toastWrap=$('toastWrap'),
   pillQuota=$('pillQuota'), pillSteps=$('pillSteps'), pillSub=$('pillSub'), pillBeat=$('pillBeat');
 
 btnPlay.innerHTML=SVG_PLAY; btnFs.innerHTML=SVG_FS; btnMute.innerHTML=SVG_VOL;
-['subTileX','musicTileX','imgTileX','sfxTileX'].forEach(id=>$(id).innerHTML=SVG_X);
 
 /* ============ 状态（全部参数持久化，下次打开自动恢复） ============ */
 const S={ rate:1, volume:1, stepSec:30, settleSec:5, beatSens:1.6, beatCooldown:2, headMin:0, tailMin:0, musicVol:0.7, shuffle:false,
@@ -708,7 +724,7 @@ playlist.addEventListener('click',e=>{
   const item=e.target.closest('.pl-item'); if(item) loadIndex(+item.dataset.i,true);
 });
 
-/* ============ 竖屏列表（上传页面完整管理：上传即加载 / 单独静音 / 移除 / 计数准确） ============ */
+/* ============ 竖屏列表（上传即加载 / 单独静音 / 移除 / 计数准确） ============ */
  $('vInput').addEventListener('change',e=>{
   const fs=[...e.target.files].filter(f=>MEDIA_RE.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
   if(fs.length){
@@ -760,6 +776,42 @@ vPlaylist.addEventListener('click',e=>{
     return; }
   const x=e.target.closest('.pl-x'); if(x){ e.stopPropagation(); removeVItem(+x.dataset.x); return; }
 });
+
+/* ============ 附件与素材列表（字幕 / 音乐 / 图片 / 音效 逐行列出、逐项移除、计数准确） ============ */
+function renderResList(){
+  const rows=[];
+  if(cues.length) rows.push({t:'sub',name:`${subName} · ${cues.length} 段`,tag:'字幕轨',ic:IC_SUB});
+  if(musicUrl) rows.push({t:'music',name:musicName,tag:'律动音乐',ic:IC_MUSIC});
+  assetImgs.forEach((a,i)=>rows.push({t:'img',i,name:a.name,tag:'图片',ic:IC_IMG}));
+  assetSfxs.forEach((a,i)=>rows.push({t:'sfx',i,name:a.name,tag:'音效',ic:IC_SFX}));
+  resCount.textContent=rows.length+' 项';
+  if(!rows.length){ resList.innerHTML='<div class="res-empty">空 · 通过上方槽上传</div>'; return; }
+  resList.innerHTML=rows.map(r=>`
+    <div class="res-row">
+      <span class="res-ic">${r.ic}</span>
+      <span class="res-name" title="${esc(r.name)}">${esc(r.name)}</span>
+      <span class="res-tag">${r.tag}</span>
+      <button class="res-x" data-t="${r.t}" data-i="${r.i??''}" title="移除">${SVG_X}</button>
+    </div>`).join('');
+}
+resList.addEventListener('click',e=>{
+  const x=e.target.closest('.res-x'); if(!x) return;
+  const t=x.dataset.t, i=(x.dataset.i==='')?null:+x.dataset.i;
+  if(t==='sub') removeSubtitle();
+  else if(t==='music') removeMusic();
+  else if(t==='img') removeImgAt(i);
+  else if(t==='sfx') removeSfxAt(i);
+});
+function removeImgAt(i){
+  const a=assetImgs[i]; if(!a) return;
+  URL.revokeObjectURL(a.url); assetImgs.splice(i,1);
+  renderResList(); updFxState(); toast(`已移除图片「${a.name}」 · 剩 ${assetImgs.length} 张`);
+}
+function removeSfxAt(i){
+  const a=assetSfxs[i]; if(!a) return;
+  URL.revokeObjectURL(a.url); assetSfxs.splice(i,1);
+  renderResList(); updFxState(); toast(`已移除音效「${a.name}」 · 剩 ${assetSfxs.length} 个`);
+}
 
 /* ============ 倍速 / 音量（滑块 + 输入双通道，全局静音与单项静音互相独立） ============ */
 function applyRate(){ try{ video.playbackRate=S.rate; }catch(e){} }
@@ -1007,13 +1059,11 @@ function fxTick(now){ // 随机触发模式：每隔 X 秒有 Y% 概率触发一
   }
 }
 
-/* ============ 特效素材管理（上传页槽上传 / 槽 × 移除） ============ */
+/* ============ 特效素材（上传槽上传 · 附件列表逐项移除） ============ */
 function updFxState(){
   $('fxState').innerHTML=`图片 <b>${assetImgs.length}</b> 张 · 音效 <b>${assetSfxs.length}</b> 个${assetImgs.length?'':'（默认爱心）'}`;
   $('imgInfo').textContent=assetImgs.length?`共 ${assetImgs.length} 张素材`:'批量上传 · 缺省爱心';
   $('sfxInfo').textContent=assetSfxs.length?`共 ${assetSfxs.length} 个音效`:'批量上传 · 随机播放';
-  $('imgTileX').classList.toggle('show',assetImgs.length>0);
-  $('sfxTileX').classList.toggle('show',assetSfxs.length>0);
   const fxs=(S.rippleOn?'波纹':'')+(S.impactOn?((S.rippleOn?'+':'')+'撞击'):'');
   $('fxModeState').innerHTML=(S.fxMode==='random'?`每 ${S.fxInterval}s · ${S.fxChance}%`:'计步触发')+' · 特效：'+(fxs||'无');
 }
@@ -1021,21 +1071,13 @@ function updFxState(){
   const fs=[...e.target.files].filter(f=>f.type.startsWith('image')||/\.(png|jpe?g|webp|gif|svg|bmp|ico|avif)$/i.test(f.name));
   if(fs.length){ for(const f of fs) assetImgs.push({name:f.name,url:URL.createObjectURL(f)});
     toast(`已加入 ${fs.length} 张图片 · 共 ${assetImgs.length} 张`); }
-  updFxState(); e.target.value='';
+  updFxState(); renderResList(); e.target.value='';
 });
  $('sfxInput').addEventListener('change',e=>{
   const fs=[...e.target.files].filter(f=>f.type.startsWith('audio')||/\.(mp3|wav|ogg|aac|m4a|opus|flac|wma|aiff|amr|ac3|dts|caf)$/i.test(f.name));
   if(fs.length){ for(const f of fs) assetSfxs.push({name:f.name,url:URL.createObjectURL(f)});
     toast(`已加入 ${fs.length} 个音效 · 共 ${assetSfxs.length} 个`); }
-  updFxState(); e.target.value='';
-});
- $('imgTileX').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
-  assetImgs.forEach(a=>URL.revokeObjectURL(a.url)); assetImgs=[];
-  updFxState(); toast('特效图片已移除 · 使用默认爱心');
-});
- $('sfxTileX').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
-  assetSfxs.forEach(a=>URL.revokeObjectURL(a.url)); assetSfxs=[];
-  updFxState(); toast('特效音效已移除');
+  updFxState(); renderResList(); e.target.value='';
 });
  $('fxModeSwitch').addEventListener('change',e=>{
   S.fxMode=e.target.checked?'random':'step'; persist();
@@ -1160,7 +1202,7 @@ function closeVWin(box){
   updVState();
 });
 
-/* ============ 字幕（JSON / LRC / VTT 自动识别；TTS 模式 / 翻译模式热切换；槽 × 移除） ============ */
+/* ============ 字幕（JSON / LRC / VTT 自动识别；TTS / 翻译热切换；附件列表移除） ============ */
 function parseSubtitle(text){
   const t=text.replace(/^\uFEFF/,'').trim();
   if(t.startsWith('[')){
@@ -1206,8 +1248,7 @@ function loadSubtitleFile(f){
       cs.sort((a,b)=>a.from-b.from);
       cues=cs; subIdx=0; cancelTTS();
       $('subInfo').textContent=`${f.name} · ${cs.length} 段`; $('subInfo').classList.add('ok');
-      $('subTileX').classList.add('show');
-      updSubState();
+      updSubState(); renderResList();
       toast(`字幕轨已加载 · ${cs.length} 段`); updateStatusPills();
     }catch(e){ toast('字幕解析失败 · 请检查 JSON / LRC / VTT 格式'); }
   };
@@ -1216,13 +1257,13 @@ function loadSubtitleFile(f){
 function updSubState(){
   $('subState').innerHTML=cues.length?`<b>${esc(subName)}</b> · ${cues.length} 段 · ${S.subMode==='tts'?'TTS 模式':'翻译模式'}`:'未加载 · 原文连续播放';
 }
- $('slotSubInput').addEventListener('change',e=>{ if(e.target.files[0]){ subName=e.target.files[0].name; loadSubtitleFile(e.target.files[0]); } e.target.value=''; });
- $('subTileX').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
+function removeSubtitle(){ // 在附件列表移除
   cues=[]; subIdx=0; subName=''; cancelTTS(); setSubtitleText('');
   $('subInfo').textContent='JSON / LRC / VTT'; $('subInfo').classList.remove('ok');
-  $('subTileX').classList.remove('show');
-  updSubState(); toast('字幕已移除 · 功能解除'); updateStatusPills();
-});
+  updSubState(); renderResList();
+  toast('字幕已移除 · 功能解除'); updateStatusPills();
+}
+ $('slotSubInput').addEventListener('change',e=>{ if(e.target.files[0]){ subName=e.target.files[0].name; loadSubtitleFile(e.target.files[0]); } e.target.value=''; });
  $('ttsSwitch').addEventListener('change',e=>{ // 热切换，不打断播放进度
   S.subMode=e.target.checked?'tts':'translate'; persist();
   if(S.subMode==='translate'){
@@ -1273,7 +1314,7 @@ function subtitleTick(){
   setSubtitleText(t>=c.from?c.content:''); // 两种模式都按时间轴显示
 }
 
-/* ============ 音乐律动（自适应频谱通量节拍检测 + 小窗 / 竖屏分流；槽 × 移除） ============ */
+/* ============ 音乐律动（自适应频谱通量节拍检测 + 小窗 / 竖屏分流；附件列表移除） ============ */
 function updMusicState(){
   $('musicState').innerHTML=musicUrl?`<b>${esc(musicName)}</b> · ${beatOn?'律动中':'已暂停'} · 跳跃 ${jumpCount} 次`:'未加载 · 律动关闭';
 }
@@ -1296,23 +1337,23 @@ function startBeat(){
   updMusicState(); updateStatusPills();
 }
 function stopBeat(){ musicAudio.pause(); beatOn=false; updMusicState(); updateStatusPills(); }
- $('musicSwitch').addEventListener('change',e=>e.target.checked?startBeat():stopBeat());
- $('slotMusicInput').addEventListener('change',e=>{
-  const f=e.target.files[0]; if(!f) return;
-  if(musicUrl) URL.revokeObjectURL(musicUrl);
-  musicUrl=URL.createObjectURL(f); musicName=f.name; musicAudio.src=musicUrl;
-  $('musicInfo').textContent=f.name; $('musicInfo').classList.add('ok');
-  $('musicTileX').classList.add('show');
-  startBeat(); toast('音乐已加载 · 律动开启');
-  e.target.value='';
-});
- $('musicTileX').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
+function removeMusic(){ // 在附件列表移除
   stopBeat(); $('musicSwitch').checked=false;
   musicAudio.removeAttribute('src'); musicAudio.load();
   if(musicUrl){ URL.revokeObjectURL(musicUrl); musicUrl=null; musicName=''; }
   $('musicInfo').textContent='按节奏随机跳转'; $('musicInfo').classList.remove('ok');
-  $('musicTileX').classList.remove('show');
-  updMusicState(); toast('音乐已移除 · 律动解除');
+  updMusicState(); renderResList();
+  toast('音乐已移除 · 律动解除');
+}
+ $('musicSwitch').addEventListener('change',e=>e.target.checked?startBeat():stopBeat());
+ $('slotMusicInput').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  if(musicUrl) URL.revokeObjectURL(musicUrl); // 单文件：上传新的即替换
+  musicUrl=URL.createObjectURL(f); musicName=f.name; musicAudio.src=musicUrl;
+  $('musicInfo').textContent=f.name; $('musicInfo').classList.add('ok');
+  renderResList();
+  startBeat(); toast('音乐已加载 · 律动开启');
+  e.target.value='';
 });
 function beatTick(){
   if(!beatOn||!audioCtx||musicAudio.paused) return;
@@ -1451,6 +1492,7 @@ volRange.value=S.volume; setVolume(S.volume,null,null);
 setRate(S.rate,null,null);
  $('shufSwitch').checked=shuffle;
  $('shufSwitch').addEventListener('change',e=>{ shuffle=S.shuffle=e.target.checked; persist(); renderPlaylist(); });
+plShufBadge.addEventListener('click',()=>{ $('shufSwitch').checked=!shuffle; $('shufSwitch').dispatchEvent(new Event('change')); });
  $('ttsSwitch').checked=(S.subMode!=='translate');
  $('smallWinSwitch').checked=S.smallWin;
  $('vsplitSwitch').checked=S.vsplit;
@@ -1497,7 +1539,7 @@ function loop(ts){
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-renderPlaylist(); renderVPlaylist(); updateStatusPills(); updMusicState(); updFxState(); updSubState(); updWinState(); applyVolume();
+renderPlaylist(); renderVPlaylist(); renderResList(); updateStatusPills(); updMusicState(); updFxState(); updSubState(); updWinState(); applyVolume();
 </script>
 </body>
 </html>
