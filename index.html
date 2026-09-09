@@ -95,13 +95,13 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
   mask-composite:intersect;
   animation:impactLines .5s ease-out forwards}
 @keyframes impactLines{0%{opacity:0;transform:translate(-50%,-50%) scale(.92)}18%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.08)}}
-.mini-win{position:absolute;border-radius:12px;overflow:hidden;background:#0b0d12;opacity:0;transform:scale(.7);
+/* 播放窗口：无边缘色框，仅柔和黑影，与主画面视觉一体 */
+.mini-win{position:absolute;border-radius:10px;overflow:hidden;background:#0b0d12;opacity:0;transform:scale(.7);
   transition:opacity .32s,transform .32s cubic-bezier(.2,.9,.3,1.3);
-  box-shadow:0 10px 26px rgba(0,0,0,.62),0 0 0 1.5px rgba(0,224,255,.5)}
+  box-shadow:0 10px 26px rgba(0,0,0,.6)}
 .mini-win.in{opacity:1;transform:scale(1)}
-.mini-win.out{opacity:0;transform:scale(.8)}
+.mini-win.out{opacity:0;transform:scale(.85)}
 .mini-win video{display:block;width:100%;height:100%;object-fit:contain;background:#0b0d12}
-.mini-win.vwin{box-shadow:0 10px 26px rgba(0,0,0,.62),0 0 0 1.5px rgba(0,224,255,.75)}
 
 .fs-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(6,8,12,.6);opacity:0;pointer-events:none;transition:height .2s,opacity .3s;z-index:5;cursor:pointer;touch-action:none}
 .is-fs .fs-progress{opacity:1;pointer-events:auto}
@@ -130,19 +130,23 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .vol-group input[type=range]{width:72px}
 @media (max-width:760px){.vol-group{display:none}.time-label{font-size:10.5px}}
 
-/* ============ 工作台：上传排（一行五个模块）+ 播放列表 ============ */
+/* ============ 上传页面（工作台）：六个上传槽一行排下 + 主列表 + 竖屏列表 ============ */
 .dock{padding:11px}
-.dock-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:9px}
-.up-tile{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:11px;background:var(--pit);cursor:pointer;transition:.16s;box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);min-width:0}
+.dock-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(156px,1fr));gap:9px}
+.up-tile{display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:11px;background:var(--pit);cursor:pointer;transition:.16s;box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);min-width:0}
 .up-tile:hover{box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04),0 0 0 1px rgba(0,224,255,.3)}
 .up-tile:active{transform:translateY(1px)}
-.uic{width:32px;height:32px;flex:none;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--accent);background:#232835}
-.uic svg{width:15px;height:15px}
-.up-tile>div{min-width:0}
-.up-tile strong{display:block;font-size:12px;letter-spacing:.04em;color:#dfe9f4;white-space:nowrap}
-.up-tile em{display:block;font-style:normal;font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uic{width:30px;height:30px;flex:none;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--accent);background:#232835}
+.uic svg{width:14px;height:14px}
+.up-tile>div{min-width:0;flex:1}
+.up-tile strong{display:block;font-size:11.5px;letter-spacing:.03em;color:#dfe9f4;white-space:nowrap}
+.up-tile em{display:block;font-style:normal;font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .up-tile em.ok{color:#9fd8e6}
 .up-tile input{display:none}
+.tile-x{width:20px;height:20px;flex:none;border:none;background:transparent;color:#5b6478;cursor:pointer;border-radius:50%;display:none;align-items:center;justify-content:center;transition:.14s}
+.tile-x.show{display:flex}
+.tile-x:hover{color:#ff8f8f;background:rgba(255,110,110,.12)}
+.tile-x svg{width:10px;height:10px}
 .dock-sep{height:1px;background:rgba(255,255,255,.05);margin:11px 2px 9px}
 .pl-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:0 2px}
 .pl-head h3{font-size:12px;letter-spacing:.2em;color:#aeb9cc;font-weight:600}
@@ -150,6 +154,7 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .pl-head .pl-shuf{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
 .pl-head .pl-shuf.on{color:var(--accent)}
 .pl-head .pl-shuf svg{width:13px;height:13px}
+.pl-head .pl-tag{margin-left:auto;font-size:10px;color:#5b6478;letter-spacing:.12em}
 .playlist{display:flex;gap:8px;overflow-x:auto;padding-bottom:5px;scrollbar-width:thin;scrollbar-color:#3a4152 transparent}
 .playlist::-webkit-scrollbar{height:5px}
 .playlist::-webkit-scrollbar-thumb{background:#3a4152;border-radius:4px}
@@ -158,6 +163,7 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .pl-item:hover{box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04),0 0 0 1px rgba(0,224,255,.28)}
 .pl-item.active{box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04),0 0 0 1.5px var(--accent)}
 .pl-item.active::before{content:'';position:absolute;left:0;top:11px;bottom:11px;width:3px;border-radius:2px;background:var(--accent)}
+.pl-item.v-item{cursor:default}
 .pl-idx{font-size:13px;font-weight:700;color:#4d566b;flex:none;font-variant-numeric:tabular-nums}
 .pl-item.active .pl-idx{color:var(--accent)}
 .pl-meta{min-width:0;flex:1}
@@ -203,7 +209,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 .p-row input[type=range]{flex:1;min-width:0}
 .p-row input[type=number]{width:70px}
 
-/* ============ 设置抽屉 + 底栏面板开关 ============ */
+/* ============ 设置抽屉（只放参数与开关）+ 底栏面板开关 ============ */
 .settings-panel{position:fixed;left:8px;right:8px;bottom:4px;z-index:70;max-height:min(60vh,520px);display:flex;flex-direction:column;border-radius:var(--radius);background:var(--panel);transform:translateY(calc(100% + 14px));transition:transform .4s cubic-bezier(.22,.9,.32,1);box-shadow:10px 12px 28px rgba(0,0,0,.6),-8px -8px 20px var(--light)}
 .settings-panel.open{transform:translateY(0)}
 .sp-head{display:flex;align-items:center;gap:12px;padding:10px 16px 6px;flex:none}
@@ -216,7 +222,6 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 .card{background:var(--panel2);border-radius:12px;padding:12px;box-shadow:4px 5px 11px rgba(0,0,0,.38),-3px -4px 9px rgba(255,255,255,.035)}
 .card h3{display:flex;align-items:center;gap:7px;font-size:11.5px;letter-spacing:.22em;color:#aeb9cc;font-weight:600;margin-bottom:10px}
 .card h3 svg{width:13px;height:13px;color:var(--accent);flex:none}
-.row-btn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
 .state-line{font-size:11.5px;color:var(--muted);padding:7px 10px;border-radius:9px;background:var(--pit);box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .state-line b{color:#9fd8e6;font-weight:600}
 .mini-hint{font-size:10.5px;line-height:1.6;color:#68718a;margin-top:8px}
@@ -298,8 +303,8 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
     </div>
   </section>
 
-  <!-- 工作台：五个上传模块一行排下 + 播放列表 -->
-  <section class="dock neu" id="playlistWrap">
+  <!-- 上传页面（工作台）：六个上传槽一行排下 + 主列表 + 竖屏列表 -->
+  <section class="dock neu" id="dock">
     <div class="dock-row">
       <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
@@ -307,32 +312,49 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
         <input type="file" id="slotMediaInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.m2v,.3gp,.ogv,.vob,.rm,.rmvb,.asf,.divx,.f4v,.mka,.mp3,.flac,.wav,.aac,.m4a,.opus,.wma,.aiff,.ape,.amr,.ac3,.dts,.caf">
       </label>
       <label class="up-tile">
+        <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/></svg></span>
+        <div><strong>竖屏视频</strong><em id="vInfo">竖屏分屏专用 · 可多选</em></div>
+        <input type="file" id="vInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.m2v,.3gp,.ogv,.vob,.rm,.rmvb,.asf,.divx,.f4v">
+      </label>
+      <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 13.5h6M6 16.5h9"/><path d="M6.5 8.5h4"/></svg></span>
         <div><strong>字幕轨</strong><em id="subInfo">JSON / LRC / VTT</em></div>
+        <button class="tile-x" id="subTileX" title="移除字幕"></button>
         <input type="file" id="slotSubInput" accept=".json,.lrc,.vtt,.txt">
       </label>
       <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></span>
         <div><strong>音乐律动</strong><em id="musicInfo">按节奏随机跳转</em></div>
+        <button class="tile-x" id="musicTileX" title="移除音乐"></button>
         <input type="file" id="slotMusicInput" accept="audio/*,.mp3,.flac,.wav,.aac,.ogg,.m4a,.opus,.wma,.aiff,.ape,.amr,.ac3,.dts,.caf">
       </label>
       <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-4.5-4.5L7 20"/></svg></span>
         <div><strong>特效图片</strong><em id="imgInfo">批量上传 · 缺省爱心</em></div>
+        <button class="tile-x" id="imgTileX" title="移除全部图片"></button>
         <input type="file" id="imgInput" multiple accept="image/*,.png,.jpg,.jpeg,.webp,.gif,.svg,.bmp,.ico,.avif">
       </label>
       <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></span>
         <div><strong>特效音效</strong><em id="sfxInfo">批量上传 · 随机播放</em></div>
+        <button class="tile-x" id="sfxTileX" title="移除全部音效"></button>
         <input type="file" id="sfxInput" multiple accept="audio/*,.mp3,.wav,.ogg,.aac,.m4a,.opus,.flac,.wma,.aiff,.amr,.ac3,.dts,.caf">
       </label>
     </div>
+
     <div class="dock-sep"></div>
     <div class="pl-head">
       <h3>播放列表</h3><span class="pl-count" id="plCount">0 项</span>
       <span class="pl-shuf" id="plShufBadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>乱序</span>
     </div>
     <div class="playlist" id="playlist"><div class="pl-empty">列表为空 · 上传媒体后自动加入</div></div>
+
+    <div class="dock-sep"></div>
+    <div class="pl-head">
+      <h3>竖屏列表</h3><span class="pl-count" id="vCount">0 项</span>
+      <span class="pl-tag">律动 · 竖屏分屏专用</span>
+    </div>
+    <div class="playlist" id="vPlaylist"><div class="pl-empty">空 · 上传竖屏视频后自动加入</div></div>
   </section>
 </div>
 
@@ -355,7 +377,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
   <span class="bar"></span>控制台
 </button>
 
-<!-- 设置抽屉 -->
+<!-- 设置抽屉：只放参数与开关 -->
 <footer class="settings-panel" id="settingsPanel">
   <div class="sp-head"><span class="sp-grip"></span><h2>控制台</h2><button class="btn" id="spClose" style="padding:6px 12px">收起</button></div>
   <div class="sp-body">
@@ -372,7 +394,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
           <label>结算提前量（秒）</label>
           <div class="p-row"><input type="range" id="settleSecR"><input type="number" id="settleSecN"></div>
         </div>
-        <div class="row-btn">
+        <div class="row-btn" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px">
           <button class="btn accent" id="btnWarm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>预热 1:15</button>
           <button class="btn" id="btnSimStep">模拟一步</button>
         </div>
@@ -396,10 +418,6 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 13.5h6M6 16.5h9"/></svg>字幕轨</h3>
         <div class="state-line" id="subState">未加载 · 原文连续播放</div>
         <label class="switch" style="margin:9px 0 2px"><input type="checkbox" id="ttsSwitch"><span class="sw-track"><i></i></span><em>TTS 朗读模式（关闭＝纯翻译显示）</em></label>
-        <div class="row-btn">
-          <button class="btn" id="subRePick">更换字幕</button>
-          <button class="btn" id="subRemove" disabled>移除字幕</button>
-        </div>
       </div>
 
       <div class="card">
@@ -425,10 +443,6 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
         <div class="param">
           <label>尾部禁区（分）</label>
           <div class="p-row"><input type="range" id="tailMinR"><input type="number" id="tailMinN"></div>
-        </div>
-        <div class="row-btn">
-          <button class="btn" id="musicRePick">更换音乐</button>
-          <button class="btn" id="musicRemove" disabled>移除音乐</button>
         </div>
       </div>
 
@@ -460,14 +474,17 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 
       <div class="card">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/></svg>竖屏分屏</h3>
-        <div class="state-line" id="vState">关闭 · 竖屏列表 0 个</div>
+        <div class="state-line" id="vState">关闭 · 列表 0 个</div>
         <label class="switch" style="margin:9px 0 2px"><input type="checkbox" id="vsplitSwitch"><span class="sw-track"><i></i></span><em>竖屏分屏开关</em></label>
-        <div class="row-btn">
-          <button class="btn" id="vPick">上传竖屏视频</button>
-          <button class="btn" id="vClear" disabled>清空竖屏列表</button>
+        <div class="param">
+          <label>竖屏存活下限（秒）</label>
+          <div class="p-row"><input type="range" id="vLifeMinR"><input type="number" id="vLifeMinN"></div>
         </div>
-        <input type="file" id="vInput" multiple hidden accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.m2v,.3gp,.ogv,.vob,.rm,.rmvb,.asf,.divx,.f4v">
-        <p class="mini-hint">勾选后按「律动小窗」卡的同一组概率与存活时间触发：小窗开启时命中小窗后再判一次同概率改为竖屏；小窗关闭时直接以该概率替代跳跃。窗口出现在画面左 / 右三分之一区域，进度随机，不参与贪吃蛇排布。</p>
+        <div class="param">
+          <label>竖屏存活上限（秒）</label>
+          <div class="p-row"><input type="range" id="vLifeMaxR"><input type="number" id="vLifeMaxN"></div>
+        </div>
+        <p class="mini-hint">触发概率沿用「律动小窗」卡的同一概率；窗口随机占满画面左或右 1/3 块，进度随机；列表上传与增删在上传页面。</p>
       </div>
 
       <div class="card">
@@ -484,7 +501,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
           <label>触发概率（%）</label>
           <div class="p-row"><input type="range" id="fxChanceR"><input type="number" id="fxChanceN"></div>
         </div>
-        <p class="mini-hint">一次触发只出一种中心特效；同时勾选多种时平均概率抽取。</p>
+        <p class="mini-hint">一次触发只出一种中心特效；同时勾选时平均概率抽取。素材上传与移除在上传页面。</p>
       </div>
 
       <div class="card">
@@ -517,14 +534,6 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
         <div class="param">
           <label>素材震动强度</label>
           <div class="p-row"><input type="range" id="shakeR"><input type="number" id="shakeN"></div>
-        </div>
-        <div class="row-btn">
-          <button class="btn" id="imgRePick">加图片</button>
-          <button class="btn" id="imgClear">移除图片</button>
-        </div>
-        <div class="row-btn">
-          <button class="btn" id="sfxRePick">加音效</button>
-          <button class="btn" id="sfxClear">移除音效</button>
         </div>
       </div>
 
@@ -563,18 +572,20 @@ const video=$('video'), playerShell=$('playerShell'), controlLayer=$('controlLay
   btnPlay=$('btnPlay'), btnFs=$('btnFs'), btnMute=$('btnMute'),
   timeText=$('timeText'), rateBadge=$('rateBadge'),
   volRange=$('volRange'), volR2=$('volR2'), volN=$('volN'), rateR=$('rateR'), rateN=$('rateN'),
-  playlist=$('playlist'), playlistWrap=$('playlistWrap'), plCount=$('plCount'), plShufBadge=$('plShufBadge'),
+  playlist=$('playlist'), plCount=$('plCount'), plShufBadge=$('plShufBadge'),
+  vPlaylist=$('vPlaylist'), vCount=$('vCount'),
   settingsPanel=$('settingsPanel'), panelSwitch=$('panelSwitch'),
   musicAudio=$('musicAudio'), toastWrap=$('toastWrap'),
   pillQuota=$('pillQuota'), pillSteps=$('pillSteps'), pillSub=$('pillSub'), pillBeat=$('pillBeat');
 
 btnPlay.innerHTML=SVG_PLAY; btnFs.innerHTML=SVG_FS; btnMute.innerHTML=SVG_VOL;
+['subTileX','musicTileX','imgTileX','sfxTileX'].forEach(id=>$(id).innerHTML=SVG_X);
 
 /* ============ 状态（全部参数持久化，下次打开自动恢复） ============ */
 const S={ rate:1, volume:1, stepSec:30, settleSec:5, beatSens:1.6, beatCooldown:2, headMin:0, tailMin:0, musicVol:0.7, shuffle:false,
   subMode:'tts', rippleMin:90, rippleMax:280, assetLifeMin:2, assetLifeMax:4, assetScaleMin:8, assetScaleMax:16, assetShake:3,
   fxMode:'step', fxInterval:5, fxChance:60, rippleOn:true, impactOn:false,
-  smallWin:false, winChance:50, winLifeMin:3, winLifeMax:6, winScaleMin:20, winScaleMax:35, vsplit:false };
+  smallWin:false, winChance:50, winLifeMin:3, winLifeMax:6, winScaleMin:20, winScaleMax:35, vsplit:false, vLifeMin:3, vLifeMax:6 };
 try{ Object.assign(S, JSON.parse(localStorage.getItem('stepvision')||'{}')); }catch(e){}
 function persist(){ try{ localStorage.setItem('stepvision', JSON.stringify(S)); }catch(e){} }
 
@@ -599,7 +610,7 @@ function toast(msg,type=''){
   setTimeout(()=>{ el.classList.remove('in'); setTimeout(()=>el.remove(),320); },2600);
 }
 
-/* ============ 媒体（Blob URL 流式解码；上传即加载：首项自动挂主 video，其余立即读元数据） ============ */
+/* ============ 主媒体列表（Blob URL 流式解码；上传即加载：首项自动挂主 video，其余立即读元数据） ============ */
 const MEDIA_RE=/\.(mp4|mkv|webm|mov|avi|flv|wmv|ts|m2ts|mts|m4v|mpg|mpeg|m2v|3gp|ogv|vob|rm|rmvb|asf|divx|f4v|mka|mp3|flac|wav|aac|ogg|m4a|opus|wma|aiff|ape|amr|ac3|dts|caf)$/i;
 function isAudioFile(f){ return (f.type&&f.type.startsWith('audio'))||/\.(mp3|flac|wav|aac|ogg|m4a|opus|wma|aiff|ape|amr|ac3|dts|caf)$/i.test(f.name); }
 function addMediaFiles(files){
@@ -685,7 +696,7 @@ function renderPlaylist(){
       </div>
     </div>`).join('');
 }
-playlistWrap.addEventListener('click',e=>{
+playlist.addEventListener('click',e=>{
   const m=e.target.closest('.pl-mute');
   if(m){ e.stopPropagation(); const i=+m.dataset.m, it=playlistArr[i]; if(!it) return;
     it.muted=!it.muted;
@@ -695,6 +706,59 @@ playlistWrap.addEventListener('click',e=>{
     return; }
   const x=e.target.closest('.pl-x'); if(x){ e.stopPropagation(); removeItem(+x.dataset.x); return; }
   const item=e.target.closest('.pl-item'); if(item) loadIndex(+item.dataset.i,true);
+});
+
+/* ============ 竖屏列表（上传页面完整管理：上传即加载 / 单独静音 / 移除 / 计数准确） ============ */
+ $('vInput').addEventListener('change',e=>{
+  const fs=[...e.target.files].filter(f=>MEDIA_RE.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
+  if(fs.length){
+    for(const f of fs){
+      const item={ name:f.name, size:f.size, url:URL.createObjectURL(f), duration:null, ar:null, muted:false };
+      vList.push(item); probeV(item);
+    }
+    toast(`竖屏列表已加入 ${fs.length} 个 · 共 ${vList.length} 个`);
+  } else toast('未识别到音视频文件');
+  renderVPlaylist(); e.target.value='';
+});
+function probeV(item){ // 上传即读元数据（时长 + 宽高比，用于随机进度与窗口比例）
+  const v=document.createElement('video'); v.preload='metadata'; v.muted=true; v.src=item.url;
+  const done=()=>{ v.onloadedmetadata=v.onerror=null;
+    if(!vList.includes(item)){ v.removeAttribute('src'); v.load(); return; } // 已被移除则不渲染，保证计数准确
+    if(v.duration&&isFinite(v.duration)) item.duration=v.duration;
+    if(v.videoWidth&&v.videoHeight) item.ar=v.videoWidth/v.videoHeight;
+    v.removeAttribute('src'); v.load(); renderVPlaylist(); };
+  v.onloadedmetadata=done; v.onerror=done;
+}
+function removeVItem(i){
+  const it=vList[i]; URL.revokeObjectURL(it.url);
+  vWins.filter(o=>o.item===it).forEach(o=>closeVWin(o.el)); // 关闭该文件的竖屏窗
+  vList.splice(i,1);
+  renderVPlaylist(); toast(`已移除「${it.name}」 · 剩 ${vList.length} 个`);
+}
+function renderVPlaylist(){
+  vCount.textContent=vList.length+' 项';
+  $('vInfo').textContent=vList.length?`共 ${vList.length} 个视频`:'竖屏分屏专用 · 可多选';
+  updVState();
+  if(!vList.length){ vPlaylist.innerHTML='<div class="pl-empty">空 · 上传竖屏视频后自动加入</div>'; return; }
+  vPlaylist.innerHTML=vList.map((it,i)=>`
+    <div class="pl-item v-item" data-i="${i}">
+      <span class="pl-idx">${String(i+1).padStart(2,'0')}</span>
+      <div class="pl-meta"><strong title="${esc(it.name)}">${esc(it.name)}</strong>
+        <span>${it.duration?fmt(it.duration):'加载中…'} · ${fmtBytes(it.size)}</span></div>
+      <div class="pl-btns">
+        <button class="pl-mute ${it.muted?'muted':''}" data-m="${i}" title="单独静音">${it.muted?SVG_MUTES:SVG_VOLS}</button>
+        <button class="pl-x" data-x="${i}" title="移除">${SVG_X}</button>
+      </div>
+    </div>`).join('');
+}
+vPlaylist.addEventListener('click',e=>{
+  const m=e.target.closest('.pl-mute');
+  if(m){ e.stopPropagation(); const i=+m.dataset.m, it=vList[i]; if(!it) return;
+    it.muted=!it.muted;
+    m.classList.toggle('muted',it.muted); m.innerHTML=it.muted?SVG_MUTES:SVG_VOLS;
+    vWins.forEach(o=>{ if(o.item===it){ const w=o.el.querySelector('video'); if(w) w.muted=it.muted; } }); // 竖屏窗声音同步
+    return; }
+  const x=e.target.closest('.pl-x'); if(x){ e.stopPropagation(); removeVItem(+x.dataset.x); return; }
 });
 
 /* ============ 倍速 / 音量（滑块 + 输入双通道，全局静音与单项静音互相独立） ============ */
@@ -714,7 +778,7 @@ function setVolume(v,srcR,srcN){
   if(srcR!==volRange) volRange.value=v;
   if(srcR!==volR2) volR2.value=v;
   if(srcN!==volN) volN.value=v.toFixed(2);
-  winRects.concat(vWins).forEach(o=>{ const w=(o.el||o).querySelector?((o.el||o).querySelector('video')):o; if(w&&w.volume!=null) w.volume=v; }); // 小窗音量同步
+  winRects.concat(vWins).forEach(o=>{ const w=o.el.querySelector('video'); if(w) w.volume=v; }); // 全部窗口音量同步
 }
 volRange.addEventListener('input',e=>setVolume(+e.target.value,volRange,null));
 volR2.addEventListener('input',e=>setVolume(+e.target.value,volR2,null));
@@ -943,11 +1007,13 @@ function fxTick(now){ // 随机触发模式：每隔 X 秒有 Y% 概率触发一
   }
 }
 
-/* ============ 特效素材管理（批量上传 / 随时移除） ============ */
+/* ============ 特效素材管理（上传页槽上传 / 槽 × 移除） ============ */
 function updFxState(){
   $('fxState').innerHTML=`图片 <b>${assetImgs.length}</b> 张 · 音效 <b>${assetSfxs.length}</b> 个${assetImgs.length?'':'（默认爱心）'}`;
   $('imgInfo').textContent=assetImgs.length?`共 ${assetImgs.length} 张素材`:'批量上传 · 缺省爱心';
   $('sfxInfo').textContent=assetSfxs.length?`共 ${assetSfxs.length} 个音效`:'批量上传 · 随机播放';
+  $('imgTileX').classList.toggle('show',assetImgs.length>0);
+  $('sfxTileX').classList.toggle('show',assetSfxs.length>0);
   const fxs=(S.rippleOn?'波纹':'')+(S.impactOn?((S.rippleOn?'+':'')+'撞击'):'');
   $('fxModeState').innerHTML=(S.fxMode==='random'?`每 ${S.fxInterval}s · ${S.fxChance}%`:'计步触发')+' · 特效：'+(fxs||'无');
 }
@@ -963,13 +1029,11 @@ function updFxState(){
     toast(`已加入 ${fs.length} 个音效 · 共 ${assetSfxs.length} 个`); }
   updFxState(); e.target.value='';
 });
- $('imgRePick').addEventListener('click',()=>$('imgInput').click());
- $('sfxRePick').addEventListener('click',()=>$('sfxInput').click());
- $('imgClear').addEventListener('click',()=>{
+ $('imgTileX').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
   assetImgs.forEach(a=>URL.revokeObjectURL(a.url)); assetImgs=[];
   updFxState(); toast('特效图片已移除 · 使用默认爱心');
 });
- $('sfxClear').addEventListener('click',()=>{
+ $('sfxTileX').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
   assetSfxs.forEach(a=>URL.revokeObjectURL(a.url)); assetSfxs=[];
   updFxState(); toast('特效音效已移除');
 });
@@ -1056,35 +1120,30 @@ function closeWin(box){
   updWinState();
 });
 
-/* ============ 竖屏分屏（独立列表 · 左/右三分之一区域 · 不参与贪吃蛇） ============ */
+/* ============ 竖屏分屏（独立列表 · 随机占满左/右 1/3 块 · 不参与贪吃蛇） ============ */
 function updVState(){
-  $('vState').innerHTML=`${S.vsplit?'<b>开启</b>':'关闭'} · 竖屏列表 <b>${vList.length}</b> 个`;
-  $('vClear').disabled=!vList.length;
+  $('vState').innerHTML=`${S.vsplit?'<b>开启</b>':'关闭'} · 列表 <b>${vList.length}</b> 个`;
 }
 function spawnVWin(){
   if(!vList.length) return false;
   const it=vList[(Math.random()*vList.length)|0];
   const W=playerShell.clientWidth, H=playerShell.clientHeight;
-  let h=Math.round(H*(0.55+Math.random()*0.3));           // 高度占画面 55%~85%
-  const ar=(it.ar&&isFinite(it.ar)&&it.ar>0)?it.ar:9/16;  // 竖屏宽高比
-  let w=Math.round(h*ar);
-  if(w>W/3-12){ w=Math.round(W/3-12); h=Math.round(w/ar); }
-  if(h>H-16){ h=H-16; w=Math.round(h*ar); }
-  w=Math.max(80,Math.min(W-16,w));
-  const side=Math.random()<.5?'L':'R';                    // 左或右三分之一区域
-  const zx=side==='L'?8:Math.round(W-W/3+4);
-  const zw=Math.max(1,Math.round(W/3-12));
-  const x=Math.round(zx+Math.random()*Math.max(1,zw-w));
-  const y=Math.round(8+Math.random()*Math.max(1,H-h-16));
-  const box=document.createElement('div'); box.className='mini-win vwin';
+  const ar=(it.ar&&isFinite(it.ar)&&it.ar>0)?it.ar:9/16;
+  const bw=Math.round(W/3);                                    // 屏幕竖分三块
+  let w=Math.max(80,bw-8), h=Math.round(w/ar);                 // 占满左或右一块（按视频比例封顶）
+  if(h>H-8){ h=H-8; w=Math.round(h*ar); }
+  const side=Math.random()<.5?'L':'R';                         // 随机占左边或右边一块
+  const x=side==='L'?4:(W-w-4);
+  const y=(h>=H-8)?4:Math.round(4+Math.random()*(H-h-8));
+  const box=document.createElement('div'); box.className='mini-win';
   box.style.left=x+'px'; box.style.top=y+'px';
   box.style.width=w+'px'; box.style.height=h+'px';
-  box.appendChild(makeWinVideo(it,false)); // 有声，音量随全局
+  box.appendChild(makeWinVideo(it,it.muted)); // 声音开关受竖屏列表该项静音状态影响
   fxLayer.appendChild(box);
   requestAnimationFrame(()=>box.classList.add('in'));
-  vWins.push({el:box});
-  const lMin=Math.min(S.winLifeMin,S.winLifeMax), lMax=Math.max(S.winLifeMin,S.winLifeMax);
-  const life=Math.max(.5,lMin+Math.random()*(lMax-lMin))*1000; // 与小窗共用同一组存活参数
+  vWins.push({el:box,item:it});
+  const lMin=Math.min(S.vLifeMin,S.vLifeMax), lMax=Math.max(S.vLifeMin,S.vLifeMax);
+  const life=Math.max(.5,lMin+Math.random()*(lMax-lMin))*1000;
   setTimeout(()=>{ box.classList.add('out'); setTimeout(()=>closeVWin(box),380); },life);
   return true;
 }
@@ -1094,36 +1153,14 @@ function closeVWin(box){
   if(v){ v.pause(); v.removeAttribute('src'); v.load(); }
   box.remove();
 }
- $('vPick').addEventListener('click',()=>$('vInput').click());
- $('vInput').addEventListener('change',e=>{
-  const fs=[...e.target.files].filter(f=>MEDIA_RE.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
-  if(fs.length){
-    for(const f of fs){
-      const item={name:f.name,url:URL.createObjectURL(f),duration:null,ar:null};
-      vList.push(item);
-      const v=document.createElement('video'); v.preload='metadata'; v.muted=true; v.src=item.url; // 上传即读元数据
-      const done=()=>{ if(v.duration&&isFinite(v.duration)) item.duration=v.duration;
-        if(v.videoWidth&&v.videoHeight) item.ar=v.videoWidth/v.videoHeight;
-        v.onloadedmetadata=v.onerror=null; v.removeAttribute('src'); v.load(); };
-      v.onloadedmetadata=done; v.onerror=done;
-    }
-    toast(`竖屏列表已加入 ${fs.length} 个 · 共 ${vList.length} 个`);
-  }
-  updVState(); e.target.value='';
-});
- $('vClear').addEventListener('click',()=>{
-  vList.forEach(i=>URL.revokeObjectURL(i.url)); vList=[];
-  vWins.slice().forEach(o=>closeVWin(o.el));
-  updVState(); toast('竖屏列表已清空');
-});
  $('vsplitSwitch').addEventListener('change',e=>{
   S.vsplit=e.target.checked; persist();
-  if(S.vsplit&&!vList.length) toast('已开启 · 但竖屏列表为空，请先上传','dim');
+  if(S.vsplit&&!vList.length) toast('已开启 · 但竖屏列表为空，请在上传页上传','dim');
   else toast(S.vsplit?'竖屏分屏已开启':'竖屏分屏已关闭');
   updVState();
 });
 
-/* ============ 字幕（JSON / LRC / VTT 自动识别；TTS 模式 / 翻译模式热切换） ============ */
+/* ============ 字幕（JSON / LRC / VTT 自动识别；TTS 模式 / 翻译模式热切换；槽 × 移除） ============ */
 function parseSubtitle(text){
   const t=text.replace(/^\uFEFF/,'').trim();
   if(t.startsWith('[')){
@@ -1169,8 +1206,8 @@ function loadSubtitleFile(f){
       cs.sort((a,b)=>a.from-b.from);
       cues=cs; subIdx=0; cancelTTS();
       $('subInfo').textContent=`${f.name} · ${cs.length} 段`; $('subInfo').classList.add('ok');
+      $('subTileX').classList.add('show');
       updSubState();
-      $('subRemove').disabled=false;
       toast(`字幕轨已加载 · ${cs.length} 段`); updateStatusPills();
     }catch(e){ toast('字幕解析失败 · 请检查 JSON / LRC / VTT 格式'); }
   };
@@ -1180,12 +1217,11 @@ function updSubState(){
   $('subState').innerHTML=cues.length?`<b>${esc(subName)}</b> · ${cues.length} 段 · ${S.subMode==='tts'?'TTS 模式':'翻译模式'}`:'未加载 · 原文连续播放';
 }
  $('slotSubInput').addEventListener('change',e=>{ if(e.target.files[0]){ subName=e.target.files[0].name; loadSubtitleFile(e.target.files[0]); } e.target.value=''; });
- $('subRePick').addEventListener('click',()=>$('slotSubInput').click());
- $('subRemove').addEventListener('click',()=>{
+ $('subTileX').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
   cues=[]; subIdx=0; subName=''; cancelTTS(); setSubtitleText('');
   $('subInfo').textContent='JSON / LRC / VTT'; $('subInfo').classList.remove('ok');
-  updSubState(); $('subRemove').disabled=true;
-  toast('字幕已移除 · 功能解除'); updateStatusPills();
+  $('subTileX').classList.remove('show');
+  updSubState(); toast('字幕已移除 · 功能解除'); updateStatusPills();
 });
  $('ttsSwitch').addEventListener('change',e=>{ // 热切换，不打断播放进度
   S.subMode=e.target.checked?'tts':'translate'; persist();
@@ -1237,7 +1273,7 @@ function subtitleTick(){
   setSubtitleText(t>=c.from?c.content:''); // 两种模式都按时间轴显示
 }
 
-/* ============ 音乐律动（自适应频谱通量节拍检测 + 小窗 / 竖屏分流） ============ */
+/* ============ 音乐律动（自适应频谱通量节拍检测 + 小窗 / 竖屏分流；槽 × 移除） ============ */
 function updMusicState(){
   $('musicState').innerHTML=musicUrl?`<b>${esc(musicName)}</b> · ${beatOn?'律动中':'已暂停'} · 跳跃 ${jumpCount} 次`:'未加载 · 律动关闭';
 }
@@ -1266,18 +1302,17 @@ function stopBeat(){ musicAudio.pause(); beatOn=false; updMusicState(); updateSt
   if(musicUrl) URL.revokeObjectURL(musicUrl);
   musicUrl=URL.createObjectURL(f); musicName=f.name; musicAudio.src=musicUrl;
   $('musicInfo').textContent=f.name; $('musicInfo').classList.add('ok');
-  $('musicRemove').disabled=false;
+  $('musicTileX').classList.add('show');
   startBeat(); toast('音乐已加载 · 律动开启');
   e.target.value='';
 });
- $('musicRePick').addEventListener('click',()=>$('slotMusicInput').click());
- $('musicRemove').addEventListener('click',()=>{
+ $('musicTileX').addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
   stopBeat(); $('musicSwitch').checked=false;
   musicAudio.removeAttribute('src'); musicAudio.load();
   if(musicUrl){ URL.revokeObjectURL(musicUrl); musicUrl=null; musicName=''; }
   $('musicInfo').textContent='按节奏随机跳转'; $('musicInfo').classList.remove('ok');
-  updMusicState(); $('musicRemove').disabled=true;
-  toast('音乐已移除 · 律动解除');
+  $('musicTileX').classList.remove('show');
+  updMusicState(); toast('音乐已移除 · 律动解除');
 });
 function beatTick(){
   if(!beatOn||!audioCtx||musicAudio.paused) return;
@@ -1406,10 +1441,12 @@ param('shakeR','shakeN','assetShake',0,20,12);             // 素材震动强度
 param('fxIntR','fxIntN','fxInterval',1,120,30);            // 随机触发间隔（秒）
 param('fxChanceR','fxChanceN','fxChance',1,100,80);        // 随机触发概率（%）
 param('winChanceR','winChanceN','winChance',1,100,80);     // 小窗出现概率（%）
-param('winLifeMinR','winLifeMinN','winLifeMin',0.5,60,20); // 窗口存活下限
-param('winLifeMaxR','winLifeMaxN','winLifeMax',0.5,60,20); // 窗口存活上限
-param('winScaleMinR','winScaleMinN','winScaleMin',5,80,50);// 窗口大小下限（%）
-param('winScaleMaxR','winScaleMaxN','winScaleMax',5,80,50);// 窗口大小上限（%）
+param('winLifeMinR','winLifeMinN','winLifeMin',0.5,60,20); // 小窗存活下限
+param('winLifeMaxR','winLifeMaxN','winLifeMax',0.5,60,20); // 小窗存活上限
+param('winScaleMinR','winScaleMinN','winScaleMin',5,80,50);// 小窗大小下限（%）
+param('winScaleMaxR','winScaleMaxN','winScaleMax',5,80,50);// 小窗大小上限（%）
+param('vLifeMinR','vLifeMinN','vLifeMin',0.5,60,20);       // 竖屏存活下限
+param('vLifeMaxR','vLifeMaxN','vLifeMax',0.5,60,20);       // 竖屏存活上限
 volRange.value=S.volume; setVolume(S.volume,null,null);
 setRate(S.rate,null,null);
  $('shufSwitch').checked=shuffle;
@@ -1460,7 +1497,7 @@ function loop(ts){
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-renderPlaylist(); updateStatusPills(); updMusicState(); updFxState(); updSubState(); updWinState(); updVState(); applyVolume();
+renderPlaylist(); renderVPlaylist(); updateStatusPills(); updMusicState(); updFxState(); updSubState(); updWinState(); applyVolume();
 </script>
 </body>
 </html>
