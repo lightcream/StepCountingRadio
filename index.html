@@ -47,6 +47,8 @@ body{
   52%{transform:translate(-6px,-2px);filter:brightness(1.14)}
   72%{transform:translate(5px,3px);filter:brightness(1.06)}
 }
+video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
+@keyframes jolt{0%,100%{transform:translateY(0)}15%{transform:translateY(8px)}35%{transform:translateY(-7px)}55%{transform:translateY(5px)}75%{transform:translateY(-3px)}}
 .center-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);pointer-events:none;z-index:2;transition:opacity .4s}
 .center-hint.off{opacity:0}
 .center-hint svg{width:44px;height:44px;opacity:.5}
@@ -65,7 +67,7 @@ body{
 .subtitle-layer.tts{border-left-color:#8ff0ff}
 .subtitle-layer.tts::after{content:"TTS 朗读中";display:block;font-size:9px;letter-spacing:.3em;color:var(--accent);margin-top:2px}
 
-/* 特效层：波纹圈 + 素材 + 小屏窗口（未全屏与全屏均生效；画面扭曲由 SVG 滤镜直接作用于 video） */
+/* 特效层：波纹圈 / 素材 / 速度线 / 小窗与竖屏窗（未全屏与全屏均触发；画面扭曲由 SVG 滤镜直接作用于 video） */
 .fx-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4}
 .ripple{position:absolute;left:50%;top:50%;border-radius:50%;border:2.5px solid rgba(0,224,255,.7);box-shadow:0 0 14px rgba(0,224,255,.35),inset 0 0 12px rgba(0,224,255,.2);transform:scale(.06);animation:rippleA .85s ease-out forwards}
 .ripple.r2{border-width:1.5px;opacity:.75}
@@ -84,12 +86,22 @@ body{
 .a-in img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
 .a-in svg{width:100%;height:100%;fill:var(--accent);filter:drop-shadow(0 0 8px rgba(0,224,255,.5))}
 .asset.out .a-in{opacity:0}
+/* 撞击速度线：放射线 × 垂直 ±60° 楔形 × 环形衰减（双 mask 交集） */
+.impact-lines{position:absolute;left:50%;top:50%;width:240%;height:240%;opacity:0;
+  background:repeating-conic-gradient(from 120deg at 50% 50%,rgba(226,244,255,.15) 0deg 1deg,transparent 1deg 5.5deg);
+  -webkit-mask:conic-gradient(from 120deg at 50% 50%,#000 0 120deg,transparent 120deg 240deg,#000 240deg 360deg),radial-gradient(circle at 50% 50%,transparent 20%,#000 32%,#000 72%,transparent 82%);
+  -webkit-mask-composite:source-in;
+  mask:conic-gradient(from 120deg at 50% 50%,#000 0 120deg,transparent 120deg 240deg,#000 240deg 360deg),radial-gradient(circle at 50% 50%,transparent 20%,#000 32%,#000 72%,transparent 82%);
+  mask-composite:intersect;
+  animation:impactLines .5s ease-out forwards}
+@keyframes impactLines{0%{opacity:0;transform:translate(-50%,-50%) scale(.92)}18%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.08)}}
 .mini-win{position:absolute;border-radius:12px;overflow:hidden;background:#0b0d12;opacity:0;transform:scale(.7);
   transition:opacity .32s,transform .32s cubic-bezier(.2,.9,.3,1.3);
   box-shadow:0 10px 26px rgba(0,0,0,.62),0 0 0 1.5px rgba(0,224,255,.5)}
 .mini-win.in{opacity:1;transform:scale(1)}
 .mini-win.out{opacity:0;transform:scale(.8)}
 .mini-win video{display:block;width:100%;height:100%;object-fit:contain;background:#0b0d12}
+.mini-win.vwin{box-shadow:0 10px 26px rgba(0,0,0,.62),0 0 0 1.5px rgba(0,224,255,.75)}
 
 .fs-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(6,8,12,.6);opacity:0;pointer-events:none;transition:height .2s,opacity .3s;z-index:5;cursor:pointer;touch-action:none}
 .is-fs .fs-progress{opacity:1;pointer-events:auto}
@@ -207,6 +219,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 .row-btn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
 .state-line{font-size:11.5px;color:var(--muted);padding:7px 10px;border-radius:9px;background:var(--pit);box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .state-line b{color:#9fd8e6;font-weight:600}
+.mini-hint{font-size:10.5px;line-height:1.6;color:#68718a;margin-top:8px}
 .panel-switch{ /* 面板收起后收进浏览器底栏的开关 */
   position:fixed;left:50%;bottom:4px;transform:translateX(-50%);z-index:82;
   display:flex;align-items:center;gap:9px;padding:8px 18px 8px 15px;border:none;cursor:pointer;
@@ -291,7 +304,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
       <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
         <div><strong>媒体文件</strong><em id="slotMediaInfo">视频 / 音频 · 可多选</em></div>
-        <input type="file" id="slotMediaInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.3gp,.ogv">
+        <input type="file" id="slotMediaInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.m2v,.3gp,.ogv,.vob,.rm,.rmvb,.asf,.divx,.f4v,.mka,.mp3,.flac,.wav,.aac,.m4a,.opus,.wma,.aiff,.ape,.amr,.ac3,.dts,.caf">
       </label>
       <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 13.5h6M6 16.5h9"/><path d="M6.5 8.5h4"/></svg></span>
@@ -301,17 +314,17 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
       <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></span>
         <div><strong>音乐律动</strong><em id="musicInfo">按节奏随机跳转</em></div>
-        <input type="file" id="slotMusicInput" accept="audio/*,.mp3,.flac,.wav,.aac,.ogg,.m4a,.opus">
+        <input type="file" id="slotMusicInput" accept="audio/*,.mp3,.flac,.wav,.aac,.ogg,.m4a,.opus,.wma,.aiff,.ape,.amr,.ac3,.dts,.caf">
       </label>
       <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-4.5-4.5L7 20"/></svg></span>
         <div><strong>特效图片</strong><em id="imgInfo">批量上传 · 缺省爱心</em></div>
-        <input type="file" id="imgInput" multiple accept="image/*,.png,.jpg,.jpeg,.webp,.gif,.svg">
+        <input type="file" id="imgInput" multiple accept="image/*,.png,.jpg,.jpeg,.webp,.gif,.svg,.bmp,.ico,.avif">
       </label>
       <label class="up-tile">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></span>
         <div><strong>特效音效</strong><em id="sfxInfo">批量上传 · 随机播放</em></div>
-        <input type="file" id="sfxInput" multiple accept="audio/*,.mp3,.wav,.ogg,.aac,.m4a,.opus">
+        <input type="file" id="sfxInput" multiple accept="audio/*,.mp3,.wav,.ogg,.aac,.m4a,.opus,.flac,.wma,.aiff,.amr,.ac3,.dts,.caf">
       </label>
     </div>
     <div class="dock-sep"></div>
@@ -323,11 +336,16 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
   </section>
 </div>
 
-<!-- 水波曲特效滤镜：直接作用于 video 元素，画面产生位移扭曲后回弹 -->
+<!-- 特效滤镜（直接作用于 video 元素）：波纹曲面 / 撞击肉浪+垂直拖影 -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <filter id="waterFX" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
     <feTurbulence id="wfxTurb" type="fractalNoise" baseFrequency="0.008 0.013" numOctaves="2" seed="7" result="n"/>
     <feDisplacementMap id="wfxDisp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="impactFX" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+    <feTurbulence id="ifxTurb" type="turbulence" baseFrequency="0.0012 0.08" numOctaves="2" seed="4" result="n"/>
+    <feDisplacementMap id="ifxDisp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feGaussianBlur id="ifxBlur" in="d" stdDeviation="0 0"/>
   </filter>
 </svg>
 
@@ -415,11 +433,11 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
       </div>
 
       <div class="card">
-        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="13" height="10" rx="2"/><rect x="14.5" y="12" width="7" height="7" rx="1.6"/></svg>律动小屏</h3>
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="13" height="10" rx="2"/><rect x="14.5" y="12" width="7" height="7" rx="1.6"/></svg>律动小窗</h3>
         <div class="state-line" id="winState">关闭 · 需列表 ≥ 2 项生效</div>
-        <label class="switch" style="margin:9px 0 2px"><input type="checkbox" id="smallWinSwitch"><span class="sw-track"><i></i></span><em>小屏幕开关</em></label>
+        <label class="switch" style="margin:9px 0 2px"><input type="checkbox" id="smallWinSwitch"><span class="sw-track"><i></i></span><em>小窗口开关</em></label>
         <div class="param">
-          <label>小屏出现概率（%）</label>
+          <label>小窗出现概率（%）</label>
           <div class="p-row"><input type="range" id="winChanceR"><input type="number" id="winChanceN"></div>
         </div>
         <div class="param">
@@ -441,9 +459,23 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
       </div>
 
       <div class="card">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/></svg>竖屏分屏</h3>
+        <div class="state-line" id="vState">关闭 · 竖屏列表 0 个</div>
+        <label class="switch" style="margin:9px 0 2px"><input type="checkbox" id="vsplitSwitch"><span class="sw-track"><i></i></span><em>竖屏分屏开关</em></label>
+        <div class="row-btn">
+          <button class="btn" id="vPick">上传竖屏视频</button>
+          <button class="btn" id="vClear" disabled>清空竖屏列表</button>
+        </div>
+        <input type="file" id="vInput" multiple hidden accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.m2v,.3gp,.ogv,.vob,.rm,.rmvb,.asf,.divx,.f4v">
+        <p class="mini-hint">勾选后按「律动小窗」卡的同一组概率与存活时间触发：小窗开启时命中小窗后再判一次同概率改为竖屏；小窗关闭时直接以该概率替代跳跃。窗口出现在画面左 / 右三分之一区域，进度随机，不参与贪吃蛇排布。</p>
+      </div>
+
+      <div class="card">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="8.5"/></svg>特效触发</h3>
-        <div class="state-line" id="fxModeState">模式：计步触发</div>
+        <div class="state-line" id="fxModeState">模式：计步触发 · 波纹</div>
         <label class="switch" style="margin:9px 0 2px"><input type="checkbox" id="fxModeSwitch"><span class="sw-track"><i></i></span><em>随机触发模式（关闭＝计步触发）</em></label>
+        <label class="switch" style="margin:7px 0 2px"><input type="checkbox" id="rippleSwitch"><span class="sw-track"><i></i></span><em>波纹圆圈震动特效</em></label>
+        <label class="switch" style="margin:7px 0 2px"><input type="checkbox" id="impactSwitch"><span class="sw-track"><i></i></span><em>撞击速度线模糊特效</em></label>
         <div class="param">
           <label>触发间隔（秒）</label>
           <div class="p-row"><input type="range" id="fxIntR"><input type="number" id="fxIntN"></div>
@@ -452,6 +484,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
           <label>触发概率（%）</label>
           <div class="p-row"><input type="range" id="fxChanceR"><input type="number" id="fxChanceN"></div>
         </div>
+        <p class="mini-hint">一次触发只出一种中心特效；同时勾选多种时平均概率抽取。</p>
       </div>
 
       <div class="card">
@@ -540,8 +573,8 @@ btnPlay.innerHTML=SVG_PLAY; btnFs.innerHTML=SVG_FS; btnMute.innerHTML=SVG_VOL;
 /* ============ 状态（全部参数持久化，下次打开自动恢复） ============ */
 const S={ rate:1, volume:1, stepSec:30, settleSec:5, beatSens:1.6, beatCooldown:2, headMin:0, tailMin:0, musicVol:0.7, shuffle:false,
   subMode:'tts', rippleMin:90, rippleMax:280, assetLifeMin:2, assetLifeMax:4, assetScaleMin:8, assetScaleMax:16, assetShake:3,
-  fxMode:'step', fxInterval:5, fxChance:60,
-  smallWin:false, winChance:50, winLifeMin:3, winLifeMax:6, winScaleMin:20, winScaleMax:35 };
+  fxMode:'step', fxInterval:5, fxChance:60, rippleOn:true, impactOn:false,
+  smallWin:false, winChance:50, winLifeMin:3, winLifeMax:6, winScaleMin:20, winScaleMax:35, vsplit:false };
 try{ Object.assign(S, JSON.parse(localStorage.getItem('stepvision')||'{}')); }catch(e){}
 function persist(){ try{ localStorage.setItem('stepvision', JSON.stringify(S)); }catch(e){} }
 
@@ -553,8 +586,10 @@ let shuffle=S.shuffle;
 let beatOn=false, musicUrl=null, musicName='', jumpCount=0, lastJump=0, beatAvg=0.05;
 let audioCtx=null, musicAnalyser=null, musicGain=null, freqData=null;
 let assetImgs=[], assetSfxs=[];   // 特效素材池
-let winRects=[];                  // 存活中的小屏窗口 {x,y,w,h,el,item}
-let barDragging=false, previewRatio=0, hideTimer=0, lastFxT=0;
+let vList=[];                     // 竖屏分屏独立播放列表
+let winRects=[], vWins=[];        // 存活中的小窗（贪吃蛇记录）与竖屏窗
+let snake={x:8,y:8,rowH:0};       // 贪吃蛇排布游标
+let barDragging=false, previewRatio=0, hideTimer=0, lastFxT=0, waterRAF=0, impactRAF=0;
 
 /* ============ Toast ============ */
 function toast(msg,type=''){
@@ -565,9 +600,10 @@ function toast(msg,type=''){
 }
 
 /* ============ 媒体（Blob URL 流式解码；上传即加载：首项自动挂主 video，其余立即读元数据） ============ */
-function isAudioFile(f){ return (f.type&&f.type.startsWith('audio'))||/\.(mp3|flac|wav|aac|ogg|m4a|opus|wma|aiff|caf)$/i.test(f.name); }
+const MEDIA_RE=/\.(mp4|mkv|webm|mov|avi|flv|wmv|ts|m2ts|mts|m4v|mpg|mpeg|m2v|3gp|ogv|vob|rm|rmvb|asf|divx|f4v|mka|mp3|flac|wav|aac|ogg|m4a|opus|wma|aiff|ape|amr|ac3|dts|caf)$/i;
+function isAudioFile(f){ return (f.type&&f.type.startsWith('audio'))||/\.(mp3|flac|wav|aac|ogg|m4a|opus|wma|aiff|ape|amr|ac3|dts|caf)$/i.test(f.name); }
 function addMediaFiles(files){
-  const ok=files.filter(f=>/\.(mp4|mkv|webm|mov|avi|flv|wmv|ts|m2ts|m4v|mpg|mpeg|3gp|ogv|mp3|flac|wav|aac|ogg|m4a|opus|wma)$/i.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
+  const ok=files.filter(f=>MEDIA_RE.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
   if(!ok.length){ toast('未识别到音视频文件'); return; }
   for(const f of ok){
     const item={ name:f.name, size:f.size, url:URL.createObjectURL(f), duration:null, ar:null, kind:isAudioFile(f)?'audio':'video', muted:false };
@@ -622,8 +658,9 @@ function next(){
 }
 function removeItem(i){ // 移除后计数 / 序号 / 当前播放索引 / 小屏窗口全部即时校正
   const it=playlistArr[i]; URL.revokeObjectURL(it.url);
-  winRects.filter(o=>o.item===it).forEach(o=>closeWin(o.el)); // 关闭该文件的小屏窗口
+  winRects.filter(o=>o.item===it).forEach(o=>closeWin(o.el)); // 关闭该文件的小窗
   playlistArr.splice(i,1);
+  if(!winRects.length) snake={x:8,y:8,rowH:0};
   if(!playlistArr.length){
     video.pause(); video.removeAttribute('src'); video.load(); currentIndex=-1;
     renderPlaylist(); toast('列表已清空'); return;
@@ -654,7 +691,7 @@ playlistWrap.addEventListener('click',e=>{
     it.muted=!it.muted;
     m.classList.toggle('muted',it.muted); m.innerHTML=it.muted?SVG_MUTES:SVG_VOLS; // 局部更新，不重渲染列表
     if(i===currentIndex) applyVolume();
-    winRects.forEach(o=>{ if(o.item===it){ const w=o.el.querySelector('video'); if(w) w.muted=it.muted; } }); // 小屏声音同步
+    winRects.forEach(o=>{ if(o.item===it){ const w=o.el.querySelector('video'); if(w) w.muted=it.muted; } }); // 小窗声音同步
     return; }
   const x=e.target.closest('.pl-x'); if(x){ e.stopPropagation(); removeItem(+x.dataset.x); return; }
   const item=e.target.closest('.pl-item'); if(item) loadIndex(+item.dataset.i,true);
@@ -677,7 +714,7 @@ function setVolume(v,srcR,srcN){
   if(srcR!==volRange) volRange.value=v;
   if(srcR!==volR2) volR2.value=v;
   if(srcN!==volN) volN.value=v.toFixed(2);
-  winRects.forEach(o=>{ const w=o.el.querySelector('video'); if(w) w.volume=v; }); // 小屏音量同步
+  winRects.concat(vWins).forEach(o=>{ const w=(o.el||o).querySelector?((o.el||o).querySelector('video')):o; if(w&&w.volume!=null) w.volume=v; }); // 小窗音量同步
 }
 volRange.addEventListener('input',e=>setVolume(+e.target.value,volRange,null));
 volR2.addEventListener('input',e=>setVolume(+e.target.value,volR2,null));
@@ -788,15 +825,28 @@ function onStep(){
   }
 }
 
-/* ============ 特效（未全屏 / 全屏均触发）：水波曲扭曲 + 波纹圈 + 素材 + 音效 ============ */
-function onFx(){ startWaterRipple(); spawnRipple(); spawnAsset(); }
-let waterRAF=0;
-function startWaterRipple(){ // SVG 位移滤镜直接作用于 video：画面被推挤扭曲后回弹
+/* ============ 特效（未全屏 / 全屏均触发；一次抽取一种中心特效） ============ */
+function onFx(){
+  const pool=[]; if(S.rippleOn) pool.push('ripple'); if(S.impactOn) pool.push('impact');
+  const fx=pool.length?pool[(Math.random()*pool.length)|0]:null; // 同时勾选则平均概率抽取
+  if(fx==='ripple'){ startWaterRipple(); spawnRipple(); }
+  else if(fx==='impact'){ startImpact(); }
+  spawnAsset();
+}
+function stopAllVideoFX(){ // 两种滤镜互斥：切换时统一清场
+  if(waterRAF){ cancelAnimationFrame(waterRAF); waterRAF=0; }
+  if(impactRAF){ cancelAnimationFrame(impactRAF); impactRAF=0; }
+  video.style.filter='';
+  $('wfxDisp').setAttribute('scale','0');
+  $('ifxDisp').setAttribute('scale','0');
+  $('ifxBlur').setAttribute('stdDeviation','0 0');
+}
+function startWaterRipple(){ // 波纹：SVG 位移滤镜直接作用于 video，画面被推挤扭曲后回弹
+  stopAllVideoFX();
   const turb=$('wfxTurb'), disp=$('wfxDisp');
-  if(waterRAF) cancelAnimationFrame(waterRAF);
   video.style.filter='url(#waterFX)';
   const t0=performance.now(), dur=820;
-  const amp=Math.min(95,Math.max(32,playerShell.clientWidth/13)); // 扭曲幅度随画面宽度
+  const amp=Math.min(95,Math.max(32,playerShell.clientWidth/13));
   let lastUpd=0;
   const step=now=>{
     const p=(now-t0)/dur;
@@ -813,6 +863,30 @@ function startWaterRipple(){ // SVG 位移滤镜直接作用于 video：画面�
   disp.setAttribute('scale',amp); turb.setAttribute('baseFrequency','0.008 0.0136');
   waterRAF=requestAnimationFrame(step);
 }
+function startImpact(){ // 撞击：垂直肉浪位移 + 垂直拖影模糊 + 上下浮动 + 楔形放射速度线
+  stopAllVideoFX();
+  const turb=$('ifxTurb'), disp=$('ifxDisp'), blur=$('ifxBlur');
+  video.style.filter='url(#impactFX)';
+  video.classList.remove('jolt'); void video.offsetWidth; video.classList.add('jolt');
+  spawnImpactLines();
+  const t0=performance.now(), dur=650;
+  const amp=Math.min(70,Math.max(26,playerShell.clientWidth/16));
+  let lastUpd=0;
+  const step=now=>{
+    const p=(now-t0)/dur;
+    if(p>=1){ video.style.filter=''; disp.setAttribute('scale','0'); blur.setAttribute('stdDeviation','0 0'); impactRAF=0; return; }
+    if(now-lastUpd>30){
+      lastUpd=now;
+      const e=(1-p)*(1-p);
+      disp.setAttribute('scale',(amp*e).toFixed(1));                    // 肉浪幅度衰减
+      blur.setAttribute('stdDeviation','0 '+(9*e).toFixed(1));          // 垂直拖影衰减
+      turb.setAttribute('baseFrequency','0.0012 '+(0.07+0.09*p).toFixed(4)); // 噪声沿垂直方向变密
+    }
+    impactRAF=requestAnimationFrame(step);
+  };
+  disp.setAttribute('scale',amp); blur.setAttribute('stdDeviation','0 9');
+  impactRAF=requestAnimationFrame(step);
+}
 function spawnRipple(){ // 双圈同心扩散，外圈直径 = 2 × 最大半径 B
   const d=Math.max(80,S.rippleMax)*2;
   for(let k=0;k<2;k++){
@@ -825,12 +899,16 @@ function spawnRipple(){ // 双圈同心扩散，外圈直径 = 2 × 最大半径
     },k*140);
   }
 }
+function spawnImpactLines(){ // 放射速度线，conic 遮罩限定垂直 ±60° 楔形 + 环形衰减
+  const el=document.createElement('div'); el.className='impact-lines';
+  fxLayer.appendChild(el);
+  setTimeout(()=>el.remove(),560);
+}
 function spawnAsset(){
   const W=playerShell.clientWidth, H=playerShell.clientHeight;
   const cx=W/2, cy=H/2;
   const A=Math.max(0,S.rippleMin), B=Math.max(A+10,S.rippleMax);
   const r=A+Math.random()*(B-A), ang=Math.random()*Math.PI*2;
-  // 大小：屏幕短边的 下限%~上限% 区间随机
   const pMin=Math.min(S.assetScaleMin,S.assetScaleMax), pMax=Math.max(S.assetScaleMin,S.assetScaleMax);
   const pct=pMin+Math.random()*(pMax-pMin);
   const size=Math.max(16,Math.round(Math.min(W,H)*pct/100));
@@ -852,7 +930,6 @@ function spawnAsset(){
     const img=new Image(); img.src=im.url; img.draggable=false; inner.appendChild(img); }
   else inner.innerHTML=SVG_HEART; // 未上传图片 → 默认爱心
   el.appendChild(inner); fxLayer.appendChild(el);
-  // 存活：下限~上限 秒区间随机
   const lMin=Math.min(S.assetLifeMin,S.assetLifeMax), lMax=Math.max(S.assetLifeMin,S.assetLifeMax);
   const life=Math.max(.5,lMin+Math.random()*(lMax-lMin))*1000;
   setTimeout(()=>el.classList.add('out'),Math.max(0,life-350)); // 淡出
@@ -871,16 +948,17 @@ function updFxState(){
   $('fxState').innerHTML=`图片 <b>${assetImgs.length}</b> 张 · 音效 <b>${assetSfxs.length}</b> 个${assetImgs.length?'':'（默认爱心）'}`;
   $('imgInfo').textContent=assetImgs.length?`共 ${assetImgs.length} 张素材`:'批量上传 · 缺省爱心';
   $('sfxInfo').textContent=assetSfxs.length?`共 ${assetSfxs.length} 个音效`:'批量上传 · 随机播放';
-  $('fxModeState').innerHTML=S.fxMode==='random'?`模式：每 ${S.fxInterval}s · ${S.fxChance}% 概率`:'模式：计步触发';
+  const fxs=(S.rippleOn?'波纹':'')+(S.impactOn?((S.rippleOn?'+':'')+'撞击'):'');
+  $('fxModeState').innerHTML=(S.fxMode==='random'?`每 ${S.fxInterval}s · ${S.fxChance}%`:'计步触发')+' · 特效：'+(fxs||'无');
 }
  $('imgInput').addEventListener('change',e=>{
-  const fs=[...e.target.files].filter(f=>f.type.startsWith('image')||/\.(png|jpe?g|webp|gif|svg|bmp)$/i.test(f.name));
+  const fs=[...e.target.files].filter(f=>f.type.startsWith('image')||/\.(png|jpe?g|webp|gif|svg|bmp|ico|avif)$/i.test(f.name));
   if(fs.length){ for(const f of fs) assetImgs.push({name:f.name,url:URL.createObjectURL(f)});
     toast(`已加入 ${fs.length} 张图片 · 共 ${assetImgs.length} 张`); }
   updFxState(); e.target.value='';
 });
  $('sfxInput').addEventListener('change',e=>{
-  const fs=[...e.target.files].filter(f=>f.type.startsWith('audio')||/\.(mp3|wav|ogg|aac|m4a|opus|flac)$/i.test(f.name));
+  const fs=[...e.target.files].filter(f=>f.type.startsWith('audio')||/\.(mp3|wav|ogg|aac|m4a|opus|flac|wma|aiff|amr|ac3|dts|caf)$/i.test(f.name));
   if(fs.length){ for(const f of fs) assetSfxs.push({name:f.name,url:URL.createObjectURL(f)});
     toast(`已加入 ${fs.length} 个音效 · 共 ${assetSfxs.length} 个`); }
   updFxState(); e.target.value='';
@@ -901,47 +979,65 @@ function updFxState(){
   toast(S.fxMode==='random'?`随机模式 · 每 ${S.fxInterval}s 概率 ${S.fxChance}%`:'计步触发模式');
   updFxState();
 });
+ $('rippleSwitch').addEventListener('change',e=>{ S.rippleOn=e.target.checked; persist(); updFxState(); });
+ $('impactSwitch').addEventListener('change',e=>{ S.impactOn=e.target.checked; persist(); updFxState(); });
 
-/* ============ 律动小屏窗口（列表其他视频，随机进度 / 大小 / 存活 / 防遮挡） ============ */
+/* ============ 律动小窗（贪吃蛇排布：连排 / 换行 / 回绕找空位） ============ */
 function updWinState(){
   $('winState').innerHTML=S.smallWin?`<b>开启</b> · 概率 ${S.winChance}% · 需列表 ≥ 2 项`:'关闭 · 需列表 ≥ 2 项生效';
 }
+function makeWinVideo(it,muted){
+  const v=document.createElement('video');
+  v.setAttribute('playsinline',''); v.playsInline=true; v.loop=true;
+  v.src=it.url; v.muted=muted; v.volume=S.volume;
+  v.addEventListener('loadedmetadata',()=>{
+    const dur=isFinite(it.duration)?it.duration:v.duration;
+    if(isFinite(dur)&&dur>1) v.currentTime=Math.random()*Math.max(0,dur-1); // 随机进度，从不从头播放
+    v.play().catch(()=>{});
+  });
+  return v;
+}
 function spawnWin(){
   const cands=playlistArr.filter((it,i)=>i!==currentIndex);
-  if(!cands.length) return false; // 列表只有一个视频时小屏无效
+  if(!cands.length) return false; // 列表只有一个视频时小窗无效
   const vids=cands.filter(it=>it.kind==='video');
-  const pool=vids.length?vids:cands; // 优先视频项
+  const pool=vids.length?vids:cands;
   const it=pool[(Math.random()*pool.length)|0];
   const W=playerShell.clientWidth, H=playerShell.clientHeight;
   const pMin=Math.min(S.winScaleMin,S.winScaleMax), pMax=Math.max(S.winScaleMin,S.winScaleMax);
   const pct=pMin+Math.random()*(pMax-pMin);
-  const w=Math.max(110,Math.round(Math.min(W,H)*pct/100));
+  let w=Math.max(110,Math.round(Math.min(W,H)*pct/100));
   const ar=(it.ar&&isFinite(it.ar)&&it.ar>0)?it.ar:16/9;
-  const h=Math.min(H-16,Math.round(w/ar));
-  // 随机位置：尝试 14 次寻找不与现有窗口重叠的落点（找不到则接受）
-  let best=null;
-  for(let k=0;k<14;k++){
-    const x=Math.round(8+Math.random()*Math.max(1,W-w-16));
-    const y=Math.round(8+Math.random()*Math.max(1,H-h-16));
-    const hit=winRects.some(o=>!(x+w+8<o.x||o.x+o.w+8<x||y+h+8<o.y||o.y+o.h+8<y));
-    if(!hit){ best={x,y,w,h}; break; }
-    best=best||{x,y,w,h};
+  let h=Math.min(H-16,Math.round(w/ar));
+  if(h<H-16) w=Math.round(h*ar);
+  w=Math.min(W-16,w);
+  if(!winRects.length) snake={x:8,y:8,rowH:0}; // 蛇清空后从头连排
+  // 贪吃蛇：优先接在上个窗口右侧 → 排满换行 → 全满回绕找不重叠空位
+  let rc=null;
+  if(snake.x+w+8<=W-8 && snake.y+h<=H-8) rc={x:snake.x,y:snake.y,w,h};
+  if(!rc){
+    const ny=snake.y+snake.rowH+8;
+    if(8+w+8<=W-8 && ny+h<=H-8){ snake={x:8,y:ny,rowH:0}; rc={x:8,y:ny,w,h}; }
   }
-  const rc=best;
+  if(!rc){
+    let fb=null;
+    for(let k=0;k<14;k++){
+      const x=Math.round(8+Math.random()*Math.max(1,W-w-16));
+      const y=Math.round(8+Math.random()*Math.max(1,H-h-16));
+      if(!winRects.some(o=>!(x+w+8<o.x||o.x+o.w+8<x||y+h+8<o.y||o.y+o.h+8<y))){ rc={x,y,w,h}; break; }
+      fb=fb||{x,y,w,h};
+    }
+    rc=rc||fb;
+    snake={x:rc.x+rc.w+8,y:rc.y,rowH:rc.h};
+  }
   const box=document.createElement('div'); box.className='mini-win';
   box.style.left=rc.x+'px'; box.style.top=rc.y+'px';
-  box.style.width=rc.w+'px'; box.style.height=rc.h+'px'; // 位置大小钳制在画面内
-  const v=document.createElement('video');
-  v.setAttribute('playsinline',''); v.playsInline=true; v.loop=true;
-  v.src=it.url; v.muted=it.muted; v.volume=S.volume; // 声音开关受播放列表该项静音状态影响
-  box.appendChild(v); fxLayer.appendChild(box);
+  box.style.width=rc.w+'px'; box.style.height=rc.h+'px';
+  box.appendChild(makeWinVideo(it,it.muted)); // 声音开关受播放列表该项静音状态影响
+  fxLayer.appendChild(box);
   requestAnimationFrame(()=>box.classList.add('in'));
-  v.addEventListener('loadedmetadata',()=>{
-    const dur=isFinite(it.duration)?it.duration:v.duration;
-    if(isFinite(dur)&&dur>1) v.currentTime=Math.random()*Math.max(0,dur-1); // 随机进度，不从开头播放
-    v.play().catch(()=>{});
-  });
   winRects.push({x:rc.x,y:rc.y,w:rc.w,h:rc.h,el:box,item:it});
+  snake.x=rc.x+rc.w+8; snake.rowH=Math.max(snake.rowH,rc.h); // 蛇前进
   const lMin=Math.min(S.winLifeMin,S.winLifeMax), lMax=Math.max(S.winLifeMin,S.winLifeMax);
   const life=Math.max(.5,lMin+Math.random()*(lMax-lMin))*1000;
   setTimeout(()=>{ box.classList.add('out'); setTimeout(()=>closeWin(box),380); },life);
@@ -956,8 +1052,75 @@ function closeWin(box){
  $('smallWinSwitch').addEventListener('change',e=>{
   S.smallWin=e.target.checked; persist();
   if(S.smallWin&&playlistArr.length<2) toast('已开启 · 但列表不足 2 项，暂不生效','dim');
-  else toast(S.smallWin?'小屏幕已开启':'小屏幕已关闭');
+  else toast(S.smallWin?'小窗口已开启':'小窗口已关闭');
   updWinState();
+});
+
+/* ============ 竖屏分屏（独立列表 · 左/右三分之一区域 · 不参与贪吃蛇） ============ */
+function updVState(){
+  $('vState').innerHTML=`${S.vsplit?'<b>开启</b>':'关闭'} · 竖屏列表 <b>${vList.length}</b> 个`;
+  $('vClear').disabled=!vList.length;
+}
+function spawnVWin(){
+  if(!vList.length) return false;
+  const it=vList[(Math.random()*vList.length)|0];
+  const W=playerShell.clientWidth, H=playerShell.clientHeight;
+  let h=Math.round(H*(0.55+Math.random()*0.3));           // 高度占画面 55%~85%
+  const ar=(it.ar&&isFinite(it.ar)&&it.ar>0)?it.ar:9/16;  // 竖屏宽高比
+  let w=Math.round(h*ar);
+  if(w>W/3-12){ w=Math.round(W/3-12); h=Math.round(w/ar); }
+  if(h>H-16){ h=H-16; w=Math.round(h*ar); }
+  w=Math.max(80,Math.min(W-16,w));
+  const side=Math.random()<.5?'L':'R';                    // 左或右三分之一区域
+  const zx=side==='L'?8:Math.round(W-W/3+4);
+  const zw=Math.max(1,Math.round(W/3-12));
+  const x=Math.round(zx+Math.random()*Math.max(1,zw-w));
+  const y=Math.round(8+Math.random()*Math.max(1,H-h-16));
+  const box=document.createElement('div'); box.className='mini-win vwin';
+  box.style.left=x+'px'; box.style.top=y+'px';
+  box.style.width=w+'px'; box.style.height=h+'px';
+  box.appendChild(makeWinVideo(it,false)); // 有声，音量随全局
+  fxLayer.appendChild(box);
+  requestAnimationFrame(()=>box.classList.add('in'));
+  vWins.push({el:box});
+  const lMin=Math.min(S.winLifeMin,S.winLifeMax), lMax=Math.max(S.winLifeMin,S.winLifeMax);
+  const life=Math.max(.5,lMin+Math.random()*(lMax-lMin))*1000; // 与小窗共用同一组存活参数
+  setTimeout(()=>{ box.classList.add('out'); setTimeout(()=>closeVWin(box),380); },life);
+  return true;
+}
+function closeVWin(box){
+  const i=vWins.findIndex(o=>o.el===box); if(i>=0) vWins.splice(i,1);
+  const v=box.querySelector('video');
+  if(v){ v.pause(); v.removeAttribute('src'); v.load(); }
+  box.remove();
+}
+ $('vPick').addEventListener('click',()=>$('vInput').click());
+ $('vInput').addEventListener('change',e=>{
+  const fs=[...e.target.files].filter(f=>MEDIA_RE.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
+  if(fs.length){
+    for(const f of fs){
+      const item={name:f.name,url:URL.createObjectURL(f),duration:null,ar:null};
+      vList.push(item);
+      const v=document.createElement('video'); v.preload='metadata'; v.muted=true; v.src=item.url; // 上传即读元数据
+      const done=()=>{ if(v.duration&&isFinite(v.duration)) item.duration=v.duration;
+        if(v.videoWidth&&v.videoHeight) item.ar=v.videoWidth/v.videoHeight;
+        v.onloadedmetadata=v.onerror=null; v.removeAttribute('src'); v.load(); };
+      v.onloadedmetadata=done; v.onerror=done;
+    }
+    toast(`竖屏列表已加入 ${fs.length} 个 · 共 ${vList.length} 个`);
+  }
+  updVState(); e.target.value='';
+});
+ $('vClear').addEventListener('click',()=>{
+  vList.forEach(i=>URL.revokeObjectURL(i.url)); vList=[];
+  vWins.slice().forEach(o=>closeVWin(o.el));
+  updVState(); toast('竖屏列表已清空');
+});
+ $('vsplitSwitch').addEventListener('change',e=>{
+  S.vsplit=e.target.checked; persist();
+  if(S.vsplit&&!vList.length) toast('已开启 · 但竖屏列表为空，请先上传','dim');
+  else toast(S.vsplit?'竖屏分屏已开启':'竖屏分屏已关闭');
+  updVState();
 });
 
 /* ============ 字幕（JSON / LRC / VTT 自动识别；TTS 模式 / 翻译模式热切换） ============ */
@@ -1074,7 +1237,7 @@ function subtitleTick(){
   setSubtitleText(t>=c.from?c.content:''); // 两种模式都按时间轴显示
 }
 
-/* ============ 音乐律动（自适应频谱通量节拍检测 + 小屏分流） ============ */
+/* ============ 音乐律动（自适应频谱通量节拍检测 + 小窗 / 竖屏分流） ============ */
 function updMusicState(){
   $('musicState').innerHTML=musicUrl?`<b>${esc(musicName)}</b> · ${beatOn?'律动中':'已暂停'} · 跳跃 ${jumpCount} 次`:'未加载 · 律动关闭';
 }
@@ -1126,8 +1289,15 @@ function beatTick(){
 }
 function doJump(){
   const n=playlistArr.length; if(!n) return;
-  if(S.smallWin && n>1 && Math.random()*100<S.winChance && spawnWin()){ // X% 概率改为小屏窗口，不跳跃
-    jumpCount++; updMusicState(); return;
+  const roll=Math.random()*100;
+  if(!S.smallWin && S.vsplit && vList.length && roll<S.winChance){ // 只开竖屏：X% 概率不跳，直接竖屏窗
+    if(spawnVWin()){ jumpCount++; updMusicState(); return; }
+  }
+  if(S.smallWin && n>1 && roll<S.winChance){ // 小窗分流
+    if(S.vsplit && vList.length && Math.random()*100<S.winChance){ // 命中小窗后再以同一概率改为竖屏窗
+      if(spawnVWin()){ jumpCount++; updMusicState(); return; }
+    }
+    if(spawnWin()){ jumpCount++; updMusicState(); return; }
   }
   const idx=n>1?Math.floor(Math.random()*n):currentIndex; // 列表任意文件
   const dur=(idx===currentIndex?video.duration:playlistArr[idx]?.duration);
@@ -1235,7 +1405,7 @@ param('scaleMaxR','scaleMaxN','assetScaleMax',1,80,40);    // 素材大小上限
 param('shakeR','shakeN','assetShake',0,20,12);             // 素材震动强度
 param('fxIntR','fxIntN','fxInterval',1,120,30);            // 随机触发间隔（秒）
 param('fxChanceR','fxChanceN','fxChance',1,100,80);        // 随机触发概率（%）
-param('winChanceR','winChanceN','winChance',1,100,80);     // 小屏出现概率（%）
+param('winChanceR','winChanceN','winChance',1,100,80);     // 小窗出现概率（%）
 param('winLifeMinR','winLifeMinN','winLifeMin',0.5,60,20); // 窗口存活下限
 param('winLifeMaxR','winLifeMaxN','winLifeMax',0.5,60,20); // 窗口存活上限
 param('winScaleMinR','winScaleMinN','winScaleMin',5,80,50);// 窗口大小下限（%）
@@ -1246,7 +1416,10 @@ setRate(S.rate,null,null);
  $('shufSwitch').addEventListener('change',e=>{ shuffle=S.shuffle=e.target.checked; persist(); renderPlaylist(); });
  $('ttsSwitch').checked=(S.subMode!=='translate');
  $('smallWinSwitch').checked=S.smallWin;
+ $('vsplitSwitch').checked=S.vsplit;
  $('fxModeSwitch').checked=(S.fxMode==='random');
+ $('rippleSwitch').checked=S.rippleOn;
+ $('impactSwitch').checked=S.impactOn;
 
 /* ============ 键盘 ============ */
 window.addEventListener('keydown',e=>{
@@ -1287,7 +1460,7 @@ function loop(ts){
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-renderPlaylist(); updateStatusPills(); updMusicState(); updFxState(); updSubState(); updWinState(); applyVolume();
+renderPlaylist(); updateStatusPills(); updMusicState(); updFxState(); updSubState(); updWinState(); updVState(); applyVolume();
 </script>
 </body>
 </html>
