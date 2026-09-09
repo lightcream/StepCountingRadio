@@ -39,7 +39,7 @@ body{
 /* ============ 播放器 ============ */
 .player-shell{position:relative;width:100%;aspect-ratio:16/9;max-height:62vh;background:#0b0d12;border-radius:var(--radius);overflow:hidden;box-shadow:10px 12px 26px var(--dark),-8px -9px 20px var(--light);margin-bottom:12px}
 .player-shell video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#0b0d12}
-.player-shell.shake{animation:shake .5s ease-out} /* 律动跳跃转场：位移震动 + 高亮（全屏同样生效） */
+.player-shell.shake{animation:shake .5s ease-out}
 @keyframes shake{
   0%,100%{transform:translate(0,0);filter:brightness(1)}
   14%{transform:translate(-9px,4px);filter:brightness(1.5)}
@@ -47,13 +47,14 @@ body{
   52%{transform:translate(-6px,-2px);filter:brightness(1.14)}
   72%{transform:translate(5px,3px);filter:brightness(1.06)}
 }
-video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
+video.jolt{animation:jolt .5s ease-out}
 @keyframes jolt{0%,100%{transform:translateY(0)}15%{transform:translateY(8px)}35%{transform:translateY(-7px)}55%{transform:translateY(5px)}75%{transform:translateY(-3px)}}
 .center-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);pointer-events:none;z-index:2;transition:opacity .4s}
 .center-hint.off{opacity:0}
 .center-hint svg{width:44px;height:44px;opacity:.5}
 .center-hint p{font-size:14px;letter-spacing:.22em;color:#9aa5ba}
 .center-hint span{font-size:11px;letter-spacing:.12em}
+.center-hint.err p{color:#ff9d9d}
 .audio-viz{position:absolute;bottom:15%;left:50%;transform:translateX(-50%);display:none;gap:6px;align-items:flex-end;height:52px;pointer-events:none;z-index:2}
 .player-shell[data-kind="audio"] .audio-viz{display:flex}
 .audio-viz i{width:5px;border-radius:3px;background:var(--accent);opacity:.9;height:8px;animation:viz 1.05s ease-in-out infinite alternate;animation-play-state:paused}
@@ -67,14 +68,14 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .subtitle-layer.tts{border-left-color:#8ff0ff}
 .subtitle-layer.tts::after{content:"TTS 朗读中";display:block;font-size:9px;letter-spacing:.3em;color:var(--accent);margin-top:2px}
 
-/* 特效层：波纹圈 / 素材 / 文字 / 速度线 / 小窗与竖屏窗（未全屏与全屏均触发；画面扭曲由 SVG 滤镜直接作用于 video） */
+/* 特效层 */
 .fx-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4}
 .ripple{position:absolute;left:50%;top:50%;border-radius:50%;border:2.5px solid rgba(0,224,255,.7);box-shadow:0 0 14px rgba(0,224,255,.35),inset 0 0 12px rgba(0,224,255,.2);transform:scale(.06);animation:rippleA .85s ease-out forwards}
 .ripple.r2{border-width:1.5px;opacity:.75}
 @keyframes rippleA{0%{transform:scale(.06);opacity:.95}100%{transform:scale(1);opacity:0}}
 .asset{position:absolute;width:var(--s,56px);height:var(--s,56px);margin:calc(var(--s,56px)/-2) 0 0 calc(var(--s,56px)/-2);transform:rotate(var(--rot,0deg));pointer-events:none}
 .a-in{width:100%;height:100%;display:flex;align-items:center;justify-content:center;transition:opacity .35s;
-  animation:assetIn .32s cubic-bezier(.2,.9,.3,1.45),assetJit .14s .32s linear infinite} /* 入场弹跳 + 持续自我震动 */
+  animation:assetIn .32s cubic-bezier(.2,.9,.3,1.45),assetJit .14s .32s linear infinite}
 @keyframes assetIn{from{transform:scale(.25);opacity:0}}
 @keyframes assetJit{
   0%,100%{transform:translate(0,0)}
@@ -86,7 +87,6 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .a-in img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
 .a-in svg{width:100%;height:100%;fill:var(--accent);filter:drop-shadow(0 0 8px rgba(0,224,255,.5))}
 .asset.out .a-in{opacity:0}
-/* 文字特效：以落点为中心、朝向圆心旋转、自我震动、两套青绿系颜色随机、字号区间随机 */
 .txt-asset{position:absolute;transform:translate(-50%,-50%) rotate(var(--rot,0deg));pointer-events:none;white-space:nowrap}
 .txt-in{display:inline-block;padding:2px 9px;white-space:nowrap;
   font-family:"方正准圆_GBK","FZZhunYuan-M02","PingFang SC","Microsoft YaHei",sans-serif;
@@ -94,7 +94,6 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
   text-shadow:0 0 9px rgba(0,0,0,.55),0 2px 5px rgba(0,0,0,.6);
   animation:assetIn .32s cubic-bezier(.2,.9,.3,1.45),assetJit .14s .32s linear infinite;transition:opacity .35s}
 .txt-asset.out .txt-in{opacity:0}
-/* 撞击速度线：放射线 × 垂直 ±60° 楔形 × 环形衰减（双 mask 交集） */
 .impact-lines{position:absolute;left:50%;top:50%;width:240%;height:240%;opacity:0;
   background:repeating-conic-gradient(from 120deg at 50% 50%,rgba(226,244,255,.15) 0deg 1deg,transparent 1deg 5.5deg);
   -webkit-mask:conic-gradient(from 120deg at 50% 50%,#000 0 120deg,transparent 120deg 240deg,#000 240deg 360deg),radial-gradient(circle at 50% 50%,transparent 20%,#000 32%,#000 72%,transparent 82%);
@@ -103,7 +102,6 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
   mask-composite:intersect;
   animation:impactLines .5s ease-out forwards}
 @keyframes impactLines{0%{opacity:0;transform:translate(-50%,-50%) scale(.92)}18%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.08)}}
-/* 播放窗口：无边缘色框，仅柔和黑影，与主画面视觉一体 */
 .mini-win{position:absolute;border-radius:10px;overflow:hidden;background:#0b0d12;opacity:0;transform:scale(.7);
   transition:opacity .32s,transform .32s cubic-bezier(.2,.9,.3,1.3);
   box-shadow:0 10px 26px rgba(0,0,0,.6)}
@@ -138,7 +136,7 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .vol-group input[type=range]{width:72px}
 @media (max-width:760px){.vol-group{display:none}.time-label{font-size:10.5px}}
 
-/* ============ 上传页面：两行上传槽（媒体与轨道 / 特效素材）+ 三个文件列表 ============ */
+/* ============ 上传页面 ============ */
 .dock{padding:11px}
 .dock-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px}
 .dock-row+.dock-row{margin-top:9px}
@@ -180,7 +178,6 @@ video.jolt{animation:jolt .5s ease-out} /* 撞击：画面上下浮动肉浪 */
 .pl-mute.muted{color:var(--accent)}
 .pl-x:hover{color:#ff8f8f;background:rgba(255,110,110,.12)}
 .pl-mute svg,.pl-x svg{width:12px;height:12px}
-/* 附件与素材列表（字幕 / 音乐 / 图片 / 音效 / 文字 逐行管理） */
 .res-list{display:flex;flex-direction:column;gap:5px;max-height:230px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#3a4152 transparent}
 .res-list::-webkit-scrollbar{width:5px}
 .res-list::-webkit-scrollbar-thumb{background:#3a4152;border-radius:4px}
@@ -220,19 +217,24 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 .switch em{font-style:normal;color:var(--muted);font-size:12px}
 .switch input:checked~em{color:#9fd8e6}
 
-/* ============ 参数组件：滑块 + 输入两种方式，数值精确到两位小数（HTML 原生属性兜底 + JS 双向同步） ============ */
+/* ============ 参数组件 ============ */
 .param{display:flex;flex-direction:column;gap:5px;margin:7px 0 4px}
 .param>label{font-size:11px;color:var(--muted);letter-spacing:.05em}
 .p-row{display:flex;gap:8px;align-items:center}
 .p-row input[type=range]{flex:1;min-width:0}
 .p-row input[type=number]{width:70px}
 
-/* ============ 设置抽屉（只放参数与开关）+ 底栏面板开关 ============ */
+/* ============ 设置抽屉 ============ */
 .settings-panel{position:fixed;left:8px;right:8px;bottom:4px;z-index:70;max-height:min(60vh,560px);display:flex;flex-direction:column;border-radius:var(--radius);background:var(--panel);transform:translateY(calc(100% + 14px));transition:transform .4s cubic-bezier(.22,.9,.32,1);box-shadow:10px 12px 28px rgba(0,0,0,.6),-8px -8px 20px var(--light)}
 .settings-panel.open{transform:translateY(0)}
-.sp-head{display:flex;align-items:center;gap:12px;padding:10px 16px 6px;flex:none}
-.sp-grip{width:40px;height:4px;border-radius:3px;background:#41495c;flex:none}
+.sp-head{display:flex;align-items:center;gap:7px;padding:10px 16px 6px;flex:none}
+.sp-grip{width:36px;height:4px;border-radius:3px;background:#41495c;flex:none}
 .sp-head h2{font-size:12px;letter-spacing:.3em;color:#aeb9cc;font-weight:600;flex:1}
+.hbtn{width:28px;height:28px;flex:none;border:none;border-radius:9px;cursor:pointer;background:var(--panel2);color:var(--muted);display:flex;align-items:center;justify-content:center;box-shadow:3px 3px 7px var(--dark),-2px -3px 6px var(--light);transition:.16s}
+.hbtn:hover{color:var(--accent)}
+.hbtn.on{background:var(--accent);color:var(--accent-ink)}
+.hbtn svg{width:13px;height:13px}
+.settings-panel.locked .sp-body{pointer-events:none;opacity:.45;filter:saturate(.55)}
 .sp-body{overflow-y:auto;padding:2px 16px 16px;scrollbar-width:thin;scrollbar-color:#3a4152 transparent}
 .sp-body::-webkit-scrollbar{width:5px}
 .sp-body::-webkit-scrollbar-thumb{background:#3a4152;border-radius:4px}
@@ -243,8 +245,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 .state-line{font-size:11.5px;color:var(--muted);padding:7px 10px;border-radius:9px;background:var(--pit);box-shadow:inset 3px 3px 6px rgba(0,0,0,.5),inset -2px -2px 4px rgba(255,255,255,.04);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .state-line b{color:#9fd8e6;font-weight:600}
 .mini-hint{font-size:10.5px;line-height:1.6;color:#68718a;margin-top:8px}
-.panel-switch{ /* 面板收起后收进浏览器底栏的开关 */
-  position:fixed;left:50%;bottom:4px;transform:translateX(-50%);z-index:82;
+.panel-switch{position:fixed;left:50%;bottom:4px;transform:translateX(-50%);z-index:82;
   display:flex;align-items:center;gap:9px;padding:8px 18px 8px 15px;border:none;cursor:pointer;
   border-radius:11px 11px 0 0;background:var(--panel);color:var(--muted);
   font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.24em;
@@ -255,7 +256,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 .panel-switch svg{width:12px;height:12px}
 .panel-switch.hide{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(120%)}
 
-/* ============ mini 细线进度条（常驻最底）/ toast ============ */
+/* ============ mini 细线进度条 / toast ============ */
 .mini-progress{position:fixed;left:0;right:0;bottom:0;height:4px;z-index:80;background:rgba(8,10,15,.75);cursor:pointer;touch-action:none;transition:height .15s}
 .mini-progress::before{content:'';position:absolute;top:-8px;left:0;right:0;height:14px}
 .mini-progress:hover{height:8px}
@@ -270,6 +271,8 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
   .brand h1{font-size:15px}
   .settings-grid{grid-template-columns:1fr}
   .panel-switch{padding:7px 14px 7px 12px;letter-spacing:.18em}
+  .sp-head{gap:5px;padding:8px 12px 5px}
+  .hbtn{width:26px;height:26px}
 }
 </style>
 </head>
@@ -288,8 +291,8 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
       <div><h1>STEP<b>VISION</b></h1><span>步频放映室</span></div>
     </div>
     <div class="pills">
-      <div class="pill" id="pillQuota">已锁定 · 未开启计步</div>
-      <div class="pill" id="pillSteps">步数 <b>0</b></div>
+      <div class="pill" id="pillQuota">已锁定 · 未开启触发引擎</div>
+      <div class="pill" id="pillSteps">触发 <b>0</b></div>
       <div class="pill" id="pillSub">字幕</div>
       <div class="pill" id="pillBeat">律动</div>
     </div>
@@ -300,7 +303,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
     <video id="video" playsinline webkit-playsinline preload="auto"></video>
     <div class="center-hint" id="centerHint">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M7 4v16M17 4v16M2.5 9h4.5M2.5 15h4.5M17 9h4.5M17 15h4.5" stroke-linecap="round"/><path d="M10.5 9.5l4 2.5-4 2.5z" fill="currentColor" stroke="none"/></svg>
-      <p>上传媒体文件开始放映</p><span>计步解锁播放 · 支持超大视频</span>
+      <p>上传媒体文件开始放映</p><span>触发引擎解锁播放 · 支持超大视频</span>
     </div>
     <div class="audio-viz" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="subtitle-layer" id="subLayer"></div>
@@ -321,7 +324,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
     </div>
   </section>
 
-  <!-- 上传页面：两行上传槽 + 播放列表 + 竖屏列表 + 附件素材列表 -->
+  <!-- 上传页面 -->
   <section class="dock neu" id="dock">
     <div class="dock-row">
       <label class="up-tile" for="slotMediaInput">
@@ -386,7 +389,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
   </section>
 </div>
 
-<!-- 特效滤镜（直接作用于 video 元素）：波纹曲面 / 撞击肉浪+垂直拖影 -->
+<!-- 特效滤镜 -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <filter id="waterFX" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
     <feTurbulence id="wfxTurb" type="fractalNoise" baseFrequency="0.008 0.013" numOctaves="2" seed="7" result="n"/>
@@ -399,23 +402,32 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
   </filter>
 </svg>
 
-<!-- 底栏面板开关（控制台收起后露出） -->
+<!-- 底栏面板开关 -->
 <button class="panel-switch" id="panelSwitch" type="button" title="打开控制台">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 14l6-6 6 6"/></svg>
   <span class="bar"></span>控制台
 </button>
 
-<!-- 设置抽屉：只放参数与开关（★ 所有控件均带原生 min/max/step/value，即使 JS 异常也正常显示与拖动） -->
+<!-- 设置抽屉 -->
 <footer class="settings-panel" id="settingsPanel">
-  <div class="sp-head"><span class="sp-grip"></span><h2>控制台</h2><button class="btn" id="spClose" style="padding:6px 12px">收起</button></div>
+  <div class="sp-head">
+    <span class="sp-grip"></span><h2>控制台</h2>
+    <button class="hbtn" id="lockBtn" type="button" title="锁定 / 解锁参数面板"></button>
+    <button class="hbtn" id="exportBtn" type="button" title="导出配置"></button>
+    <button class="hbtn" id="importBtn" type="button" title="导入配置"></button>
+    <button class="btn" id="spClose" style="padding:6px 12px">收起</button>
+    <input type="file" id="cfgInput" accept=".json,application/json" hidden>
+  </div>
   <div class="sp-body">
     <div class="settings-grid">
 
       <div class="card">
-        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-7 4.5 14 2.5-7H21"/></svg>步数引擎</h3>
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-7 4.5 14 2.5-7H21"/></svg>触发引擎</h3>
         <button class="btn accent wide" id="btnSensor">开启计步传感器</button>
+        <div style="height:8px"></div>
+        <button class="btn wide" id="btnMouse"></button>
         <div class="param">
-          <label>每步解锁（秒）</label>
+          <label>每次触发解锁（秒）</label>
           <div class="p-row"><input type="range" id="stepSecR" min="1" max="120" step="0.01" value="30"><input type="number" id="stepSecN" min="1" max="600" step="0.01" value="30.00"></div>
         </div>
         <div class="param">
@@ -424,9 +436,10 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px">
           <button class="btn accent" id="btnWarm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>预热 1:15</button>
-          <button class="btn" id="btnSimStep">模拟一步</button>
+          <button class="btn" id="btnSimStep">模拟触发</button>
         </div>
-        <div class="state-line" id="sensorState" style="margin-top:9px">传感器：未开启 · 视频已锁定</div>
+        <div class="state-line" id="sensorState" style="margin-top:9px">引擎：未开启 · 视频已锁定</div>
+        <p class="mini-hint">计步与鼠标移动二选一，开启一个会自动关闭另一个；两个都没开启时视频锁定不可播放。结算规则：触发不叠加，仅最后提前量窗口内或时间结束后触发才激活新一段。</p>
       </div>
 
       <div class="card">
@@ -483,6 +496,10 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
           <div class="p-row"><input type="range" id="winChanceR" min="1" max="80" step="0.01" value="50"><input type="number" id="winChanceN" min="1" max="100" step="0.01" value="50.00"></div>
         </div>
         <div class="param">
+          <label>窗口最大并发数</label>
+          <div class="p-row"><input type="range" id="winMaxR" min="1" max="10" step="0.01" value="6"><input type="number" id="winMaxN" min="1" max="16" step="0.01" value="6.00"></div>
+        </div>
+        <div class="param">
           <label>窗口存活下限（秒）</label>
           <div class="p-row"><input type="range" id="winLifeMinR" min="0.5" max="20" step="0.01" value="3"><input type="number" id="winLifeMinN" min="0.5" max="60" step="0.01" value="3.00"></div>
         </div>
@@ -498,6 +515,7 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
           <label>窗口大小上限（%）</label>
           <div class="p-row"><input type="range" id="winScaleMaxR" min="5" max="50" step="0.01" value="35"><input type="number" id="winScaleMaxN" min="5" max="80" step="0.01" value="35.00"></div>
         </div>
+        <p class="mini-hint">超过并发上限时自动关闭最早出现的窗口腾出解码槽；移动端（含安卓 Chrome）同一时刻仅保留一个有声窗口、其余自动静音并带自动重试静音兜底，保证多窗并发。</p>
       </div>
 
       <div class="card">
@@ -521,8 +539,8 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 
       <div class="card">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="8.5"/></svg>特效触发</h3>
-        <div class="state-line" id="fxModeState">模式：计步触发 · 波纹</div>
-        <label class="switch" style="margin:9px 0 2px"><input type="checkbox" id="fxModeSwitch"><span class="sw-track"><i></i></span><em>随机触发模式（关闭＝计步触发）</em></label>
+        <div class="state-line" id="fxModeState">模式：引擎触发 · 波纹</div>
+        <label class="switch" style="margin:9px 0 2px"><input type="checkbox" id="fxModeSwitch"><span class="sw-track"><i></i></span><em>随机触发模式（关闭＝计步 / 鼠标触发）</em></label>
         <label class="switch" style="margin:7px 0 2px"><input type="checkbox" id="rippleSwitch" checked><span class="sw-track"><i></i></span><em>波纹圆圈震动特效</em></label>
         <label class="switch" style="margin:7px 0 2px"><input type="checkbox" id="impactSwitch"><span class="sw-track"><i></i></span><em>撞击漫画速度线特效</em></label>
         <div class="param">
@@ -617,10 +635,10 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
 /* ============ 工具 ============ */
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const r2=v=>Math.round(v*100)/100; // 精确到两位小数
+const r2=v=>Math.round(v*100)/100;
 function fmt(t){ if(!isFinite(t)||t<0)return'--:--'; t=Math.max(0,Math.floor(t)); const h=(t/3600)|0,m=((t%3600)/60)|0,s=t%60,p=n=>String(n).padStart(2,'0'); return h?h+':'+p(m)+':'+p(s):p(m)+':'+p(s); }
 function fmtBytes(b){ if(!isFinite(b))return'--'; const u=['B','KB','MB','GB','TB']; let i=0; while(b>=1024&&i<4){b/=1024;i++} return (b>=100||i===0?Math.round(b):b.toFixed(1))+' '+u[i]; }
-function safe(tag,fn){ try{ fn(); }catch(e){ console.warn('[初始化跳过]',tag,e); } } // 分段隔离：一段失败不拖垮其他段
+function safe(tag,fn){ try{ fn(); }catch(e){ console.warn('[初始化跳过]',tag,e); } }
 
 const SVG_PLAY='<svg viewBox="0 0 24 24"><path d="M7.5 4.5v15l13-7.5z" fill="currentColor"/></svg>';
 const SVG_PAUSE='<svg viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1.2" fill="currentColor"/><rect x="14" y="4.5" width="4" height="15" rx="1.2" fill="currentColor"/></svg>';
@@ -631,11 +649,16 @@ const SVG_HEART='<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.3
 const SVG_X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>';
 const SVG_VOLS='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
 const SVG_MUTES='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9l6 6M22 9l-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+const SVG_MOUSE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="5"/><path d="M12 6v3"/></svg>';
 const IC_SUB='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 14h7M6 17h9"/></svg>';
 const IC_MUSIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>';
 const IC_IMG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-4.5-4.5L7 20"/></svg>';
 const IC_SFX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 9a4 4 0 0 1 0 6"/></svg>';
 const IC_TXT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7V4h14v3M12 4v16M9 20h6"/></svg>';
+const SVG_LOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+const SVG_UNLOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg>';
+const SVG_DLA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>';
+const SVG_UPL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13V3m0 0L8 7m4-4l4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>';
 
 /* ============ 元素 ============ */
 const video=$('video'), playerShell=$('playerShell'), controlLayer=$('controlLayer'),
@@ -652,20 +675,24 @@ const video=$('video'), playerShell=$('playerShell'), controlLayer=$('controlLay
   musicAudio=$('musicAudio'), toastWrap=$('toastWrap'),
   pillQuota=$('pillQuota'), pillSteps=$('pillSteps'), pillSub=$('pillSub'), pillBeat=$('pillBeat');
 
-safe('控制按钮图标',()=>{ btnPlay.innerHTML=SVG_PLAY; btnFs.innerHTML=SVG_FS; btnMute.innerHTML=SVG_VOL; });
+safe('控制按钮图标',()=>{
+  btnPlay.innerHTML=SVG_PLAY; btnFs.innerHTML=SVG_FS; btnMute.innerHTML=SVG_VOL;
+  $('btnMouse').innerHTML=SVG_MOUSE+'开启鼠标移动系统';
+  $('lockBtn').innerHTML=SVG_UNLOCK; $('exportBtn').innerHTML=SVG_DLA; $('importBtn').innerHTML=SVG_UPL;
+});
 
-/* ============ 状态（全部参数持久化，下次打开自动恢复） ============ */
+/* ============ 状态 ============ */
 const S={ rate:1, volume:1, stepSec:30, settleSec:5, beatSens:1.6, beatCooldown:2, headMin:0, tailMin:0, musicVol:0.7, shuffle:false,
   subMode:'tts', rippleMin:90, rippleMax:280, assetLifeMin:2, assetLifeMax:4, assetScaleMin:8, assetScaleMax:16, assetShake:3,
   fxMode:'step', fxInterval:5, fxChance:60, rippleOn:true, impactOn:false,
-  smallWin:false, winChance:50, winLifeMin:3, winLifeMax:6, winScaleMin:20, winScaleMax:35,
+  smallWin:false, winChance:50, winMax:6, winLifeMin:3, winLifeMax:6, winScaleMin:20, winScaleMax:35,
   vsplit:false, vChance:50, vLifeMin:3, vLifeMax:6,
   txtOn:false, txtMinR:110, txtMaxR:300, txtLifeMin:2, txtLifeMax:4, txtShake:3, txtSizeMin:18, txtSizeMax:32 };
 safe('读取本地存档',()=>{ Object.assign(S, JSON.parse(localStorage.getItem('stepvision')||'{}')); });
 function persist(){ try{ localStorage.setItem('stepvision', JSON.stringify(S)); }catch(e){} }
 
 let playlistArr=[], currentIndex=-1, pendingSeek=null, userMuted=false;
-let stepMode=false, steps=0, quota=0, quotaToastShown=false;
+let stepMode=false, mouseMode=false, triggers=0, quota=0, quotaToastShown=false;
 let cues=[], subIdx=0, lastSubText=null, subName='';
 let ttsState='idle', ttsCancelRef=null;
 let shuffle=S.shuffle;
@@ -677,16 +704,20 @@ let vList=[];
 let winRects=[], vWins=[];
 let snake={x:8,y:8,rowH:0};
 let barDragging=false, previewRatio=0, hideTimer=0, lastFxT=0, waterRAF=0, impactRAF=0;
+let panelLocked=false, mobileMuteHinted=false;
+const IS_MOBILE=/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+function engineOn(){ return stepMode||mouseMode; }
 
 /* ============ Toast ============ */
-function toast(msg,type=''){
+function toast(msg,type){
+  if(!type) type='';
   while(toastWrap.children.length>=3) toastWrap.firstChild.remove();
   const el=document.createElement('div'); el.className='toast '+type; el.textContent=msg;
   toastWrap.appendChild(el); requestAnimationFrame(()=>el.classList.add('in'));
   setTimeout(()=>{ el.classList.remove('in'); setTimeout(()=>el.remove(),320); },2600);
 }
 
-/* ============ 时长修复（部分容器 duration=Infinity 导致进度条瘫痪） ============ */
+/* ============ 时长修复 ============ */
 function effDur(){
   const d=video.duration;
   if(isFinite(d)&&d>0) return d;
@@ -700,14 +731,14 @@ function probeMeta(v,onReady){
     if(isFinite(v.duration)&&v.duration>0){ fin(); return; }
     const ondc=()=>{ if(isFinite(v.duration)&&v.duration>0){ v.removeEventListener('durationchange',ondc); fin(); } };
     v.addEventListener('durationchange',ondc);
-    try{ v.currentTime=1e101; }catch(e){}
+    try{ v.currentTime=1e101; }catch(e){ fin(); }
     setTimeout(fin,1000);
   });
   v.addEventListener('error',fin);
   setTimeout(fin,2500);
 }
 
-/* ============ 主媒体列表（Blob URL 流式解码；上传即加载） ============ */
+/* ============ 主媒体列表 ============ */
 const MEDIA_RE=/\.(mp4|mkv|webm|mov|avi|flv|wmv|ts|m2ts|mts|m4v|mpg|mpeg|m2v|3gp|ogv|vob|rm|rmvb|asf|divx|f4v|mka|mp3|flac|wav|aac|ogg|m4a|opus|wma|aiff|ape|amr|ac3|dts|caf)$/i;
 function isAudioFile(f){ return (f.type&&f.type.startsWith('audio'))||/\.(mp3|flac|wav|aac|ogg|m4a|opus|wma|aiff|ape|amr|ac3|dts|caf)$/i.test(f.name); }
 function addMediaFiles(files){
@@ -717,9 +748,9 @@ function addMediaFiles(files){
     const item={ name:f.name, size:f.size, url:URL.createObjectURL(f), duration:null, ar:null, kind:isAudioFile(f)?'audio':'video', muted:false };
     playlistArr.push(item); probeDuration(item);
   }
-  $('slotMediaInfo').textContent=`共 ${playlistArr.length} 个 · ${ok[ok.length-1].name}`;
+  $('slotMediaInfo').textContent='共 '+playlistArr.length+' 个 · '+ok[ok.length-1].name;
   $('slotMediaInfo').classList.add('ok');
-  if(currentIndex<0) loadIndex(0,true); else { renderPlaylist(); toast(`已加入 ${ok.length} 个 · 共 ${playlistArr.length} 个`); }
+  if(currentIndex<0) loadIndex(0,true); else { renderPlaylist(); toast('已加入 '+ok.length+' 个 · 共 '+playlistArr.length+' 个'); }
 }
 function probeDuration(item){
   const v=document.createElement('video'); v.preload='metadata'; v.muted=true; v.src=item.url;
@@ -730,9 +761,9 @@ function probeDuration(item){
     v.removeAttribute('src'); v.load(); renderPlaylist();
   });
 }
-safe('媒体槽',()=>{ $('slotMediaInput').addEventListener('change',e=>{ addMediaFiles([...e.target.files]); e.target.value=''; }); });
+safe('媒体槽',()=>{ $('slotMediaInput').addEventListener('change',e=>{ addMediaFiles(Array.from(e.target.files||[])); e.target.value=''; }); });
 safe('拖放',()=>{ ['dragover','dragleave','drop'].forEach(ev=>playerShell.addEventListener(ev,e=>{ e.preventDefault();
-  if(ev==='drop'&&e.dataTransfer.files.length) addMediaFiles([...e.dataTransfer.files]); })); });
+  if(ev==='drop'&&e.dataTransfer.files.length) addMediaFiles(Array.from(e.dataTransfer.files)); })); });
 
 function loadIndex(i,autoplay,seekTo){
   if(i<0||i>=playlistArr.length) return;
@@ -741,15 +772,15 @@ function loadIndex(i,autoplay,seekTo){
   pendingSeek=(seekTo!=null)?seekTo:null;
   video.src=it.url; applyRate(); applyVolume();
   playerShell.dataset.kind=it.kind;
-  subIdx=0; if(cues.length) cues.forEach(c=>c.done=false);
+  subIdx=0; if(cues.length) cues.forEach(c=>{ c.done=false; });
   renderPlaylist();
   if(autoplay===true) tryPlay();
 }
 function tryPlay(){
   if(!playlistArr.length){ toast('请先上传媒体文件'); return false; }
-  if(!stepMode){ toast('视频已锁定 · 请先开启计步传感器'); return false; }
-  if(quota<=0){ toast('本段播放时间已用尽 · 计步或点预热解锁'); return false; }
-  video.play().catch(()=>{});
+  if(!engineOn()){ toast('视频已锁定 · 请先开启计步传感器或鼠标移动系统'); return false; }
+  if(quota<=0){ toast('本段播放时间已用尽 · 触发一次或点预热解锁'); return false; }
+  video.play().catch(function(){});
   return true;
 }
 function togglePlay(){
@@ -775,23 +806,23 @@ function removeItem(i){
   }
   if(i===currentIndex){ const old=currentIndex; currentIndex=-1; loadIndex(Math.min(old,playlistArr.length-1), quota>0); }
   else if(i<currentIndex) currentIndex--;
-  renderPlaylist(); toast(`已移除「${it.name}」 · 剩 ${playlistArr.length} 个`);
+  renderPlaylist(); toast('已移除「'+it.name+'」 · 剩 '+playlistArr.length+' 个');
 }
 function renderPlaylist(){
   plCount.textContent=playlistArr.length+' 项';
   plShufBadge.classList.toggle('on',shuffle);
   centerHint.classList.toggle('off',playlistArr.length>0);
   if(!playlistArr.length){ playlist.innerHTML='<div class="pl-empty">列表为空 · 上传媒体后自动加入</div>'; return; }
-  playlist.innerHTML=playlistArr.map((it,i)=>`
-    <div class="pl-item ${i===currentIndex?'active':''}" data-i="${i}">
-      <span class="pl-idx">${String(i+1).padStart(2,'0')}</span>
-      <div class="pl-meta"><strong title="${esc(it.name)}">${esc(it.name)}</strong>
-        <span>${it.duration?fmt(it.duration):'加载中…'} · ${fmtBytes(it.size)} · ${it.kind==='audio'?'音频':'视频'}</span></div>
-      <div class="pl-btns">
-        <button class="pl-mute ${it.muted?'muted':''}" data-m="${i}" title="单独静音">${it.muted?SVG_MUTES:SVG_VOLS}</button>
-        <button class="pl-x" data-x="${i}" title="移除">${SVG_X}</button>
-      </div>
-    </div>`).join('');
+  playlist.innerHTML=playlistArr.map(function(it,i){
+    return '<div class="pl-item '+(i===currentIndex?'active':'')+'" data-i="'+i+'">'+
+      '<span class="pl-idx">'+String(i+1).padStart(2,'0')+'</span>'+
+      '<div class="pl-meta"><strong title="'+esc(it.name)+'">'+esc(it.name)+'</strong>'+
+      '<span>'+(it.duration?fmt(it.duration):'加载中…')+' · '+fmtBytes(it.size)+' · '+(it.kind==='audio'?'音频':'视频')+'</span></div>'+
+      '<div class="pl-btns">'+
+      '<button class="pl-mute '+(it.muted?'muted':'')+'" data-m="'+i+'" title="单独静音">'+(it.muted?SVG_MUTES:SVG_VOLS)+'</button>'+
+      '<button class="pl-x" data-x="'+i+'" title="移除">'+SVG_X+'</button>'+
+      '</div></div>';
+  }).join('');
 }
 safe('主列表委托',()=>{ playlist.addEventListener('click',e=>{
   const m=e.target.closest('.pl-mute');
@@ -807,13 +838,13 @@ safe('主列表委托',()=>{ playlist.addEventListener('click',e=>{
 
 /* ============ 竖屏列表 ============ */
 safe('竖屏槽',()=>{ $('vInput').addEventListener('change',e=>{
-  const fs=[...e.target.files].filter(f=>MEDIA_RE.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
+  const fs=Array.from(e.target.files||[]).filter(f=>MEDIA_RE.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
   if(fs.length){
     for(const f of fs){
       const item={ name:f.name, size:f.size, url:URL.createObjectURL(f), duration:null, ar:null, muted:false };
       vList.push(item); probeV(item);
     }
-    toast(`竖屏列表已加入 ${fs.length} 个 · 共 ${vList.length} 个`);
+    toast('竖屏列表已加入 '+fs.length+' 个 · 共 '+vList.length+' 个');
   } else toast('未识别到音视频文件');
   renderVPlaylist(); e.target.value='';
 }); });
@@ -830,23 +861,23 @@ function removeVItem(i){
   const it=vList[i]; URL.revokeObjectURL(it.url);
   vWins.filter(o=>o.item===it).forEach(o=>closeVWin(o.el));
   vList.splice(i,1);
-  renderVPlaylist(); toast(`已移除「${it.name}」 · 剩 ${vList.length} 个`);
+  renderVPlaylist(); toast('已移除「'+it.name+'」 · 剩 '+vList.length+' 个');
 }
 function renderVPlaylist(){
   vCount.textContent=vList.length+' 项';
-  $('vInfo').textContent=vList.length?`共 ${vList.length} 个视频`:'竖屏分屏专用 · 可多选';
+  $('vInfo').textContent=vList.length?('共 '+vList.length+' 个视频'):'竖屏分屏专用 · 可多选';
   updVState();
   if(!vList.length){ vPlaylist.innerHTML='<div class="pl-empty">空 · 上传竖屏视频后自动加入</div>'; return; }
-  vPlaylist.innerHTML=vList.map((it,i)=>`
-    <div class="pl-item v-item" data-i="${i}">
-      <span class="pl-idx">${String(i+1).padStart(2,'0')}</span>
-      <div class="pl-meta"><strong title="${esc(it.name)}">${esc(it.name)}</strong>
-        <span>${it.duration?fmt(it.duration):'加载中…'} · ${fmtBytes(it.size)}</span></div>
-      <div class="pl-btns">
-        <button class="pl-mute ${it.muted?'muted':''}" data-m="${i}" title="单独静音">${it.muted?SVG_MUTES:SVG_VOLS}</button>
-        <button class="pl-x" data-x="${i}" title="移除">${SVG_X}</button>
-      </div>
-    </div>`).join('');
+  vPlaylist.innerHTML=vList.map(function(it,i){
+    return '<div class="pl-item v-item" data-i="'+i+'">'+
+      '<span class="pl-idx">'+String(i+1).padStart(2,'0')+'</span>'+
+      '<div class="pl-meta"><strong title="'+esc(it.name)+'">'+esc(it.name)+'</strong>'+
+      '<span>'+(it.duration?fmt(it.duration):'加载中…')+' · '+fmtBytes(it.size)+'</span></div>'+
+      '<div class="pl-btns">'+
+      '<button class="pl-mute '+(it.muted?'muted':'')+'" data-m="'+i+'" title="单独静音">'+(it.muted?SVG_MUTES:SVG_VOLS)+'</button>'+
+      '<button class="pl-x" data-x="'+i+'" title="移除">'+SVG_X+'</button>'+
+      '</div></div>';
+  }).join('');
 }
 safe('竖屏列表委托',()=>{ vPlaylist.addEventListener('click',e=>{
   const m=e.target.closest('.pl-mute');
@@ -858,23 +889,24 @@ safe('竖屏列表委托',()=>{ vPlaylist.addEventListener('click',e=>{
   const x=e.target.closest('.pl-x'); if(x){ e.stopPropagation(); removeVItem(+x.dataset.x); return; }
 }); });
 
-/* ============ 附件与素材列表 ============ */
+/* ============ 附件与素材列表（★ 上次崩溃点已修复：补齐括号） ============ */
 function renderResList(){
   const rows=[];
-  if(cues.length) rows.push({t:'sub',name:`${subName} · ${cues.length} 段`,tag:'字幕轨',ic:IC_SUB});
+  if(cues.length) rows.push({t:'sub',name:subName+' · '+cues.length+' 段',tag:'字幕轨',ic:IC_SUB});
   if(musicUrl) rows.push({t:'music',name:musicName,tag:'律动音乐',ic:IC_MUSIC});
-  assetImgs.forEach((a,i)=>rows.push({t:'img',i,name:a.name,tag:'图片',ic:IC_IMG}));
-  assetSfxs.forEach((a,i)=>rows.push({t:'sfx',i,name:a.name,tag:'音效',ic:IC_SFX}));
-  if(txtLines.length) rows.push({t:'txt',name:`${txtName} · ${txtLines.length} 句`,tag:'文字',ic:IC_TXT});
+  assetImgs.forEach(function(a,i){ rows.push({t:'img',i:i,name:a.name,tag:'图片',ic:IC_IMG}); });
+  assetSfxs.forEach(function(a,i){ rows.push({t:'sfx',i:i,name:a.name,tag:'音效',ic:IC_SFX}); });
+  if(txtLines.length) rows.push({t:'txt',name:txtName+' · '+txtLines.length+' 句',tag:'文字',ic:IC_TXT});
   resCount.textContent=rows.length+' 项';
   if(!rows.length){ resList.innerHTML='<div class="res-empty">空 · 通过上方槽上传</div>'; return; }
-  resList.innerHTML=rows.map(r=>`
-    <div class="res-row">
-      <span class="res-ic">${r.ic}</span>
-      <span class="res-name" title="${esc(r.name)}">${esc(r.name)}</span>
-      <span class="res-tag">${r.tag}</span>
-      <button class="res-x" data-t="${r.t}" data-i="${r.i??''}" title="移除">${SVG_X}</button>
-    </div>`).join('');
+  resList.innerHTML=rows.map(function(r){
+    return '<div class="res-row">'+
+      '<span class="res-ic">'+r.ic+'</span>'+
+      '<span class="res-name" title="'+esc(r.name)+'">'+esc(r.name)+'</span>'+
+      '<span class="res-tag">'+r.tag+'</span>'+
+      '<button class="res-x" data-t="'+r.t+'" data-i="'+(r.i!=null?r.i:'')+'" title="移除">'+SVG_X+'</button>'+
+      '</div>';
+  }).join('');
 }
 safe('附件列表委托',()=>{ resList.addEventListener('click',e=>{
   const x=e.target.closest('.res-x'); if(!x) return;
@@ -888,12 +920,12 @@ safe('附件列表委托',()=>{ resList.addEventListener('click',e=>{
 function removeImgAt(i){
   const a=assetImgs[i]; if(!a) return;
   URL.revokeObjectURL(a.url); assetImgs.splice(i,1);
-  renderResList(); updFxState(); toast(`已移除图片「${a.name}」 · 剩 ${assetImgs.length} 张`);
+  renderResList(); updFxState(); toast('已移除图片「'+a.name+'」 · 剩 '+assetImgs.length+' 张');
 }
 function removeSfxAt(i){
   const a=assetSfxs[i]; if(!a) return;
   URL.revokeObjectURL(a.url); assetSfxs.splice(i,1);
-  renderResList(); updFxState(); toast(`已移除音效「${a.name}」 · 剩 ${assetSfxs.length} 个`);
+  renderResList(); updFxState(); toast('已移除音效「'+a.name+'」 · 剩 '+assetSfxs.length+' 个');
 }
 
 /* ============ 倍速 / 音量 ============ */
@@ -904,7 +936,7 @@ function setRate(v,srcR,srcN){
   v=r2(Math.min(4,Math.max(0.1,v||1))); S.rate=v; persist(); applyRate();
   if(srcR!==rateR) rateR.value=Math.min(Math.max(v,0.25),3);
   if(srcN!==rateN) rateN.value=v.toFixed(2);
-  rateBadge.textContent='×'+v.toFixed(2); rateBadge.style.display=v!==1?'inline':'none';
+  rateBadge.textContent='×'+v.toFixed(2); rateBadge.style.display=(v!==1)?'inline':'none';
 }
 function setVolume(v,srcR,srcN){
   v=r2(Math.min(1,Math.max(0,v||0))); S.volume=v; persist(); applyVolume();
@@ -926,7 +958,7 @@ safe('视频事件',()=>{
     applyRate(); applyVolume();
     const it=playlistArr[currentIndex];
     if(it&&it.duration==null&&isFinite(video.duration)&&video.duration>0) it.duration=video.duration;
-    if(!isFinite(video.duration)||video.duration<=0){ // 无时长容器：seek 巨值逼出真实总时长
+    if(!isFinite(video.duration)||video.duration<=0){
       const ondc=()=>{
         if(!isFinite(video.duration)||video.duration<=0) return;
         video.removeEventListener('durationchange',ondc);
@@ -954,7 +986,7 @@ function seekMedia(t){
   if(!isFinite(t)||!d) return;
   video.currentTime=Math.max(0,Math.min(t,d-0.05));
   subIdx=0;
-  if(cues.length) cues.forEach(c=>c.done=c.from<video.currentTime-0.05);
+  if(cues.length) cues.forEach(c=>{ c.done=c.from<video.currentTime-0.05; });
   setSubtitleText('');
   updateProgressUI(true);
 }
@@ -981,7 +1013,7 @@ function makeBar(barEl,fillEl,preview){
   barEl.addEventListener('pointerup',up); barEl.addEventListener('pointercancel',up);
 }
 safe('进度条绑定',()=>{
-  makeBar(mainBar,mainFill,(r,e)=>{ bubble.textContent=fmt(r*effDur()); bubble.style.left=(r*100)+'%'; });
+  makeBar(mainBar,mainFill,(r)=>{ bubble.textContent=fmt(r*effDur()); bubble.style.left=(r*100)+'%'; });
   makeBar(miniBar,miniFill,null);
   makeBar(fsBar,fsFill,null);
 });
@@ -996,7 +1028,12 @@ function updateProgressUI(force){
   if(force||lab!==lastLabel){ lastLabel=lab; timeText.textContent=lab; }
 }
 
-/* ============ 计步传感器（未开启 = 视频全局锁定） ============ */
+/* ============ 触发引擎 ============ */
+function updEngineState(){
+  if(stepMode) $('sensorState').innerHTML='计步传感器：<b>运行中</b> · 每步 '+S.stepSec+'s · 提前量 '+S.settleSec+'s';
+  else if(mouseMode) $('sensorState').innerHTML='鼠标移动系统：<b>运行中</b> · 每次触发 '+S.stepSec+'s · 提前量 '+S.settleSec+'s';
+  else $('sensorState').textContent='引擎：未开启 · 视频已锁定';
+}
 let motionAvg=9.8, motionPeak=false, lastStepAt=0;
 function onMotion(e){
   const a=e.accelerationIncludingGravity; if(!a) return;
@@ -1004,48 +1041,74 @@ function onMotion(e){
   motionAvg=motionAvg*0.92+mag*0.08;
   const raw=mag-motionAvg, now=performance.now();
   if(!motionPeak){ if(raw>2.2) motionPeak=true; }
-  else if(raw<-1.1){ motionPeak=false; if(now-lastStepAt>320){ lastStepAt=now; onStep(); } }
+  else if(raw<-1.1){ motionPeak=false; if(now-lastStepAt>320){ lastStepAt=now; onTrigger('step'); } }
 }
+let mAcc=0, lastMX=null, lastMY=null, lastMouseMoveAt=0;
+function onMouseMove(e){
+  if(!mouseMode) return;
+  if(lastMX!==null) mAcc+=Math.abs(e.clientX-lastMX)+Math.abs(e.clientY-lastMY);
+  lastMX=e.clientX; lastMY=e.clientY;
+  const now=performance.now();
+  if(mAcc>=40 && now-lastMouseMoveAt>=600){
+    mAcc=0; lastMouseMoveAt=now;
+    onTrigger('mouse');
+  }
+}
+safe('鼠标监听',()=>{ window.addEventListener('mousemove',onMouseMove,{passive:true}); });
+function shutMouse(){ mouseMode=false; $('btnMouse').innerHTML=SVG_MOUSE+'开启鼠标移动系统'; }
+function shutSensor(){ window.removeEventListener('devicemotion',onMotion); stepMode=false; $('btnSensor').textContent='开启计步传感器'; }
 async function toggleSensor(){
   if(stepMode){
-    window.removeEventListener('devicemotion',onMotion); stepMode=false;
-    video.pause(); quota=0;
-    $('btnSensor').textContent='开启计步传感器';
-    $('sensorState').textContent='传感器：未开启 · 视频已锁定';
-    toast('传感器已关闭 · 视频锁定'); updateStatusPills(); return;
+    shutSensor(); video.pause(); quota=0;
+    updEngineState(); toast('计步已关闭 · 视频锁定'); updateStatusPills(); return;
   }
+  shutMouse();
   if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){
     try{ const p=await DeviceMotionEvent.requestPermission(); if(p!=='granted'){ toast('传感器权限被拒绝'); return; } }
     catch(err){ toast('权限请求失败'); return; }
-  }else if(!('ondevicemotion' in window)){ toast('此设备无运动传感器 · 可用「模拟一步」或 S 键','dim'); }
+  }else if(!('ondevicemotion' in window)){ toast('此设备无运动传感器 · 可用「模拟触发」或 S 键','dim'); }
   window.addEventListener('devicemotion',onMotion); stepMode=true; quotaToastShown=false;
   $('btnSensor').textContent='传感器运行中 · 点击关闭';
-  $('sensorState').innerHTML='传感器：<b>运行中</b> · 每步 '+S.stepSec+'s · 提前量 '+S.settleSec+'s';
+  updEngineState();
   toast('计步已开启 · 视频解锁 · 每步 '+S.stepSec+' 秒'); updateStatusPills();
 }
-safe('步数引擎按钮',()=>{
+function toggleMouse(){
+  if(mouseMode){
+    shutMouse(); video.pause(); quota=0;
+    updEngineState(); toast('鼠标系统已关闭 · 视频锁定'); updateStatusPills(); return;
+  }
+  shutSensor();
+  mouseMode=true; quotaToastShown=false; mAcc=0; lastMX=null;
+  $('btnMouse').innerHTML=SVG_MOUSE+'鼠标系统运行中 · 点击关闭';
+  updEngineState();
+  toast('鼠标移动已开启 · 视频解锁 · 每次触发 '+S.stepSec+' 秒'); updateStatusPills();
+}
+safe('引擎按钮',()=>{
   $('btnSensor').addEventListener('click',toggleSensor);
-  $('btnSimStep').addEventListener('click',()=>onStep());
+  $('btnMouse').addEventListener('click',toggleMouse);
+  $('btnSimStep').addEventListener('click',()=>onTrigger(stepMode?'step':'mouse'));
   $('btnWarm').addEventListener('click',()=>{
-    if(!stepMode){ toast('请先开启计步传感器 · 再用预热解锁'); return; }
+    if(!engineOn()){ toast('请先开启计步传感器或鼠标移动系统 · 再用预热解锁'); return; }
     cancelTTS(); quota=75; quotaToastShown=false;
     if(video.ended) next(); else tryPlay();
     toast('预热完成 · 播放 1:15');
   });
 });
-function onStep(){
-  steps++; if(S.fxMode==='step') onFx(); updateStatusPills();
-  if(!stepMode) return;
+function onTrigger(src){
+  triggers++;
+  if(S.fxMode==='step') onFx();
+  updateStatusPills();
+  if(!engineOn()) return;
   if(quota<=S.settleSec){
     quota=S.stepSec;
     if(video.ended) next(); else if(video.paused) tryPlay();
-    toast(`步数触发 · 解锁新一段 ${S.stepSec}s`);
-  }else{
-    toast(`已计步 · 剩余 ${fmt(quota)}，进入最后 ${S.settleSec}s 后生效`,'dim');
+    toast('触发成功 · 解锁新一段 '+S.stepSec+'s');
+  }else if(src!=='mouse'){
+    toast('已触发 · 剩余 '+fmt(quota)+'，进入最后 '+S.settleSec+'s 后生效','dim');
   }
 }
 
-/* ============ 特效（未全屏 / 全屏均触发；素材 + 文字同场） ============ */
+/* ============ 特效 ============ */
 function onFx(){
   const pool=[]; if(S.rippleOn) pool.push('ripple'); if(S.impactOn) pool.push('impact');
   const fx=pool.length?pool[(Math.random()*pool.length)|0]:null;
@@ -1062,7 +1125,7 @@ function stopAllVideoFX(){
   $('ifxDisp').setAttribute('scale','0');
   $('ifxBlur').setAttribute('stdDeviation','0 0');
 }
-function startWaterRipple(){ // 波纹：SVG 位移滤镜直接作用于 video，画面被推挤扭曲后回弹
+function startWaterRipple(){
   stopAllVideoFX();
   const turb=$('wfxTurb'), disp=$('wfxDisp');
   video.style.filter='url(#waterFX)';
@@ -1084,7 +1147,7 @@ function startWaterRipple(){ // 波纹：SVG 位移滤镜直接作用于 video�
   disp.setAttribute('scale',amp); turb.setAttribute('baseFrequency','0.008 0.0136');
   waterRAF=requestAnimationFrame(step);
 }
-function startImpact(){ // 撞击：漫画式竖直上下肉浪 + 垂直拖影 + 上下弹跳 + 放射速度线
+function startImpact(){
   stopAllVideoFX();
   const turb=$('ifxTurb'), disp=$('ifxDisp'), blur=$('ifxBlur');
   video.style.filter='url(#impactFX)';
@@ -1137,7 +1200,7 @@ function spawnAsset(){
   let x=cx+Math.cos(ang)*r, y=cy+Math.sin(ang)*r;
   x=Math.min(W-pad,Math.max(pad,x));
   y=Math.min(H-pad,Math.max(pad,y));
-  const rot=Math.atan2(cy-y,cx-x)*180/Math.PI+90; // 朝向圆心
+  const rot=Math.atan2(cy-y,cx-x)*180/Math.PI+90;
   if(assetSfxs.length){
     const s=assetSfxs[(Math.random()*assetSfxs.length)|0];
     try{ const a=new Audio(s.url); a.volume=.85; a.play().catch(()=>{}); }catch(e){}
@@ -1156,9 +1219,9 @@ function spawnAsset(){
   setTimeout(()=>el.classList.add('out'),Math.max(0,life-350));
   setTimeout(()=>el.remove(),life);
 }
-function txtColor(){ // 两套颜色区间随机
-  if(Math.random()<.5) return `rgb(${240+((Math.random()*16)|0)},${160+((Math.random()*51)|0)},${180+((Math.random()*51)|0)})`;
-  return `rgb(${230+((Math.random()*26)|0)},${120+((Math.random()*61)|0)},${150+((Math.random()*51)|0)})`;
+function txtColor(){
+  if(Math.random()<.5) return 'rgb('+(240+((Math.random()*16)|0))+','+(160+((Math.random()*51)|0))+','+(180+((Math.random()*51)|0))+')';
+  return 'rgb('+(230+((Math.random()*26)|0))+','+(120+((Math.random()*61)|0))+','+(150+((Math.random()*51)|0))+')';
 }
 function spawnTxt(){
   if(!txtLines.length) return;
@@ -1168,7 +1231,7 @@ function spawnTxt(){
   const r=A+Math.random()*(B-A), ang=Math.random()*Math.PI*2;
   const txt=txtLines[(Math.random()*txtLines.length)|0];
   const sMin=Math.min(S.txtSizeMin,S.txtSizeMax), sMax=Math.max(S.txtSizeMin,S.txtSizeMax);
-  const fs=Math.max(10,Math.round(sMin+Math.random()*(sMax-sMin))); // ★ 字号在 A–B 区间随机
+  const fs=Math.max(10,Math.round(sMin+Math.random()*(sMax-sMin)));
   const halfW=Math.min(W/2-8,(txt.length*fs*1.05)/2+10), halfH=fs;
   let x=cx+Math.cos(ang)*r, y=cy+Math.sin(ang)*r;
   x=Math.min(W-halfW,Math.max(halfW,x));
@@ -1198,23 +1261,23 @@ function fxTick(now){
 
 /* ============ 特效素材 / 文字 ============ */
 function updFxState(){
-  $('fxState').innerHTML=`图片 <b>${assetImgs.length}</b> 张 · 音效 <b>${assetSfxs.length}</b> 个${assetImgs.length?'':'（默认爱心）'}`;
-  $('imgInfo').textContent=assetImgs.length?`共 ${assetImgs.length} 张素材`:'批量上传 · 缺省爱心';
-  $('sfxInfo').textContent=assetSfxs.length?`共 ${assetSfxs.length} 个音效`:'批量上传 · 随机播放';
+  $('fxState').innerHTML='图片 <b>'+assetImgs.length+'</b> 张 · 音效 <b>'+assetSfxs.length+'</b> 个'+(assetImgs.length?'':'（默认爱心）');
+  $('imgInfo').textContent=assetImgs.length?('共 '+assetImgs.length+' 张素材'):'批量上传 · 缺省爱心';
+  $('sfxInfo').textContent=assetSfxs.length?('共 '+assetSfxs.length+' 个音效'):'批量上传 · 随机播放';
   const fxs=(S.rippleOn?'波纹':'')+(S.impactOn?((S.rippleOn?'+':'')+'撞击'):'');
-  $('fxModeState').innerHTML=(S.fxMode==='random'?`每 ${S.fxInterval}s · ${S.fxChance}%`:'计步触发')+' · 特效：'+(fxs||'无');
+  $('fxModeState').innerHTML=(S.fxMode==='random'?'每 '+S.fxInterval+'s · '+S.fxChance+'%':'引擎触发')+' · 特效：'+(fxs||'无');
 }
 safe('素材上传',()=>{
   $('imgInput').addEventListener('change',e=>{
-    const fs=[...e.target.files].filter(f=>f.type.startsWith('image')||/\.(png|jpe?g|webp|gif|svg|bmp|ico|avif)$/i.test(f.name));
+    const fs=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('image')||/\.(png|jpe?g|webp|gif|svg|bmp|ico|avif)$/i.test(f.name));
     if(fs.length){ for(const f of fs) assetImgs.push({name:f.name,url:URL.createObjectURL(f)});
-      toast(`已加入 ${fs.length} 张图片 · 共 ${assetImgs.length} 张`); }
+      toast('已加入 '+fs.length+' 张图片 · 共 '+assetImgs.length+' 张'); }
     updFxState(); renderResList(); e.target.value='';
   });
   $('sfxInput').addEventListener('change',e=>{
-    const fs=[...e.target.files].filter(f=>f.type.startsWith('audio')||/\.(mp3|wav|ogg|aac|m4a|opus|flac|wma|aiff|amr|ac3|dts|caf)$/i.test(f.name));
+    const fs=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('audio')||/\.(mp3|wav|ogg|aac|m4a|opus|flac|wma|aiff|amr|ac3|dts|caf)$/i.test(f.name));
     if(fs.length){ for(const f of fs) assetSfxs.push({name:f.name,url:URL.createObjectURL(f)});
-      toast(`已加入 ${fs.length} 个音效 · 共 ${assetSfxs.length} 个`); }
+      toast('已加入 '+fs.length+' 个音效 · 共 '+assetSfxs.length+' 个'); }
     updFxState(); renderResList(); e.target.value='';
   });
   $('txtInput').addEventListener('change',e=>{
@@ -1224,15 +1287,15 @@ safe('素材上传',()=>{
       const lines=String(r.result).split(/\r?\n/).map(l=>l.trim().replace(/^\d+\s*[.、)）．]\s*/,'')).filter(l=>l.length);
       if(!lines.length){ toast('未解析到文字内容'); return; }
       txtLines=lines; txtName=f.name;
-      $('txtInfo').textContent=`${f.name} · ${lines.length} 句`; $('txtInfo').classList.add('ok');
+      $('txtInfo').textContent=f.name+' · '+lines.length+' 句'; $('txtInfo').classList.add('ok');
       updTxtState(); renderResList();
-      toast(`文字特效已加载 · ${lines.length} 句`);
+      toast('文字特效已加载 · '+lines.length+' 句');
     };
     r.readAsText(f); e.target.value='';
   });
 });
 function updTxtState(){
-  $('txtState').innerHTML=`${S.txtOn?'<b>开启</b>':'关闭'} · 文字 <b>${txtLines.length}</b> 句`;
+  $('txtState').innerHTML=(S.txtOn?'<b>开启</b>':'关闭')+' · 文字 <b>'+txtLines.length+'</b> 句';
 }
 function removeTxt(){
   txtLines=[]; txtName='';
@@ -1248,16 +1311,23 @@ safe('特效开关',()=>{
   $('fxModeSwitch').addEventListener('change',e=>{
     S.fxMode=e.target.checked?'random':'step'; persist();
     lastFxT=performance.now();
-    toast(S.fxMode==='random'?`随机模式 · 每 ${S.fxInterval}s 概率 ${S.fxChance}%`:'计步触发模式');
+    toast(S.fxMode==='random'?'随机模式 · 每 '+S.fxInterval+'s 概率 '+S.fxChance+'%':'引擎触发模式');
     updFxState();
   });
   $('rippleSwitch').addEventListener('change',e=>{ S.rippleOn=e.target.checked; persist(); updFxState(); });
   $('impactSwitch').addEventListener('change',e=>{ S.impactOn=e.target.checked; persist(); updFxState(); });
 });
 
-/* ============ 律动小窗（贪吃蛇排布） ============ */
+/* ============ 律动小窗 ============ */
 function updWinState(){
-  $('winState').innerHTML=S.smallWin?`<b>开启</b> · 概率 ${S.winChance}% · 需列表 ≥ 2 项`:'关闭 · 需列表 ≥ 2 项生效';
+  $('winState').innerHTML=S.smallWin?('<b>开启</b> · 概率 '+S.winChance+'% · 并发上限 '+Math.max(1,Math.round(S.winMax))):'关闭 · 需列表 ≥ 2 项生效';
+}
+function resolveWinMuted(want){
+  if(want) return true;
+  if(!IS_MOBILE) return false;
+  const audible=[...winRects,...vWins].some(o=>{ const v=o.el.querySelector('video'); return v&&!v.muted; });
+  if(audible&&!mobileMuteHinted){ mobileMuteHinted=true; toast('移动端同时仅一个有声小窗 · 其余自动静音以保证并发','dim'); }
+  return audible;
 }
 function makeWinVideo(it,muted){
   const v=document.createElement('video');
@@ -1266,9 +1336,20 @@ function makeWinVideo(it,muted){
   v.addEventListener('loadedmetadata',()=>{
     const dur=isFinite(it.duration)?it.duration:v.duration;
     if(isFinite(dur)&&dur>1) v.currentTime=Math.random()*Math.max(0,dur-1);
-    v.play().catch(()=>{});
+    v.play().catch(()=>{ if(!v.muted){ v.muted=true; v.play().catch(()=>{}); } });
   });
   return v;
+}
+function trimWins(){
+  const limit=Math.max(1,Math.round(S.winMax));
+  const all=[...winRects.map(o=>({o:o,t:o.ts,k:'w'})),...vWins.map(o=>({o:o,t:o.ts,k:'v'}))];
+  if(all.length<=limit) return;
+  all.sort((a,b)=>a.t-b.t);
+  const excess=all.length-limit;
+  for(let i=0;i<excess&&i<all.length;i++){
+    const c=all[i];
+    if(c.k==='w') closeWin(c.o.el); else closeVWin(c.o.el);
+  }
 }
 function spawnWin(){
   const cands=playlistArr.filter((it,i)=>i!==currentIndex);
@@ -1286,18 +1367,18 @@ function spawnWin(){
   w=Math.min(W-16,w);
   if(!winRects.length) snake={x:8,y:8,rowH:0};
   let rc=null;
-  if(snake.x+w+8<=W-8 && snake.y+h<=H-8) rc={x:snake.x,y:snake.y,w,h};
+  if(snake.x+w+8<=W-8 && snake.y+h<=H-8) rc={x:snake.x,y:snake.y,w:w,h:h};
   if(!rc){
     const ny=snake.y+snake.rowH+8;
-    if(8+w+8<=W-8 && ny+h<=H-8){ snake={x:8,y:ny,rowH:0}; rc={x:8,y:ny,w,h}; }
+    if(8+w+8<=W-8 && ny+h<=H-8){ snake={x:8,y:ny,rowH:0}; rc={x:8,y:ny,w:w,h:h}; }
   }
   if(!rc){
     let fb=null;
     for(let k=0;k<14;k++){
       const x=Math.round(8+Math.random()*Math.max(1,W-w-16));
       const y=Math.round(8+Math.random()*Math.max(1,H-h-16));
-      if(!winRects.some(o=>!(x+w+8<o.x||o.x+o.w+8<x||y+h+8<o.y||o.y+o.h+8<y))){ rc={x,y,w,h}; break; }
-      fb=fb||{x,y,w,h};
+      if(!winRects.some(o=>!(x+w+8<o.x||o.x+o.w+8<x||y+h+8<o.y||o.y+o.h+8<y))){ rc={x:x,y:y,w:w,h:h}; break; }
+      fb=fb||{x:x,y:y,w:w,h:h};
     }
     rc=rc||fb;
     snake={x:rc.x+rc.w+8,y:rc.y,rowH:rc.h};
@@ -1305,11 +1386,12 @@ function spawnWin(){
   const box=document.createElement('div'); box.className='mini-win';
   box.style.left=rc.x+'px'; box.style.top=rc.y+'px';
   box.style.width=rc.w+'px'; box.style.height=rc.h+'px';
-  box.appendChild(makeWinVideo(it,it.muted));
+  box.appendChild(makeWinVideo(it, resolveWinMuted(it.muted)));
   fxLayer.appendChild(box);
   requestAnimationFrame(()=>box.classList.add('in'));
-  winRects.push({x:rc.x,y:rc.y,w:rc.w,h:rc.h,el:box,item:it});
+  winRects.push({x:rc.x,y:rc.y,w:rc.w,h:rc.h,el:box,item:it,ts:performance.now()});
   snake.x=rc.x+rc.w+8; snake.rowH=Math.max(snake.rowH,rc.h);
+  trimWins();
   const lMin=Math.min(S.winLifeMin,S.winLifeMax), lMax=Math.max(S.winLifeMin,S.winLifeMax);
   const life=Math.max(.5,lMin+Math.random()*(lMax-lMin))*1000;
   setTimeout(()=>{ box.classList.add('out'); setTimeout(()=>closeWin(box),380); },life);
@@ -1330,7 +1412,7 @@ safe('小窗开关',()=>{ $('smallWinSwitch').addEventListener('change',e=>{
 
 /* ============ 竖屏分屏 ============ */
 function updVState(){
-  $('vState').innerHTML=`${S.vsplit?'<b>开启</b>':'关闭'} · 列表 <b>${vList.length}</b> 个`;
+  $('vState').innerHTML=(S.vsplit?'<b>开启</b>':'关闭')+' · 列表 <b>'+vList.length+'</b> 个';
 }
 function spawnVWin(){
   if(!vList.length) return false;
@@ -1346,10 +1428,11 @@ function spawnVWin(){
   const box=document.createElement('div'); box.className='mini-win';
   box.style.left=x+'px'; box.style.top=y+'px';
   box.style.width=w+'px'; box.style.height=h+'px';
-  box.appendChild(makeWinVideo(it,it.muted));
+  box.appendChild(makeWinVideo(it, resolveWinMuted(it.muted)));
   fxLayer.appendChild(box);
   requestAnimationFrame(()=>box.classList.add('in'));
-  vWins.push({el:box,item:it});
+  vWins.push({el:box,item:it,ts:performance.now()});
+  trimWins();
   const lMin=Math.min(S.vLifeMin,S.vLifeMax), lMax=Math.max(S.vLifeMin,S.vLifeMax);
   const life=Math.max(.5,lMin+Math.random()*(lMax-lMin))*1000;
   setTimeout(()=>{ box.classList.add('out'); setTimeout(()=>closeVWin(box),380); },life);
@@ -1385,7 +1468,7 @@ function parseLRC(text){
     const tags=[...line.matchAll(/\[(\d{1,2}):(\d{1,2}(?:\.\d{1,3})?)\]/g)];
     if(!tags.length) continue;
     const content=line.replace(/\[[^\]]*\]/g,'').trim();
-    for(const tg of tags) rows.push({from:(+tg[1])*60+(+tg[2]),content});
+    for(const tg of tags) rows.push({from:(+tg[1])*60+(+tg[2]),content:content});
   }
   rows.sort((a,b)=>a.from-b.from);
   return rows.map((r,i)=>({from:r.from,to:rows[i+1]?rows[i+1].from:r.from+8,content:r.content})).filter(r=>r.content);
@@ -1397,10 +1480,10 @@ function parseVTT(text){
     const lines=block.split('\n').filter(l=>l.trim()!=='');
     const ti=lines.findIndex(l=>l.includes('-->'));
     if(ti<0) continue;
-    const [a,b]=lines[ti].split('-->');
-    const from=parseVT(a.trim()), to=parseVT(b.trim().split(/\s+/)[0]);
+    const ab=lines[ti].split('-->');
+    const from=parseVT(ab[0].trim()), to=parseVT(ab[1].trim().split(/\s+/)[0]);
     const content=lines.slice(ti+1).join(' ').replace(/<[^>]+>/g,'').trim();
-    if(isFinite(from)&&isFinite(to)&&content) out.push({from,to,content});
+    if(isFinite(from)&&isFinite(to)&&content) out.push({from:from,to:to,content:content});
   }
   return out.sort((x,y)=>x.from-y.from);
 }
@@ -1413,15 +1496,15 @@ function loadSubtitleFile(f){
       cs.forEach(c=>{ c.to=Math.max(c.to,c.from+0.2); c.done=false; });
       cs.sort((a,b)=>a.from-b.from);
       cues=cs; subIdx=0; cancelTTS();
-      $('subInfo').textContent=`${f.name} · ${cs.length} 段`; $('subInfo').classList.add('ok');
+      $('subInfo').textContent=f.name+' · '+cs.length+' 段'; $('subInfo').classList.add('ok');
       updSubState(); renderResList();
-      toast(`字幕轨已加载 · ${cs.length} 段`); updateStatusPills();
+      toast('字幕轨已加载 · '+cs.length+' 段'); updateStatusPills();
     }catch(e){ toast('字幕解析失败 · 请检查 JSON / LRC / VTT 格式'); }
   };
   r.readAsText(f);
 }
 function updSubState(){
-  $('subState').innerHTML=cues.length?`<b>${esc(subName)}</b> · ${cues.length} 段 · ${S.subMode==='tts'?'TTS 模式':'翻译模式'}`:'未加载 · 原文连续播放';
+  $('subState').innerHTML=cues.length?('<b>'+esc(subName)+'</b> · '+cues.length+' 段 · '+(S.subMode==='tts'?'TTS 模式':'翻译模式')):'未加载 · 原文连续播放';
 }
 function removeSubtitle(){
   cues=[]; subIdx=0; subName=''; cancelTTS(); setSubtitleText('');
@@ -1451,7 +1534,7 @@ function startTTS(c){
   ttsState='speaking'; video.pause();
   setSubtitleText(c.content); subLayer.classList.add('tts');
   updateStatusPills();
-  let finished=false;
+  let finished=false, guard=0;
   const finish=resume=>{
     if(finished) return; finished=true; ttsState='idle'; clearTimeout(guard);
     subLayer.classList.remove('tts'); ttsCancelRef=null;
@@ -1469,7 +1552,7 @@ function startTTS(c){
   u.onend=()=>finish(true); u.onerror=()=>finish(true);
   try{ speechSynthesis.cancel(); speechSynthesis.speak(u); }
   catch(e){ finish(true); return; }
-  const guard=setTimeout(()=>finish(true),Math.max(2600,c.content.length*400));
+  guard=setTimeout(()=>finish(true),Math.max(2600,c.content.length*400));
 }
 function cancelTTS(){ if(ttsCancelRef) ttsCancelRef(); }
 function subtitleTick(){
@@ -1484,7 +1567,7 @@ function subtitleTick(){
 
 /* ============ 音乐律动 ============ */
 function updMusicState(){
-  $('musicState').innerHTML=musicUrl?`<b>${esc(musicName)}</b> · ${beatOn?'律动中':'已暂停'} · 跳跃 ${jumpCount} 次`:'未加载 · 律动关闭';
+  $('musicState').innerHTML=musicUrl?('<b>'+esc(musicName)+'</b> · '+(beatOn?'律动中':'已暂停')+' · 跳跃 '+jumpCount+' 次'):'未加载 · 律动关闭';
 }
 function ensureMusicGraph(){
   if(!audioCtx){
@@ -1528,8 +1611,8 @@ safe('音乐绑定',()=>{
 function beatTick(){
   if(!beatOn||!audioCtx||musicAudio.paused) return;
   musicAnalyser.getByteFrequencyData(freqData);
-  let low=0; for(let i=0;i<5;i++) low+=freqData[i]; low/=(5*255); // 低频段能量（鼓/贝斯区）
-  beatAvg=beatAvg*0.95+low*0.05;                                   // 指数平滑响度基线
+  let low=0; for(let i=0;i<5;i++) low+=freqData[i]; low/=(5*255);
+  beatAvg=beatAvg*0.95+low*0.05;
   const now=performance.now();
   if(low>0.1&&low>beatAvg*S.beatSens&&now-lastJump>S.beatCooldown*1000){ lastJump=now; doJump(); }
 }
@@ -1546,7 +1629,7 @@ function doJump(){
     if(spawnWin()){ jumpCount++; updMusicState(); return; }
   }
   const idx=n>1?Math.floor(Math.random()*n):currentIndex;
-  const dur=(idx===currentIndex?effDur():playlistArr[idx]?.duration);
+  const dur=(idx===currentIndex?effDur():playlistArr[idx]?playlistArr[idx].duration:null);
   if(!isFinite(dur)||!dur){ toast('目标文件时长未知 · 本次未跳跃','dim'); return; }
   const head=S.headMin*60, tail=S.tailMin*60;
   let lo=head, hi=dur-tail-0.5;
@@ -1624,7 +1707,8 @@ safe('面板绑定',()=>{
   if(localStorage.getItem('sv-panel')!=='0'){ settingsPanel.classList.add('open'); panelSwitch.classList.add('hide'); }
 });
 
-/* ============ 参数组件（防御式：缺元素/坏数值自动跳过回退，绝不中断链） ============ */
+/* ============ 参数组件 ============ */
+const paramReg=[];
 function param(rId,nId,key,min,max,slMax,onSet){
   safe('参数 '+key,()=>{
     const r=$(rId), n=$(nId);
@@ -1647,6 +1731,7 @@ function param(rId,nId,key,min,max,slMax,onSet){
       v=r2(Math.min(max,Math.max(min,v)));
       S[key]=v; n.value=v.toFixed(2); r.value=Math.min(v,smax); persist(); if(onSet) onSet(v);
     });
+    paramReg.push({r:r,n:n,key:key,smax:smax});
   });
 }
 param('stepSecR','stepSecN','stepSec',1,600,120);
@@ -1666,6 +1751,7 @@ param('shakeR','shakeN','assetShake',0,20,12);
 param('fxIntR','fxIntN','fxInterval',1,120,30);
 param('fxChanceR','fxChanceN','fxChance',1,100,80);
 param('winChanceR','winChanceN','winChance',1,100,80);
+param('winMaxR','winMaxN','winMax',1,16,10);
 param('winLifeMinR','winLifeMinN','winLifeMin',0.5,60,20);
 param('winLifeMaxR','winLifeMaxN','winLifeMax',0.5,60,20);
 param('winScaleMinR','winScaleMinN','winScaleMin',5,80,50);
@@ -1678,10 +1764,88 @@ param('txtMaxRR','txtMaxRN','txtMaxR',40,900,500);
 param('txtLifeMinR','txtLifeMinN','txtLifeMin',0.5,60,20);
 param('txtLifeMaxR','txtLifeMaxN','txtLifeMax',0.5,60,20);
 param('txtShakeR','txtShakeN','txtShake',0,20,12);
-param('txtSizeMinR','txtSizeMinN','txtSizeMin',10,80,50);   // ★ 文字大小下限 A
-param('txtSizeMaxR','txtSizeMaxN','txtSizeMax',10,120,60);  // ★ 文字大小上限 B
+param('txtSizeMinR','txtSizeMinN','txtSizeMin',10,80,50);
+param('txtSizeMaxR','txtSizeMaxN','txtSizeMax',10,120,60);
 
-/* ============ 开关与双通道初始化 ============ */
+/* ============ 配置导出 / 导入 + 面板锁 ============ */
+function applyAllSettings(){
+  safe('应用配置',()=>{
+    for(const p of paramReg){
+      let val=S[p.key];
+      if(typeof val==='number'&&isFinite(val)){
+        p.r.value=Math.min(val,p.smax);
+        p.n.value=val.toFixed(2);
+      }
+    }
+    setVolume(S.volume,null,null);
+    setRate(S.rate,null,null);
+    shuffle=!!S.shuffle;
+    $('shufSwitch').checked=shuffle;
+    $('ttsSwitch').checked=(S.subMode!=='translate');
+    $('smallWinSwitch').checked=S.smallWin;
+    $('vsplitSwitch').checked=S.vsplit;
+    $('fxModeSwitch').checked=(S.fxMode==='random');
+    $('rippleSwitch').checked=S.rippleOn;
+    $('impactSwitch').checked=S.impactOn;
+    $('txtSwitch').checked=S.txtOn;
+    if(musicGain) musicGain.gain.value=S.musicVol;
+    applyRate(); applyVolume();
+    renderPlaylist(); updFxState(); updSubState(); updWinState(); updVState(); updTxtState();
+  });
+}
+function exportConfig(){
+  try{
+    const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download='stepvision-config.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+    toast('配置已导出 · stepvision-config.json');
+  }catch(e){ toast('导出失败'); }
+}
+function importConfig(evt){
+  const f=evt.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const o=JSON.parse(String(r.result));
+      if(typeof o!=='object'||!o||Array.isArray(o)) throw 0;
+      for(const k in S){
+        if(!(k in o)) continue;
+        const cur=S[k], v=o[k];
+        if(typeof cur==='number'){ if(typeof v==='number'&&isFinite(v)) S[k]=r2(v); }
+        else if(typeof cur==='boolean'){ if(typeof v==='boolean') S[k]=v; }
+        else if(typeof cur==='string'){
+          if(k==='subMode'&&v!=='tts'&&v!=='translate') continue;
+          if(k==='fxMode'&&v!=='step'&&v!=='random') continue;
+          if(typeof v==='string') S[k]=v;
+        }
+      }
+      persist(); applyAllSettings();
+      toast('配置已导入并应用');
+    }catch(e){ toast('配置文件无效'); }
+  };
+  r.readAsText(f); evt.target.value='';
+}
+safe('面板锁/导入导出',()=>{
+  const lockBtn=$('lockBtn');
+  const setLock=on=>{
+    panelLocked=on;
+    settingsPanel.classList.toggle('locked',on);
+    lockBtn.classList.toggle('on',on);
+    lockBtn.innerHTML=on?SVG_LOCK:SVG_UNLOCK;
+    toast(on?'控制台已锁定 · 参数不可更改':'控制台已解锁');
+  };
+  lockBtn.addEventListener('click',()=>setLock(!panelLocked));
+  $('exportBtn').addEventListener('click',exportConfig);
+  $('importBtn').addEventListener('click',()=>{
+    if(panelLocked){ toast('控制台已锁定 · 请先解锁再导入'); return; }
+    $('cfgInput').click();
+  });
+  $('cfgInput').addEventListener('change',importConfig);
+});
+
+/* ============ 开关初始化 ============ */
 safe('音量/倍速初始化',()=>{
   volRange.value=S.volume; setVolume(S.volume,null,null);
   setRate(S.rate,null,null);
@@ -1705,30 +1869,30 @@ safe('键盘',()=>{ window.addEventListener('keydown',e=>{
   if(e.code==='Space'){ e.preventDefault(); togglePlay(); }
   else if(e.key==='ArrowRight'){ cancelTTS(); seekMedia(video.currentTime+5); }
   else if(e.key==='ArrowLeft'){ cancelTTS(); seekMedia(video.currentTime-5); }
-  else if(e.key==='s'||e.key==='S'){ onStep(); }
+  else if(e.key==='s'||e.key==='S'){ onTrigger(stepMode?'step':'mouse'); }
   else if(e.key==='f'||e.key==='F'){ toggleFs(); }
 }); });
 
 /* ============ 状态 ============ */
 function updateStatusPills(){
-  pillQuota.textContent=!stepMode?'已锁定 · 未开启计步':(quota>0?'剩余 '+fmt(quota):'已锁定 · 待计步');
-  pillQuota.classList.toggle('off',!stepMode||(stepMode&&quota<=0));
-  pillQuota.classList.toggle('warn',stepMode&&quota>0&&quota<=S.settleSec);
-  pillSteps.innerHTML='步数 <b>'+steps+'</b>';
+  pillQuota.textContent=!engineOn()?'已锁定 · 未开启触发引擎':(quota>0?'剩余 '+fmt(quota):'已锁定 · 待触发');
+  pillQuota.classList.toggle('off',!engineOn()||(engineOn()&&quota<=0));
+  pillQuota.classList.toggle('warn',engineOn()&&quota>0&&quota<=S.settleSec);
+  pillSteps.innerHTML=(stepMode?'步数 <b>':'触发 <b>')+triggers+'</b>';
   pillSub.classList.toggle('on',cues.length>0);
   pillSub.textContent=cues.length?(ttsState==='speaking'?'朗读中':(S.subMode==='tts'?'TTS':'翻译')):'字幕';
   pillBeat.classList.toggle('on',beatOn);
 }
 
-/* ============ 主循环（rAF；帧内异常隔离，循环永不冻结） ============ */
+/* ============ 主循环 ============ */
 let lastTs=performance.now(), lastText=0;
 function loop(ts){
   const dt=Math.min(0.1,(ts-lastTs)/1000); lastTs=ts;
   try{
-    if(stepMode&&!video.paused&&!video.ended&&ttsState!=='speaking'){
+    if(engineOn()&&!video.paused&&!video.ended&&ttsState!=='speaking'){
       if(quota>0){
         quota=Math.max(0,quota-dt);
-        if(quota===0){ video.pause(); if(!quotaToastShown){ quotaToastShown=true; toast('本段播放时间结束 · 计步即可续播'); } }
+        if(quota===0){ video.pause(); if(!quotaToastShown){ quotaToastShown=true; toast('本段播放时间结束 · 触发一次即可续播'); } }
       }
     }
     updateProgressUI();
@@ -1736,15 +1900,44 @@ function loop(ts){
     subtitleTick();
     beatTick();
     fxTick(ts);
-  }catch(e){ /* 单帧异常不杀死循环 */ }
+  }catch(e){ }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
 
 safe('首次渲染',()=>{
   renderPlaylist(); renderVPlaylist(); renderResList(); updateStatusPills();
-  updMusicState(); updFxState(); updSubState(); updWinState(); updVState(); updTxtState(); applyVolume();
+  updMusicState(); updFxState(); updSubState(); updWinState(); updVState(); updTxtState(); updEngineState(); applyVolume();
 });
+
+window.__SV_LOADED=true; // 启动就绪标记（供下方自检脚本检测）
+</script>
+
+<!-- ★ 启动自检 + 保底面板开关（独立脚本块：主脚本即使解析失败，此块仍可运行） -->
+<script>
+(function(){
+  function init(){
+    if(window.__SV_LOADED) return; // 主脚本正常启动
+    var hint=document.getElementById('centerHint');
+    if(hint){
+      hint.classList.remove('off');
+      hint.classList.add('err');
+      hint.innerHTML='<p>脚本初始化异常</p><span>请强制刷新（Ctrl+F5）或清除站点缓存后重试</span>';
+    }
+    var ps=document.getElementById('panelSwitch');
+    if(ps&&!ps.__bound){
+      ps.__bound=true;
+      ps.addEventListener('click',function(){
+        var sp=document.getElementById('settingsPanel');
+        if(!sp) return;
+        sp.classList.toggle('open');
+        ps.classList.toggle('hide',sp.classList.contains('open'));
+      });
+    }
+  }
+  if(document.readyState==='complete') init();
+  else window.addEventListener('load',init);
+})();
 </script>
 </body>
 </html>
