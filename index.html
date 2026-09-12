@@ -141,7 +141,7 @@ video.jolt{animation:jolt .5s ease-out}
 .dock{padding:11px}
 .dock-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px}
 .dock-row+.dock-row{margin-top:9px}
-.up-tile{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:11px;background:var(--pit);cursor:pointer;transition:.16s;box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);min-width:0}
+.up-tile{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:11px;background:var(--pit);cursor:pointer;transition:.16s;box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04);min-width:0;border:none;font:inherit;text-align:left;width:100%}
 .up-tile:hover{box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 5px rgba(255,255,255,.04),0 0 0 1px rgba(0,224,255,.3)}
 .up-tile:active{transform:translateY(1px)}
 .uic{width:32px;height:32px;flex:none;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--accent);background:#232835}
@@ -150,7 +150,6 @@ video.jolt{animation:jolt .5s ease-out}
 .up-tile strong{display:block;font-size:12px;letter-spacing:.04em;color:#dfe9f4;white-space:nowrap}
 .up-tile em{display:block;font-style:normal;font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .up-tile em.ok{color:#9fd8e6}
-.up-tile input{display:none}
 .dock-sep{height:1px;background:rgba(255,255,255,.05);margin:11px 2px 9px}
 .pl-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:0 2px}
 .pl-head h3{font-size:12px;letter-spacing:.2em;color:#aeb9cc;font-weight:600}
@@ -325,46 +324,39 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
     </div>
   </section>
 
-  <!-- 上传页面 -->
+  <!-- 上传页面（每个槽独立记住上次打开的本地目录） -->
   <section class="dock neu" id="dock">
     <div class="dock-row">
-      <label class="up-tile" for="slotMediaInput">
+      <button class="up-tile" type="button" id="slotMediaBtn">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
         <div><strong>媒体文件</strong><em id="slotMediaInfo">视频 / 音频 · 可多选</em></div>
-        <input type="file" id="slotMediaInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.m2v,.3gp,.ogv,.vob,.rm,.rmvb,.asf,.divx,.f4v,.mka,.mp3,.flac,.wav,.aac,.m4a,.opus,.wma,.aiff,.ape,.amr,.ac3,.dts,.caf">
-      </label>
-      <label class="up-tile" for="vInput">
+      </button>
+      <button class="up-tile" type="button" id="vBtn">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/></svg></span>
         <div><strong>竖屏视频</strong><em id="vInfo">竖屏分屏专用 · 可多选</em></div>
-        <input type="file" id="vInput" multiple accept="audio/*,video/*,.mkv,.avi,.flv,.wmv,.ts,.m2ts,.mts,.mov,.m4v,.webm,.mp4,.mpg,.mpeg,.m2v,.3gp,.ogv,.vob,.rm,.rmvb,.asf,.divx,.f4v">
-      </label>
-      <label class="up-tile" for="slotSubInput">
+      </button>
+      <button class="up-tile" type="button" id="subBtn">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M6 13.5h6M6 16.5h9"/><path d="M6.5 8.5h4"/></svg></span>
         <div><strong>字幕轨</strong><em id="subInfo">JSON / LRC / VTT</em></div>
-        <input type="file" id="slotSubInput" accept=".json,.lrc,.vtt,.txt">
-      </label>
-      <label class="up-tile" for="slotMusicInput">
+      </button>
+      <button class="up-tile" type="button" id="musicBtn">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></span>
         <div><strong>音乐律动</strong><em id="musicInfo">按节奏随机跳转</em></div>
-        <input type="file" id="slotMusicInput" accept="audio/*,.mp3,.flac,.wav,.aac,.ogg,.m4a,.opus,.wma,.aiff,.ape,.amr,.ac3,.dts,.caf">
-      </label>
+      </button>
     </div>
     <div class="dock-row">
-      <label class="up-tile" for="imgInput">
+      <button class="up-tile" type="button" id="imgBtn">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-4.5-4.5L7 20"/></svg></span>
         <div><strong>特效图片</strong><em id="imgInfo">批量上传 · 缺省爱心</em></div>
-        <input type="file" id="imgInput" multiple accept="image/*,.png,.jpg,.jpeg,.webp,.gif,.svg,.bmp,.ico,.avif">
-      </label>
-      <label class="up-tile" for="sfxInput">
+      </button>
+      <button class="up-tile" type="button" id="sfxBtn">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></span>
         <div><strong>特效音效</strong><em id="sfxInfo">批量上传 · 随机播放</em></div>
-        <input type="file" id="sfxInput" multiple accept="audio/*,.mp3,.wav,.ogg,.aac,.m4a,.opus,.flac,.wma,.aiff,.amr,.ac3,.dts,.caf">
-      </label>
-      <label class="up-tile" for="txtInput">
+      </button>
+      <button class="up-tile" type="button" id="txtBtn">
         <span class="uic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7V4h14v3M12 4v16M9 20h6"/></svg></span>
         <div><strong>特效文字</strong><em id="txtInfo">txt 每行一句 · 随机</em></div>
-        <input type="file" id="txtInput" accept=".txt,text/plain">
-      </label>
+      </button>
     </div>
 
     <div class="dock-sep"></div>
@@ -417,7 +409,6 @@ input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;bac
     <button class="hbtn" id="exportBtn" type="button" title="导出配置"></button>
     <button class="hbtn" id="importBtn" type="button" title="导入配置"></button>
     <button class="btn" id="spClose" style="padding:6px 12px">收起</button>
-    <input type="file" id="cfgInput" accept=".json,application/json" hidden>
   </div>
   <div class="sp-body">
     <div class="settings-grid">
@@ -718,6 +709,70 @@ function toast(msg,type){
   setTimeout(()=>{ el.classList.remove('in'); setTimeout(()=>el.remove(),320); },2600);
 }
 
+/* ============ 文件选择（★ 每槽独立记住上次目录） ============
+   Chromium：showOpenFilePicker({id}) —— 每个 id 独立记忆上次选择的目录（浏览器本地持久）；
+   其他浏览器：降级传统 input 选择器（目录记忆由浏览器全局管理，安全模型限制无法按槽独立）。 */
+const VIDEO_EXTS=['.mp4','.mkv','.webm','.mov','.avi','.flv','.wmv','.ts','.m2ts','.mts','.m4v','.mpg','.mpeg','.m2v','.3gp','.ogv','.vob','.rm','.rmvb','.asf','.divx','.f4v'];
+const AUDIO_EXTS=['.mp3','.flac','.wav','.aac','.ogg','.m4a','.opus','.wma','.aiff','.ape','.amr','.ac3','.dts','.mka','.caf'];
+const SLOT_TYPES={
+  media:{ multiple:true, legacy:'video/*,audio/*,'+VIDEO_EXTS.concat(AUDIO_EXTS).join(','),
+    types:[{description:'音视频文件',accept:{'video/*':VIDEO_EXTS,'audio/*':AUDIO_EXTS}}] },
+  v:{ multiple:true, legacy:'video/*,audio/*,'+VIDEO_EXTS.join(','),
+    types:[{description:'视频文件',accept:{'video/*':VIDEO_EXTS}}] },
+  sub:{ multiple:false, legacy:'.json,.lrc,.vtt,.txt',
+    types:[{description:'字幕文件',accept:{'text/plain':['.txt','.lrc','.vtt'],'application/json':['.json']}}] },
+  music:{ multiple:false, legacy:'audio/*,'+AUDIO_EXTS.join(','),
+    types:[{description:'音频文件',accept:{'audio/*':AUDIO_EXTS}}] },
+  img:{ multiple:true, legacy:'image/*,.png,.jpg,.jpeg,.webp,.gif,.svg,.bmp,.ico,.avif',
+    types:[{description:'图片文件',accept:{'image/*':['.png','.jpg','.jpeg','.webp','.gif','.svg','.bmp','.ico','.avif']}}] },
+  sfx:{ multiple:true, legacy:'audio/*,'+AUDIO_EXTS.join(','),
+    types:[{description:'音效文件',accept:{'audio/*':AUDIO_EXTS}}] },
+  txt:{ multiple:false, legacy:'.txt,text/plain',
+    types:[{description:'文本文件',accept:{'text/plain':['.txt']}}] },
+  cfg:{ multiple:false, legacy:'.json,application/json',
+    types:[{description:'配置文件',accept:{'application/json':['.json']}}] }
+};
+async function pickFiles(slot){
+  const conf=SLOT_TYPES[slot]; if(!conf) return null;
+  if(typeof window.showOpenFilePicker==='function'){
+    try{
+      const opts={ id:'stepvision-'+slot, multiple:!!conf.multiple, types:conf.types }; // id：按槽独立记忆目录
+      const handles=await window.showOpenFilePicker(opts);
+      const files=[];
+      for(const h of handles){ try{ files.push(await h.getFile()); }catch(e){} }
+      return files;
+    }catch(err){
+      if(err&&err.name==='AbortError') return null; // 用户取消
+      // 其他异常 → 降级传统选择器
+    }
+  }
+  return legacyPick(conf.legacy, conf.multiple);
+}
+function legacyPick(accept,multiple){ // 降级：临时 input（不进 DOM 树也可触发）
+  return new Promise(resolve=>{
+    const inp=document.createElement('input');
+    inp.type='file';
+    if(accept) inp.accept=accept;
+    inp.multiple=!!multiple;
+    let done=false;
+    const finish=files=>{ if(done) return; done=true; resolve(files); };
+    inp.addEventListener('change',()=>finish(Array.from(inp.files||[])));
+    inp.addEventListener('cancel',()=>finish(null));
+    inp.click();
+    setTimeout(()=>{ if(!done) finish(null); },60000); // 兜底：长期未操作释放
+  });
+}
+function bindSlot(btnId,slot,handler){
+  safe('槽 '+slot,()=>{
+    const btn=$(btnId); if(!btn) return;
+    btn.addEventListener('click',async ()=>{
+      const files=await pickFiles(slot);
+      if(!files||!files.length) return;
+      handler(files);
+    });
+  });
+}
+
 /* ============ 时长修复 ============ */
 function effDur(){
   const d=video.duration;
@@ -762,9 +817,9 @@ function probeDuration(item){
     v.removeAttribute('src'); v.load(); renderPlaylist();
   });
 }
-safe('媒体槽',()=>{ $('slotMediaInput').addEventListener('change',e=>{ addMediaFiles(Array.from(e.target.files||[])); e.target.value=''; }); });
 safe('拖放',()=>{ ['dragover','dragleave','drop'].forEach(ev=>playerShell.addEventListener(ev,e=>{ e.preventDefault();
   if(ev==='drop'&&e.dataTransfer.files.length) addMediaFiles(Array.from(e.dataTransfer.files)); })); });
+bindSlot('slotMediaBtn','media',fs=>addMediaFiles(fs));
 
 function loadIndex(i,autoplay,seekTo){
   if(i<0||i>=playlistArr.length) return;
@@ -838,17 +893,18 @@ safe('主列表委托',()=>{ playlist.addEventListener('click',e=>{
 }); });
 
 /* ============ 竖屏列表 ============ */
-safe('竖屏槽',()=>{ $('vInput').addEventListener('change',e=>{
-  const fs=Array.from(e.target.files||[]).filter(f=>MEDIA_RE.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
-  if(fs.length){
-    for(const f of fs){
+function addVFiles(fs){
+  const ok=fs.filter(f=>MEDIA_RE.test(f.name)||(f.type&&(f.type.startsWith('video')||f.type.startsWith('audio'))));
+  if(ok.length){
+    for(const f of ok){
       const item={ name:f.name, size:f.size, url:URL.createObjectURL(f), duration:null, ar:null, muted:false };
       vList.push(item); probeV(item);
     }
-    toast('竖屏列表已加入 '+fs.length+' 个 · 共 '+vList.length+' 个');
+    toast('竖屏列表已加入 '+ok.length+' 个 · 共 '+vList.length+' 个');
   } else toast('未识别到音视频文件');
-  renderVPlaylist(); e.target.value='';
-}); });
+  renderVPlaylist();
+}
+bindSlot('vBtn','v',fs=>addVFiles(fs));
 function probeV(item){
   const v=document.createElement('video'); v.preload='metadata'; v.muted=true; v.src=item.url;
   probeMeta(v,()=>{
@@ -890,7 +946,7 @@ safe('竖屏列表委托',()=>{ vPlaylist.addEventListener('click',e=>{
   const x=e.target.closest('.pl-x'); if(x){ e.stopPropagation(); removeVItem(+x.dataset.x); return; }
 }); });
 
-/* ============ 附件与素材列表（★ 上次崩溃点已修复：补齐括号） ============ */
+/* ============ 附件与素材列表 ============ */
 function renderResList(){
   const rows=[];
   if(cues.length) rows.push({t:'sub',name:subName+' · '+cues.length+' 段',tag:'字幕轨',ic:IC_SUB});
@@ -1268,32 +1324,30 @@ function updFxState(){
   const fxs=(S.rippleOn?'波纹':'')+(S.impactOn?((S.rippleOn?'+':'')+'撞击'):'');
   $('fxModeState').innerHTML=(S.fxMode==='random'?'每 '+S.fxInterval+'s · '+S.fxChance+'%':'引擎触发')+' · 特效：'+(fxs||'无');
 }
-safe('素材上传',()=>{
-  $('imgInput').addEventListener('change',e=>{
-    const fs=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('image')||/\.(png|jpe?g|webp|gif|svg|bmp|ico|avif)$/i.test(f.name));
-    if(fs.length){ for(const f of fs) assetImgs.push({name:f.name,url:URL.createObjectURL(f)});
-      toast('已加入 '+fs.length+' 张图片 · 共 '+assetImgs.length+' 张'); }
-    updFxState(); renderResList(); e.target.value='';
-  });
-  $('sfxInput').addEventListener('change',e=>{
-    const fs=Array.from(e.target.files||[]).filter(f=>f.type.startsWith('audio')||/\.(mp3|wav|ogg|aac|m4a|opus|flac|wma|aiff|amr|ac3|dts|caf)$/i.test(f.name));
-    if(fs.length){ for(const f of fs) assetSfxs.push({name:f.name,url:URL.createObjectURL(f)});
-      toast('已加入 '+fs.length+' 个音效 · 共 '+assetSfxs.length+' 个'); }
-    updFxState(); renderResList(); e.target.value='';
-  });
-  $('txtInput').addEventListener('change',e=>{
-    const f=e.target.files[0]; if(!f) return;
-    const r=new FileReader();
-    r.onload=()=>{
-      const lines=String(r.result).split(/\r?\n/).map(l=>l.trim().replace(/^\d+\s*[.、)）．]\s*/,'')).filter(l=>l.length);
-      if(!lines.length){ toast('未解析到文字内容'); return; }
-      txtLines=lines; txtName=f.name;
-      $('txtInfo').textContent=f.name+' · '+lines.length+' 句'; $('txtInfo').classList.add('ok');
-      updTxtState(); renderResList();
-      toast('文字特效已加载 · '+lines.length+' 句');
-    };
-    r.readAsText(f); e.target.value='';
-  });
+bindSlot('imgBtn','img',fs=>{
+  const ok=fs.filter(f=>f.type.startsWith('image')||/\.(png|jpe?g|webp|gif|svg|bmp|ico|avif)$/i.test(f.name));
+  if(ok.length){ for(const f of ok) assetImgs.push({name:f.name,url:URL.createObjectURL(f)});
+    toast('已加入 '+ok.length+' 张图片 · 共 '+assetImgs.length+' 张'); }
+  updFxState(); renderResList();
+});
+bindSlot('sfxBtn','sfx',fs=>{
+  const ok=fs.filter(f=>f.type.startsWith('audio')||/\.(mp3|wav|ogg|aac|m4a|opus|flac|wma|aiff|amr|ac3|dts|caf)$/i.test(f.name));
+  if(ok.length){ for(const f of ok) assetSfxs.push({name:f.name,url:URL.createObjectURL(f)});
+    toast('已加入 '+ok.length+' 个音效 · 共 '+assetSfxs.length+' 个'); }
+  updFxState(); renderResList();
+});
+bindSlot('txtBtn','txt',fs=>{
+  const f=fs[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    const lines=String(r.result).split(/\r?\n/).map(l=>l.trim().replace(/^\d+\s*[.、)）．]\s*/,'')).filter(l=>l.length);
+    if(!lines.length){ toast('未解析到文字内容'); return; }
+    txtLines=lines; txtName=f.name;
+    $('txtInfo').textContent=f.name+' · '+lines.length+' 句'; $('txtInfo').classList.add('ok');
+    updTxtState(); renderResList();
+    toast('文字特效已加载 · '+lines.length+' 句');
+  };
+  r.readAsText(f);
 });
 function updTxtState(){
   $('txtState').innerHTML=(S.txtOn?'<b>开启</b>':'关闭')+' · 文字 <b>'+txtLines.length+'</b> 句';
@@ -1453,6 +1507,10 @@ safe('竖屏开关',()=>{ $('vsplitSwitch').addEventListener('change',e=>{
 }); });
 
 /* ============ 字幕 ============ */
+bindSlot('subBtn','sub',fs=>{
+  const f=fs[0]; if(!f) return;
+  subName=f.name; loadSubtitleFile(f);
+});
 function parseSubtitle(text){
   const t=text.replace(/^\uFEFF/,'').trim();
   if(t.startsWith('[')){
@@ -1514,7 +1572,6 @@ function removeSubtitle(){
   toast('字幕已移除 · 功能解除'); updateStatusPills();
 }
 safe('字幕绑定',()=>{
-  $('slotSubInput').addEventListener('change',e=>{ if(e.target.files[0]){ subName=e.target.files[0].name; loadSubtitleFile(e.target.files[0]); } e.target.value=''; });
   $('ttsSwitch').addEventListener('change',e=>{
     S.subMode=e.target.checked?'tts':'translate'; persist();
     if(S.subMode==='translate'){
@@ -1589,6 +1646,14 @@ function startBeat(){
   updMusicState(); updateStatusPills();
 }
 function stopBeat(){ musicAudio.pause(); beatOn=false; updMusicState(); updateStatusPills(); }
+function loadMusicFile(f){
+  if(musicUrl) URL.revokeObjectURL(musicUrl);
+  musicUrl=URL.createObjectURL(f); musicName=f.name; musicAudio.src=musicUrl;
+  $('musicInfo').textContent=f.name; $('musicInfo').classList.add('ok');
+  renderResList();
+  startBeat(); toast('音乐已加载 · 律动开启');
+}
+bindSlot('musicBtn','music',fs=>{ const f=fs[0]; if(f) loadMusicFile(f); });
 function removeMusic(){
   stopBeat(); $('musicSwitch').checked=false;
   musicAudio.removeAttribute('src'); musicAudio.load();
@@ -1599,15 +1664,6 @@ function removeMusic(){
 }
 safe('音乐绑定',()=>{
   $('musicSwitch').addEventListener('change',e=>e.target.checked?startBeat():stopBeat());
-  $('slotMusicInput').addEventListener('change',e=>{
-    const f=e.target.files[0]; if(!f) return;
-    if(musicUrl) URL.revokeObjectURL(musicUrl);
-    musicUrl=URL.createObjectURL(f); musicName=f.name; musicAudio.src=musicUrl;
-    $('musicInfo').textContent=f.name; $('musicInfo').classList.add('ok');
-    renderResList();
-    startBeat(); toast('音乐已加载 · 律动开启');
-    e.target.value='';
-  });
 });
 function beatTick(){
   if(!beatOn||!audioCtx||musicAudio.paused) return;
@@ -1630,7 +1686,7 @@ function doJump(){
     if(spawnWin()){ jumpCount++; updMusicState(); return; }
   }
   const idx=n>1?Math.floor(Math.random()*n):currentIndex;
-  const dur=(idx===currentIndex?effDur():playlistArr[idx]?playlistArr[idx].duration:null);
+  const dur=(idx===currentIndex?effDur():(playlistArr[idx]?playlistArr[idx].duration:null));
   if(!isFinite(dur)||!dur){ toast('目标文件时长未知 · 本次未跳跃','dim'); return; }
   const head=S.headMin*60, tail=S.tailMin*60;
   let lo=head, hi=dur-tail-0.5;
@@ -1804,8 +1860,7 @@ function exportConfig(){
     toast('配置已导出 · stepvision-config.json');
   }catch(e){ toast('导出失败'); }
 }
-function importConfig(evt){
-  const f=evt.target.files[0]; if(!f) return;
+function importConfigFile(f){ // 导入也走独立目录记忆的文件选择
   const r=new FileReader();
   r.onload=()=>{
     try{
@@ -1826,7 +1881,7 @@ function importConfig(evt){
       toast('配置已导入并应用');
     }catch(e){ toast('配置文件无效'); }
   };
-  r.readAsText(f); evt.target.value='';
+  r.readAsText(f);
 }
 safe('面板锁/导入导出',()=>{
   const lockBtn=$('lockBtn');
@@ -1839,11 +1894,11 @@ safe('面板锁/导入导出',()=>{
   };
   lockBtn.addEventListener('click',()=>setLock(!panelLocked));
   $('exportBtn').addEventListener('click',exportConfig);
-  $('importBtn').addEventListener('click',()=>{
+  $('importBtn').addEventListener('click',async ()=>{
     if(panelLocked){ toast('控制台已锁定 · 请先解锁再导入'); return; }
-    $('cfgInput').click();
+    const fs=await pickFiles('cfg');
+    if(fs&&fs.length) importConfigFile(fs[0]);
   });
-  $('cfgInput').addEventListener('change',importConfig);
 });
 
 /* ============ 开关初始化 ============ */
@@ -1911,14 +1966,14 @@ safe('首次渲染',()=>{
   updMusicState(); updFxState(); updSubState(); updWinState(); updVState(); updTxtState(); updEngineState(); applyVolume();
 });
 
-window.__SV_LOADED=true; // 启动就绪标记（供下方自检脚本检测）
+window.__SV_LOADED=true;
 </script>
 
-<!-- ★ 启动自检 + 保底面板开关（独立脚本块：主脚本即使解析失败，此块仍可运行） -->
+<!-- 启动自检 + 保底面板开关（独立脚本块） -->
 <script>
 (function(){
   function init(){
-    if(window.__SV_LOADED) return; // 主脚本正常启动
+    if(window.__SV_LOADED) return;
     var hint=document.getElementById('centerHint');
     if(hint){
       hint.classList.remove('off');
